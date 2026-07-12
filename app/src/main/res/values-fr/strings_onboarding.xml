@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding flow strings. Auto-extracted from OnboardingDialog.kt inline map.
+  Do not edit by hand — regenerate via scripts/extract_onboarding_strings.py.
+-->
+<resources>
+    <string name="onboarding_welcome_title">Bienvenue sur FabiToDo !</string>
+    <string name="onboarding_welcome_desc">Configurez FabiToDo pour la première fois pour personnaliser votre expérience.</string>
+    <string name="onboarding_account_title">Compte d\'utilisateur</string>
+    <string name="onboarding_account_desc">Nous vous recommandons de connecter votre compte Google pour garder vos tâches en sécurité dans le cloud.</string>
+    <string name="onboarding_connected_google">Connecté avec Google</string>
+    <string name="onboarding_connect_google">Se connecter avec Google</string>
+    <string name="onboarding_name_question">Comment devrions-nous vous appeler ?</string>
+    <string name="onboarding_name_placeholder"></string>
+    <string name="onboarding_app_language_title">Langue de l\'application</string>
+    <string name="onboarding_system_default">Par défaut du système</string>
+    <string name="onboarding_notifs_enabled_btn">Activé</string>
+    <string name="onboarding_appearance_mode_title">Mode d\'apparence</string>
+    <string name="onboarding_color_accent_title">Couleur d\'accentuation</string>
+    <string name="onboarding_next">Suivant</string>
+    <string name="onboarding_start">Commencer</string>
+    <string name="onboarding_visual_title">Concevez votre espace</string>
+    <string name="onboarding_visual_desc">Personnalisez les nuances visuelles et la couleur d\'accentuation de votre tableau de bord.</string>
+    <string name="onboarding_theme_mode">Mode d\'apparence</string>
+    <string name="onboarding_theme_system">Système</string>
+    <string name="onboarding_theme_light">Clair</string>
+    <string name="onboarding_theme_dark">Sombre</string>
+    <string name="onboarding_color_accent">Couleur d\'accentuation</string>
+    <string name="onboarding_color_system">Système</string>
+    <string name="onboarding_color_blue">Bleu</string>
+    <string name="onboarding_color_sunset">Coucher de soleil</string>
+    <string name="onboarding_color_green">Vert</string>
+    <string name="onboarding_color_rose">Rose</string>
+    <string name="onboarding_color_amber">Ambre</string>
+    <string name="onboarding_notifs_title">Alertes &amp; Notifications</string>
+    <string name="onboarding_notifs_desc">Ne perdez jamais le fil d\'une tâche en attente ou d\'un rappel programmé.</string>
+    <string name="onboarding_notifs_banner_title">Activer les rappels FabiToDo</string>
+    <string name="onboarding_notifs_banner_desc">Nous vous enverrons des rappels empathiques à l\'heure exacte pour vous aider à réussir.</string>
+    <string name="onboarding_notifs_grant_btn">Accorder les autorisations</string>
+    <string name="onboarding_notifs_customize">Personnaliser les canaux</string>
+    <string name="onboarding_sound_title">Son d\'alerte</string>
+    <string name="onboarding_sound_desc">Jouer des tonalités pour les rappels prioritaires et listes de contrôle.</string>
+    <string name="onboarding_vibrate_title">Retour haptique &amp; Vibration</string>
+    <string name="onboarding_vibrate_desc">Vibrer subtilement lors de la fin d\'une activité ou de la réception d\'alertes.</string>
+    <string name="onboarding_habits_title">Habitudes &amp; Intervalles</string>
+    <string name="onboarding_habits_desc">Établissez le rythme idéal d\'organisation quotidienne et de sécurité.</string>
+    <string name="onboarding_quick_reminders_title">Rappels de tâches rapides</string>
+    <string name="onboarding_quick_reminders_desc">FabiToDo peut vous encourager en douceur périodiquement avec des idées créatives pour enregistrer vos tâches en attente.</string>
+    <string name="onboarding_interval_off">Inactif</string>
+    <string name="onboarding_security_title">Sécurité des données</string>
+    <string name="onboarding_confirm_delete_title">Confirmer les suppressions</string>
+    <string name="onboarding_confirm_delete_desc">Affiche une boîte de confirmation interactive avant de supprimer une tâche.</string>
+    <string name="onboarding_ai_title">Intelligence artificielle</string>
+    <string name="onboarding_ai_desc">Synchronisez et développez vos tâches avec des générateurs d\'étapes intelligents.</string>
+    <string name="onboarding_ai_model_title">Modèle prédictif par défaut</string>
+    <string name="onboarding_model_flash"></string>
+    <string name="onboarding_model_lite"></string>
+    <string name="onboarding_ai_complexity_title">Complexité des sous-tâches</string>
+    <string name="onboarding_ai_complexity_desc">Contrôle le nombre d\'étapes d\'action que Gemini créera initialement pour chaque tâche.</string>
+    <string name="onboarding_subtasks_count_label">sous-tâches</string>
+    <string name="onboarding_of_word">sur</string>
+    <string name="onboarding_all_set">Tout est prêt !</string>
+    <string name="onboarding_next_step">Prochaine étape</string>
+    <string name="onboarding_start_excl">Commencer !</string>
+    <string name="onboarding_steps_label">Étapes</string>
+    <string name="onboarding_step_welcome">Bienvenue</string>
+    <string name="onboarding_step_account">Compte</string>
+    <string name="onboarding_step_lang">Langue</string>
+    <string name="onboarding_step_visual">Design</string>
+    <string name="onboarding_step_alerts">Alertes</string>
+    <string name="onboarding_step_habits">Habitudes</string>
+    <string name="onboarding_step_ai">Intelligence artificielle</string>
+    <string name="onboarding_step_time">Temps</string>
+    <string name="onboarding_step_quickadd">Ajout rapide</string>
+    <string name="onboarding_step_security">Sécurité</string>
+    <string name="onboarding_step_privacy">Confidentialité</string>
+    <string name="onboarding_step_finish">Terminer</string>
+    <string name="onboarding_privacy_data_protected">Vos données sont protégées et privées.</string>
+    <string name="onboarding_your_name">Votre Nom</string>
+</resources>

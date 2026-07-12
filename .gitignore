@@ -1,0 +1,48 @@
+*.iml
+.gradle
+.kotlin
+/local.properties
+local.properties
+.env
+.env.local
+debug.keystore
+debug.keystore.base64
+
+# Firebase / Google services config — inject via CI, never commit
+app/google-services.json
+app/google-services-debug.json
+google-services.json
+
+# Signing keystores & credentials
+*.jks
+*.keystore
+keystore.properties
+release.keystore
+/build
+/captures
+.externalNativeBuild
+.cxx
+.cxx/
+
+# IDEA
+/.idea/
+.idea
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/vcs.xml
+.idea/misc.xml
+.idea/codeStyles/
+.idea/deploymentTargetDropDown.xml
+.DS_Store
+
+# App-specific build directories
+/app/build/
+app/build/
+# Any extra generated outputs
+/out/
+*.class
+*.log

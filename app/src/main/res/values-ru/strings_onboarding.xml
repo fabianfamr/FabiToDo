@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding flow strings. Auto-extracted from OnboardingDialog.kt inline map.
+  Do not edit by hand — regenerate via scripts/extract_onboarding_strings.py.
+-->
+<resources>
+    <string name="onboarding_welcome_title">Добро пожаловать в FabiToDo!</string>
+    <string name="onboarding_welcome_desc">Настройте FabiToDo в первый раз, чтобы персонализировать свой опыт.</string>
+    <string name="onboarding_account_title">Учетная запись</string>
+    <string name="onboarding_account_desc">Мы рекомендуем подключить аккаунт Google, чтобы ваши задачи были в безопасности в облаке.</string>
+    <string name="onboarding_connected_google">Подключено к Google</string>
+    <string name="onboarding_connect_google">Войти через Google</string>
+    <string name="onboarding_name_question">Как нам вас называть?</string>
+    <string name="onboarding_name_placeholder"></string>
+    <string name="onboarding_app_language_title">Язык приложения</string>
+    <string name="onboarding_system_default">По умолчанию</string>
+    <string name="onboarding_notifs_enabled_btn">Включено</string>
+    <string name="onboarding_appearance_mode_title">Режим оформления</string>
+    <string name="onboarding_color_accent_title">Цветовой акцент</string>
+    <string name="onboarding_next">Далее</string>
+    <string name="onboarding_start">Начать</string>
+    <string name="onboarding_visual_title">Создайте свое пространство</string>
+    <string name="onboarding_visual_desc">Персонализируйте визуальные нюансы и акцентный цвет вашей панели управления.</string>
+    <string name="onboarding_theme_mode">Режим оформления</string>
+    <string name="onboarding_theme_system">Системная</string>
+    <string name="onboarding_theme_light">Светлая</string>
+    <string name="onboarding_theme_dark">Темная</string>
+    <string name="onboarding_color_accent">Цветовой акцент</string>
+    <string name="onboarding_color_system">Система</string>
+    <string name="onboarding_color_blue">Синий</string>
+    <string name="onboarding_color_sunset">Закат</string>
+    <string name="onboarding_color_green">Зеленый</string>
+    <string name="onboarding_color_rose">Розовый</string>
+    <string name="onboarding_color_amber">Янтарный</string>
+    <string name="onboarding_notifs_title">Оповещения и уведомления</string>
+    <string name="onboarding_notifs_desc">Никогда не теряйте из виду ожидающие задачи или запланированные напоминания.</string>
+    <string name="onboarding_notifs_banner_title">Включить напоминания FabiToDo</string>
+    <string name="onboarding_notifs_banner_desc">Мы будем отправлять вам эмпатичные напоминания точно в срок, чтобы помочь вам преуспеть.</string>
+    <string name="onboarding_notifs_grant_btn">Предоставить разрешения</string>
+    <string name="onboarding_notifs_customize">Настроить каналы</string>
+    <string name="onboarding_sound_title">Звук оповещения</string>
+    <string name="onboarding_sound_desc">Воспроизводить сигналы для приоритетных напоминаний и списков.</string>
+    <string name="onboarding_vibrate_title">Тактильный отклик и вибрация</string>
+    <string name="onboarding_vibrate_desc">Мягкая вибрация при выполнении задач или получении оповещений.</string>
+    <string name="onboarding_habits_title">Привычки и интервалы</string>
+    <string name="onboarding_habits_desc">Установите идеальный темп ежедневной организации и безопасности.</string>
+    <string name="onboarding_quick_reminders_title">Быстрые напоминания о задачах</string>
+    <string name="onboarding_quick_reminders_desc">FabiToDo может периодически мягко подталкивать вас творческими идеями для записи ваших задач.</string>
+    <string name="onboarding_interval_off">Отключено</string>
+    <string name="onboarding_security_title">Безопасность данных</string>
+    <string name="onboarding_confirm_delete_title">Подтверждать удаления</string>
+    <string name="onboarding_confirm_delete_desc">Показывать интерактивное окно подтверждения перед удалением любой задачи.</string>
+    <string name="onboarding_ai_title">Artificial Intelligence</string>
+    <string name="onboarding_ai_desc">Синхронизируйте и расширяйте задачи с помощью умного генератора подэтапов.</string>
+    <string name="onboarding_ai_model_title">Прогностическая модель по умолчанию</string>
+    <string name="onboarding_model_flash"></string>
+    <string name="onboarding_model_lite"></string>
+    <string name="onboarding_ai_complexity_title">Сложность подзадач</string>
+    <string name="onboarding_ai_complexity_desc">Управляет количеством шагов действий, которые Gemini изначально создаст для каждой задачи.</string>
+    <string name="onboarding_subtasks_count_label">подзадач</string>
+    <string name="onboarding_of_word">из</string>
+    <string name="onboarding_all_set">Все готово!</string>
+    <string name="onboarding_next_step">Следующий шаг</string>
+    <string name="onboarding_start_excl">Начать!</string>
+    <string name="onboarding_steps_label">Шагов</string>
+    <string name="onboarding_step_welcome">Приветствие</string>
+    <string name="onboarding_step_account">Аккаунт</string>
+    <string name="onboarding_step_lang">Язык</string>
+    <string name="onboarding_step_visual">Дизайн</string>
+    <string name="onboarding_step_alerts">Оповещения</string>
+    <string name="onboarding_step_habits">Привычки</string>
+    <string name="onboarding_step_ai">Artificial Intelligence</string>
+    <string name="onboarding_step_time">Время</string>
+    <string name="onboarding_step_quickadd">Быстрое добавление</string>
+    <string name="onboarding_step_security">Безопасность</string>
+    <string name="onboarding_step_privacy">Конфиденциальность</string>
+    <string name="onboarding_step_finish">Завершить</string>
+    <string name="onboarding_privacy_data_protected">Ваши данные защищены и конфиденциальны.</string>
+    <string name="onboarding_your_name">Ваше Имя</string>
+</resources>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding flow strings. Auto-extracted from OnboardingDialog.kt inline map.
+  Do not edit by hand — regenerate via scripts/extract_onboarding_strings.py.
+-->
+<resources>
+    <string name="onboarding_welcome_title">欢迎使用 FabiToDo！</string>
+    <string name="onboarding_welcome_desc">首次配置 FabiToDo 以个性化您的体验。</string>
+    <string name="onboarding_account_title">用户帐户</string>
+    <string name="onboarding_account_desc">我们建议连接您的 Google 帐户以将任务安全地保存在云端。</string>
+    <string name="onboarding_connected_google">已连接 Google</string>
+    <string name="onboarding_connect_google">连接 Google</string>
+    <string name="onboarding_name_question">我们该如何称呼您？</string>
+    <string name="onboarding_name_placeholder"></string>
+    <string name="onboarding_app_language_title">应用语言</string>
+    <string name="onboarding_system_default">系统默认</string>
+    <string name="onboarding_notifs_enabled_btn">已启用</string>
+    <string name="onboarding_appearance_mode_title">外观模式</string>
+    <string name="onboarding_color_accent_title">主题颜色</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_start">开始体验</string>
+    <string name="onboarding_visual_title">设计您的空间</string>
+    <string name="onboarding_visual_desc">个性化您的仪表板的视觉细节和主题颜色。</string>
+    <string name="onboarding_theme_mode">外观模式</string>
+    <string name="onboarding_theme_system">系统</string>
+    <string name="onboarding_theme_light">浅色</string>
+    <string name="onboarding_theme_dark">深色</string>
+    <string name="onboarding_color_accent">主题颜色</string>
+    <string name="onboarding_color_system">系统</string>
+    <string name="onboarding_color_blue">蓝色</string>
+    <string name="onboarding_color_sunset">落日橙</string>
+    <string name="onboarding_color_green">绿色</string>
+    <string name="onboarding_color_rose">玫瑰红</string>
+    <string name="onboarding_color_amber">琥珀黄</string>
+    <string name="onboarding_notifs_title">提醒与通知</string>
+    <string name="onboarding_notifs_desc">绝不会错过待办任务或日程提醒。</string>
+    <string name="onboarding_notifs_banner_title">启用 FabiToDo 提醒</string>
+    <string name="onboarding_notifs_banner_desc">我们将在准确的时间发送给您贴心提醒，助您顺利完成。</string>
+    <string name="onboarding_notifs_grant_btn">授予权限</string>
+    <string name="onboarding_notifs_customize">自定义通知类型</string>
+    <string name="onboarding_sound_title">提示音</string>
+    <string name="onboarding_sound_desc">高优先级提醒和清单播放提示音。</string>
+    <string name="onboarding_vibrate_title">触感反馈与振动</string>
+    <string name="onboarding_vibrate_desc">完成活动或收到提醒时轻微振动。</string>
+    <string name="onboarding_habits_title">习惯与计划周期</string>
+    <string name="onboarding_habits_desc">建立日常整理和安全的理想节奏。</string>
+    <string name="onboarding_quick_reminders_title">快速任务提醒</string>
+    <string name="onboarding_quick_reminders_desc">FabiToDo 能够定期通过创意点子轻轻提醒您记录待办事项。</string>
+    <string name="onboarding_interval_off">关闭</string>
+    <string name="onboarding_security_title">数据安全</string>
+    <string name="onboarding_confirm_delete_title">确认删除操作</string>
+    <string name="onboarding_confirm_delete_desc">在移除任何任务之前显示一个确认弹窗。</string>
+    <string name="onboarding_ai_title">Artificial Intelligence</string>
+    <string name="onboarding_ai_desc">使用智能子步骤生成器同步和拓展您的任务。</string>
+    <string name="onboarding_ai_model_title">默认预测模型</string>
+    <string name="onboarding_model_flash"></string>
+    <string name="onboarding_model_lite"></string>
+    <string name="onboarding_ai_complexity_title">子任务数量上限</string>
+    <string name="onboarding_ai_complexity_desc">控制 Gemini 最初为每个任务创建的行动步骤数量。</string>
+    <string name="onboarding_subtasks_count_label">个子任务</string>
+    <string name="onboarding_of_word">/</string>
+    <string name="onboarding_all_set">全部就绪！</string>
+    <string name="onboarding_next_step">下一步</string>
+    <string name="onboarding_start_excl">开始！</string>
+    <string name="onboarding_steps_label">步</string>
+    <string name="onboarding_step_welcome">欢迎</string>
+    <string name="onboarding_step_account">帐户</string>
+    <string name="onboarding_step_lang">语言</string>
+    <string name="onboarding_step_visual">设计</string>
+    <string name="onboarding_step_alerts">提醒</string>
+    <string name="onboarding_step_habits">习惯</string>
+    <string name="onboarding_step_ai">Artificial Intelligence</string>
+    <string name="onboarding_step_time">时间</string>
+    <string name="onboarding_step_quickadd">快速添加</string>
+    <string name="onboarding_step_security">安全</string>
+    <string name="onboarding_step_privacy">隐私</string>
+    <string name="onboarding_step_finish">完成</string>
+    <string name="onboarding_privacy_data_protected">您的数据受保护且为私密。</string>
+    <string name="onboarding_your_name">你的名字</string>
+</resources>

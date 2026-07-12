@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Benvenuto in FabiToDo</string>
+    <string name="login_subtitle">Facciamo in modo che succeda.</string>
+    <string name="login_desc_main">Gestisci le tue attività quotidiane, imposta promemoria intelligenti e tieni tutto sotto controllo senza stress.</string>
+    <string name="login_guest_btn">Entra come ospite</string>
+    <string name="login_google_btn">Continua con Google</string>
+    <string name="login_footer_text">Puoi accedere e sincronizzare le tue attività in qualsiasi momento dalle Impostazioni.</string>
+    <string name="login_tagline">Organizza la tua vita ✨</string>
+
+    <string name="auth_state_checking">Verifica account in corso…</string>
+    <string name="auth_state_success">Bentornato!</string>
+    <string name="auth_state_error">Si è verificato un problema durante l\'accesso: %s</string>
+    
+    <string name="google_btn_loading">Connessione in corso…</string>
+    
+    <string name="login_perks_title">Perché usare un account?</string>
+    <string name="google_feat_sync">Le tue attività su tutti i dispositivi</string>
+    <string name="google_feat_backup">Backup automatici</string>
+    <string name="google_feat_secure">Archiviazione sicura nel cloud</string>
+    <string name="error_google_login">Impossibile caricare gli account</string>
+</resources>

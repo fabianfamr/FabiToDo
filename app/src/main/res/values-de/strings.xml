@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base App Strings -->
+    <string name="app_name">FabiToDo</string>
+    <string name="search_hint">Aufgaben suchen…</string>
+    <string name="no_tasks_found">Wir konnten keine passenden Aufgaben finden.</string>
+    <string name="no_tasks_today">Klasse! Für heute hast du alles erledigt.</string>
+    <string name="no_tasks_general">Alles erledigt. Gönn dir eine Pause.</string>
+    <string name="add_task">Aufgabe hinzufügen</string>
+    <string name="edit_task">Aufgabe bearbeiten</string>
+    <string name="delete_task">Aufgabe löschen</string>
+    
+    <string name="task_title">Was steht an?</string>
+    <string name="task_description">Details hinzufügen (optional)</string>
+    <string name="due_date">Fälligkeitsdatum</string>
+    <string name="due_time">Uhrzeit</string>
+    
+    <!-- Enums and Selectors -->
+    <string name="priority_low">Niedrig</string>
+    <string name="priority_medium">Mittel</string>
+    <string name="priority_high">Hoch</string>
+    <string name="priority_urgent">Dringend</string>
+    
+    <string name="status_pending">Ausstehend</string>
+    <string name="status_in_progress">In Arbeit</string>
+    <string name="status_completed">Erledigt!</string>
+
+    <string name="category_personal">Persönlich</string>
+    <string name="category_work">Arbeit</string>
+    <string name="category_shopping">Einkaufen</string>
+    <string name="category_health">Gesundheit</string>
+    <string name="category_finance">Finanzen</string>
+    <string name="category_home">Zuhause</string>
+    <string name="category_education">Bildung</string>
+    <string name="category_social">Soziales</string>
+    <string name="category_ideas">Ideen</string>
+    <string name="category_fitness">Fitness</string>
+    <string name="category_travel">Reisen</string>
+    <string name="category_entertainment">Freizeit</string>
+    <string name="category_errands">Besorgungen</string>
+    <string name="category_family">Familie</string>
+    
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+
+    <string name="error_empty_title">Halt! Die Aufgabe braucht einen Titel.</string>
+    
+    <!-- Time strings -->
+    <string name="today">Heute</string>
+    <string name="tomorrow">Morgen</string>
+    <string name="yesterday">Gestern</string>
+
+    <string name="sort_by">Sortieren nach</string>
+    <string name="sort_manual">Wie es dir gefällt (Manuell)</string>
+    <string name="sort_due_date">Bald fällige zuerst</string>
+    <string name="sort_priority">Dringende zuerst</string>
+    <string name="sort_created_date">Älteste zuerst</string>
+
+    <string name="filter_all">Alle</string>
+    
+    <!-- Menu -->
+    <string name="menu_settings">Einstellungen</string>
+    <string name="menu_about">Über uns</string>
+    
+    <!-- Subtasks -->
+    <string name="subtasks">Teilschritte</string>
+    <string name="add_subtask">Schritt hinzufügen</string>
+    
+    <string name="stats_title">Dein Fortschritt</string>
+    <string name="stats_completed_count">%d erledigt</string>
+    <string name="stats_pending_count">%d ausstehend</string>
+
+    <!-- Welcome / Splash -->
+    <string name="splash_subtitle">Lass uns was schaffen.</string>
+    
+    <!-- Misc -->
+    <string name="undo">Rückgängig</string>
+    <string name="task_deleted">Aufgabe gelöscht</string>
+    <string name="task_completed">Super! Aufgabe erledigt.</string>
+</resources>

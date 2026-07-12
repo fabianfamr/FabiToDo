@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Elementos de la pantalla de inicio de sesión -->
+    <string name="login_title">Te damos la bienvenida a FabiToDo</string>
+    <string name="login_subtitle">Hagamos que las cosas sucedan.</string>
+    <string name="login_desc_main">Organiza tus tareas diarias, configura recordatorios inteligentes y mantén todo bajo control sin estrés.</string>
+    <string name="login_guest_btn">Entrar como invitado</string>
+    <string name="login_google_btn">Continuar con Google</string>
+    <string name="login_footer_text">Puedes iniciar sesión y sincronizar tus tareas en cualquier momento desde los Ajustes.</string>
+    <string name="login_tagline">Organiza tu vida ✨</string>
+
+    <string name="auth_state_checking">Verificando tu cuenta…</string>
+    <string name="auth_state_success">¡Hola de nuevo!</string>
+    <string name="auth_state_error">Hubo un problema al iniciar sesión: %s</string>
+    
+    <string name="google_btn_loading">Conectando…</string>
+    
+    <string name="login_perks_title">¿Por qué usar una cuenta?</string>
+    <string name="google_feat_sync">Tus tareas en todos tus dispositivos</string>
+    <string name="google_feat_backup">Copias de seguridad automáticas</string>
+    <string name="google_feat_secure">Almacenamiento seguro en la nube</string>
+    <string name="error_google_login">No se pudieron cargar las cuentas</string>
+</resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AI Center Strings -->
+    <string name="ai_center_title">Funzioni Intelligenti</string>
+    <string name="ai_center_back">Indietro</string>
+    <string name="ai_banner_magic">Magia dell\'IA</string>
+    <string name="ai_banner_title">Scomposizione automatica</string>
+    <string name="ai_banner_body">Lascia che l\'IA ti aiuti a dividere le attività complesse in passaggi più piccoli. Può anche suggerirti categorie e priorità.</string>
+    <string name="ai_banner_hide">Nascondi</string>
+    
+    <string name="ai_section_model">Modello IA</string>
+    <string name="ai_select_motor_title">Scegli il tuo assistente:</string>
+    <string name="ai_select_motor_desc">Puoi usare i modelli veloci di Gemini o altri fornitori famosi come GPT, Claude, DeepSeek o Llama.</string>
+    
+    <string name="ai_section_access">Chiave API</string>
+    <string name="ai_provider_key_label">Chiave API del fornitore</string>
+    <string name="ai_badge_recommended">Consigliato</string>
+    <string name="ai_badge_required">Obbligatorio</string>
+    
+    <string name="ai_key_req_gemini">Ti servirà una chiave di Google AI Studio (gratuita su ai.google.dev).</string>
+    <string name="ai_key_req_gpt">Richiede una chiave API di OpenAI.</string>
+    <string name="ai_key_req_claude">Richiede una chiave API di Anthropic.</string>
+    <string name="ai_key_req_deepseek">Richiede una chiave API di DeepSeek.</string>
+    <string name="ai_key_req_llama">Richiede una chiave API di Groq.</string>
+    <string name="ai_key_req_generic">Inserisci la tua chiave API per il modello scelto.</string>
+    
+    <string name="ai_key_placeholder">Incolla la tua chiave API qui…</string>
+    <string name="ai_key_icon_desc">Icona Chiave API</string>
+    <string name="ai_key_show">Mostra</string>
+    
+    <string name="ai_security_desc">Privacy e Sicurezza</string>
+    <string name="ai_security_body">Le tue chiavi vengono salvate in modo totalmente sicuro sul tuo dispositivo.</string>
+    
+    <string name="ai_section_lab">Metti alla prova</string>
+    <string name="ai_lab_title">Fai una prova</string>
+    <string name="ai_lab_desc">Scrivi un\'attività di esempio qui sotto per vedere cosa fa l\'IA.</string>
+    <string name="ai_lab_field_label">Attività di prova</string>
+    <string name="ai_lab_err_empty">Per favore, inserisci prima un\'attività di prova</string>
+    <string name="ai_lab_test_desc_default">Organizzare una festa di compleanno</string>
+    
+    <string name="ai_btn_connecting">Sto pensando…</string>
+    <string name="ai_btn_test_now">Prova la connessione</string>
+    <string name="ai_btn_test_desc">Prova</string>
+    
+    <string name="ai_result_success">Connessione riuscita!</string>
+    <string name="ai_result_parsed_header">Ecco cosa suggerisce l\'IA:</string>
+    <string name="ai_result_suggested_desc">Descrizione: </string>
+    <string name="ai_result_suggested_cat">Categoria</string>
+    <string name="ai_result_suggested_prio">Priorità</string>
+    <string name="ai_result_subtasks_count">Passaggi suggeriti (%d):</string>
+    
+    <string name="ai_result_error_title">Impossibile connettersi</string>
+    <string name="ai_result_error_generic">Ops, qualcosa è andato storto.</string>
+    <string name="ai_result_error_tips">Suggerimento: Controlla che la tua chiave API sia corretta e di avere una connessione a internet.</string>
+
+    <!-- Gemini config strings -->
+    <string name="settings_ai_title">Funzioni Intelligenti</string>
+    <string name="settings_ai_desc">Configura il tuo assistente IA.</string>
+    <string name="settings_ai_model_title">Modello</string>
+    <string name="settings_ai_model_desc">Scegli quale IA usare.</string>
+    <string name="settings_ai_apikey_title">Chiave API</string>
+    <string name="settings_ai_apikey_desc">Aggiungi la tua chiave API.</string>
+    <string name="subtasks_generate_magic">Suggerisci passaggi</string>
+    <string name="subtasks_generating">Sto pensando...</string>
+    <string name="subtasks_generate_error">Accidenti, non sono riuscito a generare i passaggi.</string>
+    <string name="ai_subtasks_settings">Suggerimento passaggi</string>
+    <string name="ai_subtasks_amount">Numero di passaggi</string>
+    <string name="ai_subtasks_desc">Quanti passaggi vuoi che ti suggerisca l\'IA?</string>
+    <string name="ai_subtasks_count">%d passaggi</string>
+
+    <!-- Low Latency Config -->
+    <string name="ai_ultra_low_latency_title">Risposte più veloci</string>
+    <string name="ai_ultra_low_latency_desc">Usa un modello più veloce per suggerimenti istantanei.</string>
+</resources>

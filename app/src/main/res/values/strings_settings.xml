@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_info">Settings</string>
+    <string name="settings_category_appearance">Appearance</string>
+    <string name="settings_category_general">General</string>
+    <string name="settings_category_notifications">Notifications</string>
+    <string name="settings_section_personalization">Personalization</string>
+    <string name="settings_section_ai">Smart Features</string>
+    <string name="settings_section_organization">Organization</string>
+    <string name="settings_section_account_backup">Account &amp; Backup</string>
+
+    <string name="settings_appearance_desc">Themes, layout, and visual customizations</string>
+    <string name="settings_categories_desc">Manage your task categories and lists</string>
+    <string name="settings_language_desc">Change the application display language</string>
+    <string name="settings_sync_desc">Backup and restore your tasks securely</string>
+    <string name="settings_account_desc">Manage your profile and sync accounts</string>
+
+    <string name="accounts_title">Accounts</string>
+    <string name="accounts_connected_header">Connected Accounts</string>
+    <string name="accounts_connected_desc">Manage linked providers and keep each integration under your control.</string>
+    <string name="accounts_active">Active</string>
+    <string name="accounts_available">Available</string>
+    <string name="accounts_no_linked">No linked accounts yet</string>
+    <string name="accounts_no_linked_desc">Connect a provider to manage it from this screen.</string>
+
+    <string name="backup_restore_title">Backup &amp; Restore</string>
+    <string name="backup_how_works_title">How backup works</string>
+    <string name="backup_how_works_desc">Choose sections, export a .fabiantodo file (Local or Drive), and import it later. Restore only replaces the sections you select.</string>
+    <string name="backup_create_title">Create Backup</string>
+    <string name="backup_export_title">Export Backup</string>
+    <string name="backup_export_desc">All sections selected. Creates a .fabiantodo backup file.</string>
+    <string name="backup_select_export">Select &amp; Export</string>
+    <string name="backup_restore_header">Restore Backup</string>
+    <string name="backup_import_title">Import Backup</string>
+    <string name="backup_import_desc">Browse or pick from recent backups. Selected data will replace current data.</string>
+
+    <string name="connect_telegram">Connect Telegram</string>
+    <string name="google_drive_coming">Google Drive (Coming soon)</string>
+    <string name="connect_netease">Connect Netease</string>
+    <string name="connect_qq_music">Connect QQ Music</string>
+
+    <string name="settings_sync_title">Google Drive Synchronization</string>
+    <string name="settings_sync_button">Connect and Sync</string>
+    <string name="settings_sync_auto">Auto-Sync</string>
+    <string name="settings_sync_desc_detailed">Keep your tasks and .fabiantodo files in sync. Enable auto-sync for seamless backups.</string>
+    <string name="settings_category_sync">GOOGLE DRIVE SYNCHRONIZATION</string>
+    <string name="settings_category_account">ACCOUNT</string>
+    <string name="settings_account_title">User</string>
+    <string name="settings_sign_out">Sign Out</string>
+
+    <string name="settings_long_press_action">Long Press Action</string>
+    <string name="settings_long_press_desc">Choose what happens when holding down a task item.</string>
+    <string name="settings_lp_edit">Edit task</string>
+    <string name="settings_lp_select">Select multiple</string>
+
+    <string name="settings_language_desc_detailed">Choose your preferred language for the interface, date formats, and system notifications.</string>
+    <string name="lang_es_sub">Spanish</string>
+    <string name="lang_en_sub">English</string>
+    <string name="lang_fr_sub">French (France)</string>
+    <string name="lang_de_sub">German (Germany)</string>
+    <string name="lang_it_sub">Italian (Italy)</string>
+    <string name="lang_system_sub">Use operating system settings</string>
+
+    <string name="settings_categories_title">Task Categories</string>
+    <string name="settings_categories_desc_detailed">Organize your activities hierarchically. Drag from the sidebars to reorder.</string>
+    <string name="content_desc_drag_reorder">Drag to reorder</string>
+    <string name="category_default">Default</string>
+    <string name="category_status_system">System (Fixed)</string>
+    <string name="category_status_custom">Custom</string>
+
+    <string name="settings_backup_title_main">Backup &amp; Restore</string>
+    <string name="settings_backup_desc_detailed">Safeguard your tasks locally or in the cloud to recover them at any moment.</string>
+    <string name="understood">Understood</string>
+    <string name="settings_backup_local_desc">Offline local backup</string>
+    <string name="settings_restore_local_desc">Local restore</string>
+
+    <string name="settings_notifications_title">Alert Settings</string>
+    <string name="settings_notifications_desc_detailed">Control when and how you want to be reminded of your important activities.</string>
+    <string name="notifications_permission_granted">System notification permission granted successfully.</string>
+    <string name="notifications_permission_denied">System notification permission denied. Reminders may not be delivered.</string>
+    <string name="settings_notifications_auto_desc">Enable automatic reminders</string>
+    <string name="settings_notifications_sound_title">Alert Sound</string>
+    <string name="settings_notifications_sound_desc">Play audio chime when alarms ring.</string>
+    <string name="settings_notifications_vibrate_title">Reminders Vibration</string>
+    <string name="settings_notifications_vibrate_desc">Enable phone vibration pattern.</string>
+    <string name="settings_notifications_offset_title">Default Anticipation</string>
+    <string name="settings_notifications_offset_desc">How many minutes in advance you will receive the notification.</string>
+    <string name="settings_notifications_offset_exact">At the exact time of the task</string>
+    <string name="settings_notifications_offset_5">5 minutes before</string>
+    <string name="settings_notifications_offset_15">15 minutes before</string>
+    <string name="settings_notifications_offset_30">30 minutes before</string>
+    <string name="settings_notifications_offset_60">1 hour before</string>
+    <string name="settings_notifications_offset_720">12 hours before</string>
+    <string name="settings_notifications_offset_1440">1 day before</string>
+    <string name="settings_notifications_offset_2880">2 days before</string>
+    <string name="settings_notifications_offset_4320">3 days before</string>
+    <string name="settings_notifications_offset_5760">4 days before</string>
+    <string name="settings_notifications_offset_7200">5 days before</string>
+    <string name="settings_notifications_offset_8640">6 days before</string>
+    <string name="settings_notifications_offset_10080">7 days before</string>
+
+    <string name="settings_snooze_title">Subject to snooze</string>
+    <string name="settings_snooze_desc">Default wait time when pressing \'Snooze\'.</string>
+    <string name="settings_snooze_5">Snooze every 5 minutes</string>
+    <string name="settings_snooze_10">Snooze every 10 minutes</string>
+    <string name="settings_snooze_15">Snooze every 15 minutes</string>
+    <string name="settings_snooze_30">Snooze every 30 minutes</string>
+
+    <string name="settings_date_format_dmy">Day / Month / Year (Ex: 30/05/26)</string>
+    <string name="settings_date_format_mdy">Month / Day / Year (Ex: 05/30/26)</string>
+    <string name="settings_date_format_ymd">Year / Month / Day (Ex: 26/05/30)</string>
+    <string name="settings_time_format_12h">12 hours - AM/PM (Ex: 02:30 PM)</string>
+    <string name="settings_time_format_24h">24 hours (Ex: 14:30)</string>
+    <string name="settings_behavior_title">Behavior</string>
+    <string name="settings_behavior_desc">Configure the touch response of the task list.</string>
+    <string name="settings_lp_select_desc">Enter multi-selection mode to delete, move, or mark multiple tasks.</string>
+    <string name="settings_lp_edit_desc">Open the floating editor to modify task content immediately.</string>
+    <string name="settings_confirm_delete_title">Confirm deletion</string>
+    <string name="settings_confirm_delete_desc">Request confirmation before permanently deleting a task.</string>
+    <string name="settings_vibrate_complete_title">Vibrate on complete</string>
+    <string name="settings_vibrate_complete_desc">Produce a subtle haptic feedback when marking tasks as completed.</string>
+    <string name="settings_trash_retention_title">Trash retention period</string>
+    <string name="settings_trash_retention_desc">How long tasks stay in the Trash before being deleted permanently.</string>
+    <string name="settings_trash_keep_forever">Keep forever</string>
+    <string name="settings_trash_days_format">%d days</string>
+    <string name="settings_trash_1_day">1 day</string>
+
+    <!-- Extracted settings strings -->
+    <string name="settings_datetime_title">Date &amp; Time</string>
+    <string name="settings_datetime_desc">Customize date and time formats</string>
+    <string name="settings_date_format_title">Date format</string>
+    <string name="settings_date_format_desc">Choose date format</string>
+    <string name="settings_time_format_title">Time format</string>
+    <string name="settings_time_format_desc">Choose time format</string>
+    
+    <string name="settings_appearance_preview_desc">How your daily task row adapts to your appearance options.</string>
+    <string name="settings_accent_color_desc">Pick a vibrant accent key to personalize alerts, buttons and highlights.</string>
+    <string name="color_system_desc">Material You dynamic wallpaper tones.</string>
+    <string name="theme_mode_desc">Choose between day, night, or system automatic colors.</string>
+
+    <string name="settings_account_data_protected">Data Protected</string>
+    <string name="settings_account_register">Register Account</string>
+    <string name="settings_account_backed_up_desc">Your information is securely backed up in the cloud.</string>
+    <string name="settings_account_register_desc">Associate your account to enjoy real-time synchronization and instant automatic backups.</string>
+    <string name="settings_account_sync_active">Continuous Backup Active</string>
+    <string name="settings_account_sync_active_desc">Your tasks are synchronized in the cloud</string>
+    <string name="toast_manual_sync_success">Manual synchronization successfully completed!</string>
+    <string name="syncing">Syncing…</string>
+    <string name="sync_now">Sync now</string>
+    <string name="benefit_cloud_access">Keep your tasks safe</string>
+    <string name="benefit_cloud_access_desc">Never lose your tasks, even if you lose your phone.</string>
+    <string name="benefit_multidevice">Sync across devices</string>
+    <string name="benefit_multidevice_desc">Access your tasks from anywhere.</string>
+    <string name="benefit_bg_backup">Auto-Backup</string>
+    <string name="benefit_bg_backup_desc">We\'ll back up your tasks automatically.</string>
+    <string name="danger_zone">Danger Zone</string>
+    
+    <!-- Settings Search Synonyms & Content Descriptions -->
+    <string name="content_desc_user_avatar">User Avatar</string>
+    <string name="synonyms_appearance">appearance theme color dark light customize design style layout accent</string>
+    <string name="synonyms_language">language system translation spanish english system language</string>
+    <string name="synonyms_datetime">date time format clock calendar schedule date-time hour</string>
+    <string name="synonyms_behavior">behavior vibrate touch long press click option feedback draft trash behavior gesture</string>
+    <string name="synonyms_ai">ai artificial intelligence gemini model apikey key smart intelligent</string>
+    <string name="synonyms_categories">categories lists colors icons workspace custom list labels</string>
+    <string name="synonyms_notifications">notifications alerts alarms sound sound-effects alert options check reminders</string>
+    <string name="synonyms_sync">backup sync local drive cloud restore backup-file backup-and-restore</string>
+    <string name="synonyms_account">account user guest profile avatar sign out register login cloud google</string>
+
+    <!-- Settings Search Localized UI Strings -->
+    <string name="settings_app_title">FabiToDo</string>
+    <string name="settings_search_placeholder">Search settings…</string>
+    <string name="settings_app_subtitle">Agenda &amp; Tasks • v4.9</string>
+    <string name="settings_search_results">Search results</string>
+    <string name="settings_no_results">No matching settings found</string>
+    <string name="settings_no_results_tips">Try terms like \"theme\", \"alerts\", \"AI\" or \"language\"</string>
+
+    <!-- ===== Strings backfilled from locale-specific files to satisfy
+         resource shrinker (isShrinkResources=true). These are the
+         English defaults; locale-specific overrides live in values-*/. -->
+    <string name="account_guest">You are signed in as Guest</string>
+    <string name="account_guest_desc">You are not signed in with any account.</string>
+    <string name="backup_btn_create">Create backup</string>
+    <string name="backup_btn_restore">Restore backup</string>
+    <string name="backup_create_desc">Export your tasks and settings to a JSON file.</string>
+    <string name="backup_restore_desc">Import tasks and settings from a JSON file.</string>
+    <string name="btn_login_google">Sign in with Google</string>
+    <string name="btn_logout">Log out</string>
+    <string name="category_edit_name">Category name</string>
+    <string name="category_edit_title">Edit category</string>
+    <string name="category_manage_add">Add category</string>
+    <string name="category_manage_empty">No custom categories yet</string>
+    <string name="dark_mode_off">Off</string>
+    <string name="dark_mode_on">On</string>
+    <string name="dark_mode_system">Follow system</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_save">Save</string>
+    <string name="lang_ar">Arabic</string>
+    <string name="lang_de">German</string>
+    <string name="lang_en">English</string>
+    <string name="lang_es">Spanish</string>
+    <string name="lang_fr">French</string>
+    <string name="lang_it">Italian</string>
+    <string name="lang_ja">Japanese</string>
+    <string name="lang_pt">Portuguese</string>
+    <string name="lang_ru">Russian</string>
+    <string name="lang_sys">System default</string>
+    <string name="lang_zh">Chinese</string>
+    <string name="logout_confirmation_desc">Are you sure you want to log out?</string>
+    <string name="logout_confirmation_title">Log out</string>
+    <string name="settings_badge_desc">Show a counter badge on the app icon.</string>
+    <string name="settings_badge_title">Notification badge</string>
+    <string name="settings_biometrics_desc">Require biometric authentication to open the app.</string>
+    <string name="settings_biometrics_title">Biometric lock</string>
+    <string name="settings_daily_summary_desc">Send a daily summary of pending tasks.</string>
+    <string name="settings_daily_summary_title">Daily summary</string>
+    <string name="settings_dark_mode_desc">Switch between light and dark themes.</string>
+    <string name="settings_dark_mode_title">Dark mode</string>
+    <string name="settings_default_prio_desc">Default priority for new tasks.</string>
+    <string name="settings_default_prio_title">Default priority</string>
+    <string name="settings_default_sort_desc">Default sort order for tasks.</string>
+    <string name="settings_default_sort_title">Default sort order</string>
+    <string name="settings_delete_confirm_desc">Ask for confirmation before deleting tasks.</string>
+    <string name="settings_delete_confirm_title">Confirm deletion</string>
+    <string name="settings_enable_notif_desc">Enable task reminders and notifications.</string>
+    <string name="settings_enable_notif_title">Notifications</string>
+    <string name="settings_font_scale_desc">Adjust the app font size.</string>
+    <string name="settings_font_scale_title">Font size</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_move_completed_desc">Move completed tasks to the bottom of the list.</string>
+    <string name="settings_move_completed_title">Move completed to bottom</string>
+    <string name="settings_privacy_desc">Privacy policy and data handling.</string>
+    <string name="settings_privacy_title">Privacy</string>
+    <string name="settings_quick_add_desc">Show quick-add suggestions throughout the day.</string>
+    <string name="settings_quick_add_title">Quick add reminders</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_section_security">Security</string>
+    <string name="settings_summary_time_desc">Show task summary at a specific time.</string>
+    <string name="settings_summary_time_title">Summary time</string>
+    <string name="settings_swipe_action_desc">Choose what happens when you swipe a task.</string>
+    <string name="settings_swipe_action_title">Swipe action</string>
+    <string name="settings_terms_desc">Terms of service.</string>
+    <string name="settings_terms_title">Terms</string>
+    <string name="settings_theme_desc">Choose the app color theme.</string>
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_version_title">Version</string>
+    <string name="swipe_complete">Mark complete</string>
+    <string name="swipe_delete">Delete</string>
+    <string name="swipe_none">None</string>
+    <string name="sync_last">Last sync: %s</string>
+    <string name="sync_never">Never synced</string>
+    <string name="sync_status_disabled">Sync disabled</string>
+    <string name="sync_status_error">Sync error</string>
+    <string name="sync_status_idle">Up to date</string>
+    <string name="sync_status_offline">Offline</string>
+    <string name="sync_status_syncing">Syncing…</string>
+    <string name="theme_amber">Amber</string>
+    <string name="theme_default">Default</string>
+    <string name="theme_dynamic">Dynamic (system)</string>
+    <string name="theme_forest">Forest</string>
+    <string name="theme_lavender">Lavender</string>
+    <string name="theme_monochrome">Monochrome</string>
+    <string name="theme_ocean">Ocean</string>
+    <string name="theme_rose">Rose</string>
+    <string name="theme_sunset">Sunset</string>
+    <string name="time_format_12">12-hour</string>
+    <string name="time_format_24">24-hour</string>
+</resources>

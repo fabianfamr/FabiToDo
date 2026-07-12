@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding flow strings. Auto-extracted from OnboardingDialog.kt inline map.
+  Do not edit by hand — regenerate via scripts/extract_onboarding_strings.py.
+-->
+<resources>
+    <string name="onboarding_welcome_title">FabiToDoへようこそ！</string>
+    <string name="onboarding_welcome_desc">最初にFabiToDoを設定して、体験をカスタマイズしましょう。</string>
+    <string name="onboarding_account_title">ユーザーアカウント</string>
+    <string name="onboarding_account_desc">タスクをクラウドで安全に保管するために、Googleアカウントの連携をお勧めします。</string>
+    <string name="onboarding_connected_google">Googleと接続中</string>
+    <string name="onboarding_connect_google">Googleでログイン</string>
+    <string name="onboarding_name_question">お名前を教えてください</string>
+    <string name="onboarding_name_placeholder"></string>
+    <string name="onboarding_app_language_title">アプリ de 言語</string>
+    <string name="onboarding_system_default">システムデフォルト</string>
+    <string name="onboarding_notifs_enabled_btn">有効</string>
+    <string name="onboarding_appearance_mode_title">外観モード</string>
+    <string name="onboarding_color_accent_title">アクセントカラー</string>
+    <string name="onboarding_next">次へ</string>
+    <string name="onboarding_start">始める</string>
+    <string name="onboarding_visual_title">スペースをデザインする</string>
+    <string name="onboarding_visual_desc">ダッシュボードのビジュアルカラーとアクセントカラーをパーソナライズします。</string>
+    <string name="onboarding_theme_mode">外観モード</string>
+    <string name="onboarding_theme_system">システム</string>
+    <string name="onboarding_theme_light">ライト</string>
+    <string name="onboarding_theme_dark">ダーク</string>
+    <string name="onboarding_color_accent">アクセントカラー</string>
+    <string name="onboarding_color_system">システム</string>
+    <string name="onboarding_color_blue">ブルー</string>
+    <string name="onboarding_color_sunset">サンセット</string>
+    <string name="onboarding_color_green">グリーン</string>
+    <string name="onboarding_color_rose">ローズ</string>
+    <string name="onboarding_color_amber">アンバー</string>
+    <string name="onboarding_notifs_title">アラートと通知</string>
+    <string name="onboarding_notifs_desc">保留中のタスクや予定されたリマインダーを見失うことはありません。</string>
+    <string name="onboarding_notifs_banner_title">FabiToDoリマインダーを有効にする</string>
+    <string name="onboarding_notifs_banner_desc">成功をサポートするために、正確な時間と思いやりのあるリマインダーをお送りします。</string>
+    <string name="onboarding_notifs_grant_btn">権限を許可する</string>
+    <string name="onboarding_notifs_customize">チャンネルのカスタマイズ</string>
+    <string name="onboarding_sound_title">アラート音</string>
+    <string name="onboarding_sound_desc">高優先度のリマインダーやチェックリストで音を再生します。</string>
+    <string name="onboarding_vibrate_title">触覚フィードバックと振動</string>
+    <string name="onboarding_vibrate_desc">アクティビティ完了時やアラート受信時に、優しくバイブレーションします。</string>
+    <string name="onboarding_habits_title">習慣と間隔</string>
+    <string name="onboarding_habits_desc">毎日の整理整頓とセキュリティ de 理想的なペースを確立します。</string>
+    <string name="onboarding_quick_reminders_title">クイックタスクリマインダー</string>
+    <string name="onboarding_quick_reminders_desc">FabiToDoは、保留中のタスクを登録するためのクリエイティブなアイデアで、定期的に優しく促します。</string>
+    <string name="onboarding_interval_off">無効</string>
+    <string name="onboarding_security_title">データセキュリティ</string>
+    <string name="onboarding_confirm_delete_title">削除を確認する</string>
+    <string name="onboarding_confirm_delete_desc">タスクを削除する前に、インタラクティブな確認ダイアログを表示します。</string>
+    <string name="onboarding_ai_title">Artificial Intelligence</string>
+    <string name="onboarding_ai_desc">スマートなサブステップジェネレーターで、タスクを同期して拡張します。</string>
+    <string name="onboarding_ai_model_title">デフォルトの予測モデル</string>
+    <string name="onboarding_model_flash"></string>
+    <string name="onboarding_model_lite"></string>
+    <string name="onboarding_ai_complexity_title">サブタスクの複雑さ</string>
+    <string name="onboarding_ai_complexity_desc">Geminiが各タスクに対して最初に作成するアクションステップの数を制御します。</string>
+    <string name="onboarding_subtasks_count_label">サブタスク</string>
+    <string name="onboarding_of_word">/</string>
+    <string name="onboarding_all_set">準備完了！</string>
+    <string name="onboarding_next_step">次のステップ</string>
+    <string name="onboarding_start_excl">始める！</string>
+    <string name="onboarding_steps_label">ステップ</string>
+    <string name="onboarding_step_welcome">ようこそ</string>
+    <string name="onboarding_step_account">アカウント</string>
+    <string name="onboarding_step_lang">言語</string>
+    <string name="onboarding_step_visual">デザイン</string>
+    <string name="onboarding_step_alerts">アラート</string>
+    <string name="onboarding_step_habits">習慣</string>
+    <string name="onboarding_step_ai">Artificial Intelligence</string>
+    <string name="onboarding_step_time">時間</string>
+    <string name="onboarding_step_quickadd">クイック追加</string>
+    <string name="onboarding_step_security">セキュリティ</string>
+    <string name="onboarding_step_privacy">プライバシー</string>
+    <string name="onboarding_step_finish">完了</string>
+    <string name="onboarding_privacy_data_protected">あなたのデータは保護され、プライベートです。</string>
+    <string name="onboarding_your_name">あなたの名前</string>
+</resources>

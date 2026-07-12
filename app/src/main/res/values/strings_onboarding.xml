@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding flow strings. Auto-extracted from OnboardingDialog.kt inline map.
+  Do not edit by hand — regenerate via scripts/extract_onboarding_strings.py.
+-->
+<resources>
+    <string name="onboarding_welcome_title">Welcome to FabiToDo!</string>
+    <string name="onboarding_welcome_desc">Configure FabiToDo for the first time to personalize your experience.</string>
+    <string name="onboarding_account_title">User Account</string>
+    <string name="onboarding_account_desc">We recommend connecting your Google account to keep your tasks safe in the cloud.</string>
+    <string name="onboarding_connected_google">Connected with Google</string>
+    <string name="onboarding_connect_google">Connect with Google</string>
+    <string name="onboarding_name_question">What should we call you?</string>
+    <string name="onboarding_name_placeholder"></string>
+    <string name="onboarding_app_language_title">Application Language</string>
+    <string name="onboarding_system_default">System Default</string>
+    <string name="onboarding_notifs_enabled_btn">Activated</string>
+    <string name="onboarding_appearance_mode_title">Appearance Mode</string>
+    <string name="onboarding_color_accent_title">Color Accent</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_start">Get Started</string>
+    <string name="onboarding_visual_title">Design your space</string>
+    <string name="onboarding_visual_desc">Personalize the visual nuances and accent color of your dashboard.</string>
+    <string name="onboarding_theme_mode">Appearance Mode</string>
+    <string name="onboarding_theme_system">System</string>
+    <string name="onboarding_theme_light">Light</string>
+    <string name="onboarding_theme_dark">Dark</string>
+    <string name="onboarding_color_accent">Color Accent</string>
+    <string name="onboarding_color_system">System</string>
+    <string name="onboarding_color_blue">Blue</string>
+    <string name="onboarding_color_sunset">Sunset</string>
+    <string name="onboarding_color_green">Green</string>
+    <string name="onboarding_color_rose">Rose</string>
+    <string name="onboarding_color_amber">Amber</string>
+    <string name="onboarding_notifs_title">Alerts &amp; Notifications</string>
+    <string name="onboarding_notifs_desc">Never lose track of a pending task or scheduled reminder.</string>
+    <string name="onboarding_notifs_banner_title">Enable FabiToDo Reminders</string>
+    <string name="onboarding_notifs_banner_desc">We will send you empathetic reminders at the exact time to help you succeed.</string>
+    <string name="onboarding_notifs_grant_btn">Grant Permissions</string>
+    <string name="onboarding_notifs_customize">Customize Channels</string>
+    <string name="onboarding_sound_title">Alert Sound</string>
+    <string name="onboarding_sound_desc">Play tones for high-priority reminders and checklists.</string>
+    <string name="onboarding_vibrate_title">Haptic Feedback &amp; Vibration</string>
+    <string name="onboarding_vibrate_desc">Gently vibrate when completing activities or receiving alerts.</string>
+    <string name="onboarding_habits_title">Habits &amp; Intervals</string>
+    <string name="onboarding_habits_desc">Establish the ideal pace of daily organization and security.</string>
+    <string name="onboarding_quick_reminders_title">Quick Task Reminders</string>
+    <string name="onboarding_quick_reminders_desc">FabiToDo can gently encourage you periodically with creative ideas to register your pending tasks.</string>
+    <string name="onboarding_interval_off">Inactive</string>
+    <string name="onboarding_security_title">Data Security</string>
+    <string name="onboarding_confirm_delete_title">Confirm Deletions</string>
+    <string name="onboarding_confirm_delete_desc">Displays an interactive confirmation box before removing any task.</string>
+    <string name="onboarding_ai_title">Artificial Intelligence</string>
+    <string name="onboarding_ai_desc">Synchronize and expand your tasks with smart sub-step generators.</string>
+    <string name="onboarding_ai_model_title">Default Predictive Model</string>
+    <string name="onboarding_model_flash"></string>
+    <string name="onboarding_model_lite"></string>
+    <string name="onboarding_ai_complexity_title">Subtask Complexity</string>
+    <string name="onboarding_ai_complexity_desc">Controls the amount of action steps Gemini will initially create for each task.</string>
+    <string name="onboarding_subtasks_count_label">subtasks</string>
+    <string name="onboarding_of_word">of</string>
+    <string name="onboarding_all_set">All set!</string>
+    <string name="onboarding_next_step">Next step</string>
+    <string name="onboarding_start_excl">Get Started!</string>
+    <string name="onboarding_steps_label">Steps</string>
+    <string name="onboarding_step_welcome">Welcome</string>
+    <string name="onboarding_step_account">Account</string>
+    <string name="onboarding_step_lang">Language</string>
+    <string name="onboarding_step_visual">Design</string>
+    <string name="onboarding_step_alerts">Alerts</string>
+    <string name="onboarding_step_habits">Habits</string>
+    <string name="onboarding_step_ai">Artificial Intelligence</string>
+    <string name="onboarding_step_time">Time</string>
+    <string name="onboarding_step_quickadd">Quick Add</string>
+    <string name="onboarding_step_security">Security</string>
+    <string name="onboarding_step_privacy">Privacy</string>
+    <string name="onboarding_step_finish">Finish</string>
+    <string name="onboarding_privacy_data_protected">Your data is protected and private.</string>
+    <string name="onboarding_your_name">Your Name</string>
+</resources>

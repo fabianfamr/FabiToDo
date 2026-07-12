@@ -1,0 +1,56 @@
+{
+  "_comment": "Copy this file to app/google-services.json and replace placeholders with your own Firebase project values from https://console.firebase.google.com/. The real google-services.json is .gitignored and must never be committed.",
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_PROJECT_ID.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "YOUR_MOBILESDK_APP_ID",
+        "android_client_info": {
+          "package_name": "com.fabian.todolist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "YOUR_ANDROID_OAUTH_CLIENT_ID_DEBUG",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fabian.todolist",
+            "certificate_hash": "YOUR_DEBUG_SIGNING_CERTIFICATE_SHA1"
+          }
+        },
+        {
+          "client_id": "YOUR_ANDROID_OAUTH_CLIENT_ID_RELEASE",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fabian.todolist",
+            "certificate_hash": "YOUR_RELEASE_SIGNING_CERTIFICATE_SHA1"
+          }
+        },
+        {
+          "client_id": "YOUR_WEB_OAUTH_CLIENT_ID",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "YOUR_FIREBASE_ANDROID_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "YOUR_WEB_OAUTH_CLIENT_ID",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

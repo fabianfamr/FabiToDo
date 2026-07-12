@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Willkommen bei FabiToDo</string>
+    <string name="login_subtitle">Lass uns was schaffen.</string>
+    <string name="login_desc_main">Verwalte deine täglichen Aufgaben, setze clevere Erinnerungen und behalte deinen Tag entspannt im Griff.</string>
+    <string name="login_guest_btn">Als Gast starten</string>
+    <string name="login_google_btn">Weiter mit Google</string>
+    <string name="login_footer_text">Du kannst dich jederzeit in den Einstellungen anmelden und deine Aufgaben synchronisieren.</string>
+    <string name="login_tagline">Organisiere dein Leben ✨</string>
+
+    <string name="auth_state_checking">Konto wird überprüft…</string>
+    <string name="auth_state_success">Schön, dass du wieder da bist!</string>
+    <string name="auth_state_error">Es gab ein Problem bei der Anmeldung: %s</string>
+    
+    <string name="google_btn_loading">Verbinde…</string>
+    
+    <string name="login_perks_title">Warum ein Konto erstellen?</string>
+    <string name="google_feat_sync">Deine Aufgaben auf allen Geräten</string>
+    <string name="google_feat_backup">Automatische Backups</string>
+    <string name="google_feat_secure">Sichere Cloud-Speicherung</string>
+    <string name="error_google_login">Konten konnten nicht geladen werden</string>
+</resources>

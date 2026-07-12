@@ -1,0 +1,6 @@
+{
+  "name": "FabiToDo",
+  "description": "Gestión inteligente de tareas: organiza tus pendientes con IA, recordatorios, prioridades personalizables y un diseño fluido estilo Material You.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

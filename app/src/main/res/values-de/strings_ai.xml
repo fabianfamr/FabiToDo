@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AI Center Strings -->
+    <string name="ai_center_title">Smarte Funktionen</string>
+    <string name="ai_center_back">Zurück</string>
+    <string name="ai_banner_magic">KI-Magie</string>
+    <string name="ai_banner_title">Automatische Schritte</string>
+    <string name="ai_banner_body">Lass dir von der KI helfen, komplexe Aufgaben in kleine, handhabbare Schritte zu unterteilen. Sie kann auch Kategorien und Prioritäten vorschlagen.</string>
+    <string name="ai_banner_hide">Ausblenden</string>
+    
+    <string name="ai_section_model">KI-Modell</string>
+    <string name="ai_select_motor_title">Wähle deinen Assistenten:</string>
+    <string name="ai_select_motor_desc">Du kannst schnelle Gemini-Modelle oder andere Top-Anbieter wie GPT, Claude, DeepSeek und Llama nutzen.</string>
+    
+    <string name="ai_section_access">API-Schlüssel</string>
+    <string name="ai_provider_key_label">API-Schlüssel des Anbieters</string>
+    <string name="ai_badge_recommended">Empfohlen</string>
+    <string name="ai_badge_required">Erforderlich</string>
+    
+    <string name="ai_key_req_gemini">Du benötigst einen Google AI Studio-Schlüssel (kostenlos unter ai.google.dev erhältlich).</string>
+    <string name="ai_key_req_gpt">Erfordert einen OpenAI-API-Schlüssel.</string>
+    <string name="ai_key_req_claude">Erfordert einen Anthropic-API-Schlüssel.</string>
+    <string name="ai_key_req_deepseek">Erfordert einen DeepSeek-API-Schlüssel.</string>
+    <string name="ai_key_req_llama">Erfordert einen Groq-API-Schlüssel.</string>
+    <string name="ai_key_req_generic">Gib deinen API-Schlüssel für das gewählte Modell ein.</string>
+    
+    <string name="ai_key_placeholder">Füge deinen API-Schlüssel hier ein…</string>
+    <string name="ai_key_icon_desc">API-Schlüssel Symbol</string>
+    <string name="ai_key_show">Anzeigen</string>
+    
+    <string name="ai_security_desc">Datenschutz &amp; Sicherheit</string>
+    <string name="ai_security_body">Deine Schlüssel werden sicher auf deinem Gerät gespeichert.</string>
+    
+    <string name="ai_section_lab">Verbindung testen</string>
+    <string name="ai_lab_title">Probier es aus</string>
+    <string name="ai_lab_desc">Tippe unten eine Beispielaufgabe ein, um zu sehen, was die KI daraus macht.</string>
+    <string name="ai_lab_field_label">Beispielaufgabe</string>
+    <string name="ai_lab_err_empty">Bitte gib zuerst eine Beispielaufgabe ein</string>
+    <string name="ai_lab_test_desc_default">Eine Geburtstagsparty planen</string>
+    
+    <string name="ai_btn_connecting">Überlege…</string>
+    <string name="ai_btn_test_now">Verbindung testen</string>
+    <string name="ai_btn_test_desc">Testen</string>
+    
+    <string name="ai_result_success">Erfolgreich verbunden!</string>
+    <string name="ai_result_parsed_header">Das schlägt die KI vor:</string>
+    <string name="ai_result_suggested_desc">Beschreibung: </string>
+    <string name="ai_result_suggested_cat">Kategorie</string>
+    <string name="ai_result_suggested_prio">Priorität</string>
+    <string name="ai_result_subtasks_count">Vorgeschlagene Schritte (%d):</string>
+    
+    <string name="ai_result_error_title">Keine Verbindung möglich</string>
+    <string name="ai_result_error_generic">Hoppla, da ist etwas schiefgelaufen.</string>
+    <string name="ai_result_error_tips">Tipp: Überprüfe, ob dein API-Schlüssel korrekt ist und ob du mit dem Internet verbunden bist.</string>
+
+    <!-- Gemini config strings -->
+    <string name="settings_ai_title">Smarte Funktionen</string>
+    <string name="settings_ai_desc">Richte deinen KI-Assistenten ein.</string>
+    <string name="settings_ai_model_title">Modell</string>
+    <string name="settings_ai_model_desc">Wähle, welche KI du nutzen möchtest.</string>
+    <string name="settings_ai_apikey_title">API-Schlüssel</string>
+    <string name="settings_ai_apikey_desc">Füge deinen eigenen API-Schlüssel hinzu.</string>
+    <string name="subtasks_generate_magic">Schritte vorschlagen</string>
+    <string name="subtasks_generating">Überlege...</string>
+    <string name="subtasks_generate_error">Oje, Schritte konnten nicht generiert werden.</string>
+    <string name="ai_subtasks_settings">Schritt-Vorschläge</string>
+    <string name="ai_subtasks_amount">Anzahl der Schritte</string>
+    <string name="ai_subtasks_desc">Wie viele Schritte soll die KI vorschlagen, wenn du um Hilfe bittest?</string>
+    <string name="ai_subtasks_count">%d Schritte</string>
+
+    <!-- Low Latency Config -->
+    <string name="ai_ultra_low_latency_title">Schnellere Antworten</string>
+    <string name="ai_ultra_low_latency_desc">Verwende ein schnelleres Modell für sofortige Vorschläge.</string>
+</resources>

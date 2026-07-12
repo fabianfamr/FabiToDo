@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding flow strings. Auto-extracted from OnboardingDialog.kt inline map.
+  Do not edit by hand — regenerate via scripts/extract_onboarding_strings.py.
+-->
+<resources>
+    <string name="onboarding_welcome_title">مرحباً بك في FabiToDo!</string>
+    <string name="onboarding_welcome_desc">قم بتهيئة FabiToDo للمرة الأولى لتخصيص تجربتك.</string>
+    <string name="onboarding_account_title">حساب المستخدم</string>
+    <string name="onboarding_account_desc">نوصي بربط حساب Google الخاص بك للحفاظ على مهامك آمنة في السحابة.</string>
+    <string name="onboarding_connected_google">متصل بـ Google</string>
+    <string name="onboarding_connect_google">الاتصال بـ Google</string>
+    <string name="onboarding_name_question">ماذا يجب أن نسميك؟</string>
+    <string name="onboarding_name_placeholder"></string>
+    <string name="onboarding_app_language_title">lغة التطبيق</string>
+    <string name="onboarding_system_default">افتراضي النظام</string>
+    <string name="onboarding_notifs_enabled_btn">تم التفعيل</string>
+    <string name="onboarding_appearance_mode_title">وضع المظهر</string>
+    <string name="onboarding_color_accent_title">اللون المميز</string>
+    <string name="onboarding_next">التالي</string>
+    <string name="onboarding_start">ابدأ الآن</string>
+    <string name="onboarding_visual_title">تصميم مساحتك</string>
+    <string name="onboarding_visual_desc">تخصيص الفروق البصرية واللون المميز للوحة القيادة الخاصة بك.</string>
+    <string name="onboarding_theme_mode">وضع المظهر</string>
+    <string name="onboarding_theme_system">النظام</string>
+    <string name="onboarding_theme_light">فاتح</string>
+    <string name="onboarding_theme_dark">داكن</string>
+    <string name="onboarding_color_accent">اللون المميز</string>
+    <string name="onboarding_color_system">النظام</string>
+    <string name="onboarding_color_blue">أزرق</string>
+    <string name="onboarding_color_sunset">غروب</string>
+    <string name="onboarding_color_green">أخضر</string>
+    <string name="onboarding_color_rose">وردي</string>
+    <string name="onboarding_color_amber">كهرماني</string>
+    <string name="onboarding_notifs_title">التنبيهات والإشعارات</string>
+    <string name="onboarding_notifs_desc">لا تفقد أبداً مسار مهمة معلقة أو تذكير مجدول.</string>
+    <string name="onboarding_notifs_banner_title">تمكين تذكيرات FabiToDo</string>
+    <string name="onboarding_notifs_banner_desc">سنرسل لك تذكيرات تعاطفية في الوقت المحدد لمساعدتك على النجاح.</string>
+    <string name="onboarding_notifs_grant_btn">منح الصلاحيات</string>
+    <string name="onboarding_notifs_customize">تخصيص القنوات</string>
+    <string name="onboarding_sound_title">صوت التنبيه</string>
+    <string name="onboarding_sound_desc">تشغيل نغمات للتذكيرات ذات الأولوية العالية والقوائم.</string>
+    <string name="onboarding_vibrate_title">الاستجابة اللمسية والاهتزاز</string>
+    <string name="onboarding_vibrate_desc">الاهتزاز بلطف عند إكمال الأنشطة أو تلقي التنبيهات.</string>
+    <string name="onboarding_habits_title">العادات والفترات</string>
+    <string name="onboarding_habits_desc">حدد الوتيرة المثالية للتنظيم اليومي والأمان.</string>
+    <string name="onboarding_quick_reminders_title">تذكيرات المهام السريعة</string>
+    <string name="onboarding_quick_reminders_desc">يمكن لـ FabiToDo تشجيعك بلطف وبشكل دوري بأفكار إبداعية لتسجيل مهامك المعلقة.</string>
+    <string name="onboarding_interval_off">غير نشط</string>
+    <string name="onboarding_security_title">أمان البيانات</string>
+    <string name="onboarding_confirm_delete_title">تأكيد الحذف</string>
+    <string name="onboarding_confirm_delete_desc">عرض مربع تأكيد تفاعلي قبل إزالة أي مهمة.</string>
+    <string name="onboarding_ai_title">Artificial Intelligence</string>
+    <string name="onboarding_ai_desc">مزامنة وتوسيع مهامك باستخدام مولدات الخطوات الفرعية الذكية.</string>
+    <string name="onboarding_ai_model_title">النموذج التنبؤي الافتراضي</string>
+    <string name="onboarding_model_flash"></string>
+    <string name="onboarding_model_lite"></string>
+    <string name="onboarding_ai_complexity_title">تعقيد المهام الفرعية</string>
+    <string name="onboarding_ai_complexity_desc">التحكم في عدد خطوات العمل التي ستنشئها Gemini في البداية لكل مهمة.</string>
+    <string name="onboarding_subtasks_count_label">مهام فرعية</string>
+    <string name="onboarding_of_word">من</string>
+    <string name="onboarding_all_set">كل شيء جاهز!</string>
+    <string name="onboarding_next_step">الخطوة التالية</string>
+    <string name="onboarding_start_excl">ابدأ!</string>
+    <string name="onboarding_steps_label">خطوات</string>
+    <string name="onboarding_step_welcome">مرحباً بك</string>
+    <string name="onboarding_step_account">الحساب</string>
+    <string name="onboarding_step_lang">اللغة</string>
+    <string name="onboarding_step_visual">التصميم</string>
+    <string name="onboarding_step_alerts">التنبيهات</string>
+    <string name="onboarding_step_habits">العادات</string>
+    <string name="onboarding_step_ai">Artificial Intelligence</string>
+    <string name="onboarding_step_time">الوقت</string>
+    <string name="onboarding_step_quickadd">إضافة سريعة</string>
+    <string name="onboarding_step_security">الأمان</string>
+    <string name="onboarding_step_privacy">الخصوصية</string>
+    <string name="onboarding_step_finish">إنهاء</string>
+    <string name="onboarding_privacy_data_protected">بياناتك محمية وخاصة.</string>
+    <string name="onboarding_your_name">اسمك</string>
+</resources>

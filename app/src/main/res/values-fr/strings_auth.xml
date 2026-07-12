@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Elementos de la pantalla de inicio de sesión -->
+    <string name="login_title">Bienvenue sur FabiToDo</string>
+    <string name="login_subtitle">Mettons-nous au travail.</string>
+    <string name="login_desc_main">Gérez vos tâches quotidiennes, configurez des rappels intelligents et gardez le contrôle de votre journée en toute sérénité.</string>
+    <string name="login_guest_btn">Continuer en tant qu\'invité</string>
+    <string name="login_google_btn">Continuer avec Google</string>
+    <string name="login_footer_text">Vous pourrez vous connecter et synchroniser vos tâches à tout moment depuis les Paramètres.</string>
+    <string name="login_tagline">Organisez votre vie ✨</string>
+
+    <string name="auth_state_checking">Vérification de votre compte…</string>
+    <string name="auth_state_success">Ravi de vous revoir !</string>
+    <string name="auth_state_error">Il y a eu un souci lors de la connexion : %s</string>
+    
+    <string name="google_btn_loading">Connexion en cours…</string>
+    
+    <string name="login_perks_title">Pourquoi créer un compte ?</string>
+    <string name="google_feat_sync">Retrouvez vos tâches sur tous vos appareils</string>
+    <string name="google_feat_backup">Sauvegardes 100% automatiques</string>
+    <string name="google_feat_secure">Vos données sécurisées dans le cloud</string>
+    <string name="error_google_login">Impossible de charger les comptes</string>
+</resources>

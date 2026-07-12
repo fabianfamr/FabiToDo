@@ -1,0 +1,250 @@
+name: Android CI/CD
+
+# =============================================================================
+# Unique workflow for FabiToDo — replaces both the old android.yml and
+# release.yml. Builds a signed release APK on every push to main/master and
+# publishes a GitHub Release (draft on branch pushes, official on v* tags).
+# =============================================================================
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # -------------------------------------------------------------------------
+      # Inject gitignored config files from CI secrets.
+      # Required secrets (configure in repo Settings > Secrets and variables > Actions):
+      #   GOOGLE_SERVICES_JSON  — base64-encoded app/google-services.json (from Firebase Console)
+      # Optional secrets:
+      #   GEMINI_API_KEY        — Google AI Studio key for Gemini
+      #   GOOGLE_WEB_CLIENT_ID  — OAuth Web Client ID (from Firebase Console > Auth > Google)
+      # If the optional secrets are missing, the build still succeeds but the
+      # corresponding features (AI subtask generation, Google Sign-In) will be
+      # disabled at runtime. The app already guards against blank keys.
+      # -------------------------------------------------------------------------
+      - name: Restore google-services.json
+        if: ${{ secrets.GOOGLE_SERVICES_JSON != '' }}
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
+          echo "google-services.json restored from secret."
+
+      - name: Create .env from optional secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_WEB_CLIENT_ID: ${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+        run: |
+          # When a secret is empty/unset, write a placeholder value instead of
+          # an empty string. The secrets-gradle-plugin would otherwise generate
+          # `BuildConfig.GEMINI_API_KEY = ;` (no value), which is a Java syntax
+          # error and fails the build. The app's runtime check rejects the
+          # placeholder text and shows the "API key missing" error to the user.
+          GEMINI_VAL="${GEMINI_API_KEY:-PLACEHOLDER_NOT_CONFIGURED}"
+          GOOGLE_VAL="${GOOGLE_WEB_CLIENT_ID:-PLACEHOLDER_NOT_CONFIGURED}"
+          {
+            echo "GEMINI_API_KEY=$GEMINI_VAL"
+            echo "GOOGLE_WEB_CLIENT_ID=$GOOGLE_VAL"
+          } > .env
+          echo ".env created (values masked):"
+          sed 's/=.*/=<value>/' .env
+
+      # -------------------------------------------------------------------------
+      # Restore the CI signing keystore from the CI_KEYSTORE_BASE64 secret.
+      #
+      # This keystore must be GENERATED ONCE locally and reused on every CI run
+      # so that its SHA-1 / SHA-256 fingerprints stay stable and can be
+      # registered once in Firebase Console > Project Settings > Android app >
+      # Certificate fingerprints. If the keystore changed every run (the old
+      # behavior), Firebase would reject Google Sign-In on every build because
+      # the cert wouldn't match.
+      #
+      # To generate the keystore locally (one-time setup):
+      #
+      #   keytool -genkey -v \
+      #     -keystore ci-keystore.jks \
+      #     -alias ci_key \
+      #     -keyalg RSA -keysize 2048 -validity 10000 \
+      #     -storepass 'YOUR_CI_STORE_PASS' \
+      #     -keypass  'YOUR_CI_KEY_PASS'  \
+      #     -dname "CN=FabiToDo CI, O=FabiToDo, C=VE"
+      #
+      # Then extract its SHA-1 and SHA-256 and register them in Firebase Console:
+      #
+      #   keytool -list -v -keystore ci-keystore.jks -alias ci_key \
+      #     -storepass 'YOUR_CI_STORE_PASS' | grep -E 'SHA1|SHA256'
+      #
+      # Encode the keystore as base64 and upload it as the GitHub Actions
+      # secret CI_KEYSTORE_BASE64:
+      #
+      #   # macOS:
+      #   base64 -i ci-keystore.jks | tr -d '\n' | pbcopy
+      #   # Linux:
+      #   base64 -w0 ci-keystore.jks | xclip -selection clipboard
+      #
+      # Also create these GitHub Actions secrets:
+      #   CI_STORE_PASSWORD  → YOUR_CI_STORE_PASS
+      #   CI_KEY_ALIAS       → ci_key
+      #   CI_KEY_PASSWORD    → YOUR_CI_KEY_PASS
+      #
+      # If CI_KEYSTORE_BASE64 is not configured, the workflow falls back to
+      # generating an ephemeral keystore (with a warning) so forks still build.
+      # -------------------------------------------------------------------------
+      - name: Restore CI signing keystore
+        env:
+          CI_KEYSTORE_BASE64: ${{ secrets.CI_KEYSTORE_BASE64 }}
+          CI_STORE_PASSWORD: ${{ secrets.CI_STORE_PASSWORD }}
+          CI_KEY_ALIAS: ${{ secrets.CI_KEY_ALIAS }}
+          CI_KEY_PASSWORD: ${{ secrets.CI_KEY_PASSWORD }}
+        run: |
+          if [ -n "$CI_KEYSTORE_BASE64" ] && [ -n "$CI_STORE_PASSWORD" ] && [ -n "$CI_KEY_ALIAS" ] && [ -n "$CI_KEY_PASSWORD" ]; then
+            echo "Restoring CI keystore from secret..."
+            echo "$CI_KEYSTORE_BASE64" | base64 -d > app/keystore.jks
+            echo "KEYSTORE_PATH=app/keystore.jks"            >> "$GITHUB_ENV"
+            echo "STORE_PASSWORD=$CI_STORE_PASSWORD"         >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=$CI_KEY_ALIAS"                   >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=$CI_KEY_PASSWORD"             >> "$GITHUB_ENV"
+            echo "CI keystore restored."
+            echo "::debug::SHA-1 of CI keystore:"
+            keytool -list -v -keystore app/keystore.jks -alias "$CI_KEY_ALIAS" -storepass "$CI_STORE_PASSWORD" 2>/dev/null | grep -E 'SHA1:' | head -1 || true
+          else
+            echo "::warning::CI_KEYSTORE_BASE64 / CI_STORE_PASSWORD / CI_KEY_ALIAS / CI_KEY_PASSWORD secrets are not set. Falling back to an EPHEMERAL keystore — Google Sign-In and Firebase Auth will NOT work from these APKs because the SHA-1 is not registered in Firebase. Configure the secrets to fix this."
+            keytool -genkey -v \
+              -keystore app/keystore.jks \
+              -alias release_key \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "EphemeralPass2026" \
+              -keypass "EphemeralPass2026" \
+              -dname "CN=FabiToDo CI (ephemeral), O=FabiToDo, C=VE"
+            echo "KEYSTORE_PATH=app/keystore.jks"            >> "$GITHUB_ENV"
+            echo "STORE_PASSWORD=EphemeralPass2026"          >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=release_key"                     >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=EphemeralPass2026"            >> "$GITHUB_ENV"
+          fi
+
+      - name: Read version from app/build.gradle.kts
+        id: get_version
+        run: |
+          # Parse versionName and versionCode directly from app/build.gradle.kts
+          # so we have a single source of truth (no separate VERSION file).
+          VNAME=$(grep -E '^\s*versionName' app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+          VCODE=$(grep -E '^\s*versionCode' app/build.gradle.kts | head -1 | sed -E 's/[^0-9]*([0-9]+).*/\1/')
+          echo "Version name: $VNAME"
+          echo "Version code: $VCODE"
+          echo "VERSION_NAME=$VNAME" >> "$GITHUB_OUTPUT"
+          echo "VERSION_CODE=$VCODE" >> "$GITHUB_OUTPUT"
+
+      - name: Build Release APK
+        env:
+          KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
+          STORE_PASSWORD: ${{ env.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ env.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ env.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Print signing report
+        run: ./gradlew signingReport --no-daemon || true
+
+      - name: Locate APK
+        id: locate_apk
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::No release APK was produced"
+            exit 1
+          fi
+          echo "APK_PATH=$APK_PATH" >> "$GITHUB_ENV"
+          echo "Found APK at: $APK_PATH"
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fabitodo-release-apk
+          path: ${{ env.APK_PATH }}
+          retention-days: 30
+
+      # -------------------------------------------------------------------------
+      # Publish a GitHub Release. On v* tags: official release using the tag.
+      # On main/master pushes: a rolling pre-release tagged v<versionName>-dev
+      # (replaced on every push). Pull requests: no release.
+      # -------------------------------------------------------------------------
+      - name: Create GitHub Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.APK_PATH }}
+          tag_name: ${{ github.ref_name }}
+          name: FabiToDo ${{ github.ref_name }}
+          body: |
+            Release generada automáticamente desde CI/CD.
+
+            - Versión: ${{ steps.get_version.outputs.VERSION_NAME }}
+            - Código de versión: ${{ steps.get_version.outputs.VERSION_CODE }}
+            - Commit: ${{ github.sha }}
+
+            > ⚠️ Este APK está firmado con un keystore efímero de CI y NO es
+            > actualizable desde Play Store. Es solo para testing.
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create rolling dev release (on main/master push)
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.APK_PATH }}
+          tag_name: v${{ steps.get_version.outputs.VERSION_NAME }}-dev
+          name: FabiToDo v${{ steps.get_version.outputs.VERSION_NAME }}-dev (rolling)
+          body: |
+            Build automático de la rama `${{ github.ref_name }}`.
+
+            - Versión: ${{ steps.get_version.outputs.VERSION_NAME }}
+            - Código de versión: ${{ steps.get_version.outputs.VERSION_CODE }}
+            - Commit: ${{ github.sha }}
+
+            > ⚠️ Rolling dev build — se reemplaza en cada push a `${{ github.ref_name }}`.
+            > No es actualizable desde Play Store.
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

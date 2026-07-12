@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AI Center Strings -->
+    <string name="ai_center_title">Smart Features</string>
+    <string name="ai_center_back">Back</string>
+    <string name="ai_banner_magic">AI Magic</string>
+    <string name="ai_banner_title">Auto-Generate Steps</string>
+    <string name="ai_banner_body">Let AI help you break down complex tasks into smaller, manageable steps. It can also suggest categories and priorities automatically.</string>
+    <string name="ai_banner_hide">Hide</string>
+    
+    <string name="ai_section_model">AI Model</string>
+    <string name="ai_select_motor_title">Choose your AI model:</string>
+    <string name="ai_select_motor_desc">Select from fast Gemini models or other top-tier providers like GPT, Claude, DeepSeek, and Llama.</string>
+    
+    <string name="ai_section_access">API Key</string>
+    <string name="ai_provider_key_label">Provider API Key</string>
+    <string name="ai_badge_recommended">Recommended</string>
+    <string name="ai_badge_required">Required</string>
+    
+    <string name="ai_key_req_gemini">You\'ll need a Google AI Studio API Key (get one for free at ai.google.dev).</string>
+    <string name="ai_key_req_gpt">Requires an OpenAI API Key.</string>
+    <string name="ai_key_req_claude">Requires an Anthropic API Key.</string>
+    <string name="ai_key_req_deepseek">Requires a DeepSeek API Key.</string>
+    <string name="ai_key_req_llama">Requires a Groq API Key.</string>
+    <string name="ai_key_req_generic">Enter your API key for the selected model.</string>
+    
+    <string name="ai_key_placeholder">Paste your API key here…</string>
+    <string name="ai_key_icon_desc">API Key Icon</string>
+    <string name="ai_key_show">Show</string>
+    
+    <string name="ai_security_desc">Privacy &amp; Security</string>
+    <string name="ai_security_body">Your keys are saved securely on your device.</string>
+    
+    <string name="ai_section_lab">Test your connection</string>
+    <string name="ai_lab_title">Try it out</string>
+    <string name="ai_lab_desc">Type a sample task below to see how the AI breaks it down.</string>
+    <string name="ai_lab_field_label">Sample Task</string>
+    <string name="ai_lab_err_empty">Please enter a sample task first</string>
+    <string name="ai_lab_test_desc_default">Plan a birthday party</string>
+    
+    <string name="ai_btn_connecting">Thinking…</string>
+    <string name="ai_btn_test_now">Test Connection</string>
+    <string name="ai_btn_test_desc">Test</string>
+    
+    <string name="ai_result_success">Connected successfully!</string>
+    <string name="ai_result_parsed_header">Here\'s what the AI suggested:</string>
+    <string name="ai_result_suggested_desc">Description: </string>
+    <string name="ai_result_suggested_cat">Category</string>
+    <string name="ai_result_suggested_prio">Priority</string>
+    <string name="ai_result_subtasks_count">Suggested steps (%d):</string>
+    
+    <string name="ai_result_error_title">Couldn\'t connect</string>
+    <string name="ai_result_error_generic">Something went wrong.</string>
+    <string name="ai_result_error_tips">Tip: Check if your API Key is correct and that you have an internet connection.</string>
+
+    <!-- Gemini config strings -->
+    <string name="settings_ai_title">Smart Features</string>
+    <string name="settings_ai_desc">Set up your AI assistant.</string>
+    <string name="settings_ai_model_title">Model</string>
+    <string name="settings_ai_model_desc">Choose which AI to use.</string>
+    <string name="settings_ai_apikey_title">API Key</string>
+    <string name="settings_ai_apikey_desc">Add your own API key.</string>
+    <string name="subtasks_generate_magic">Suggest Steps</string>
+    <string name="subtasks_generating">Thinking...</string>
+    <string name="subtasks_generate_error">Oops, couldn\'t generate steps.</string>
+    <string name="ai_subtasks_settings">Step Suggestions</string>
+    <string name="ai_subtasks_amount">Number of steps</string>
+    <string name="ai_subtasks_desc">How many steps should the AI suggest when you ask for help?</string>
+    <string name="ai_subtasks_count">%d steps</string>
+
+    <!-- Low Latency Config -->
+    <string name="ai_ultra_low_latency_title">Faster Responses</string>
+    <string name="ai_ultra_low_latency_desc">Use a faster model for quicker suggestions.</string>
+</resources>
