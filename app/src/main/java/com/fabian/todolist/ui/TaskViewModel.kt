@@ -122,7 +122,7 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             // Atomic CAS — two concurrent increments previously could both read
             // value=5, both compute next=6, and both write 6, losing an increment.
-            val next = _unsyncedTasksCount.update { it + 1 }
+            val next = _unsyncedTasksCount.updateAndGet { it + 1 }
             prefs.edit().putInt("unsynced_tasks_count", next).apply()
             if (isAppInForeground) {
                 triggerEventDrivenSync()

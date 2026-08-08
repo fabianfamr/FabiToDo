@@ -203,7 +203,7 @@ class CloudSyncManager @Inject constructor(
                 list.add(
                     Subtask(
                         id = obj.optString("id", java.util.UUID.randomUUID().toString()),
-                        title = obj.getString("title"),
+                        title = obj.optString("title", ""),
                         isCompleted = obj.optBoolean("isCompleted", false)
                     )
                 )

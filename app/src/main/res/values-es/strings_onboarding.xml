@@ -77,4 +77,13 @@
     <string name="onboarding_step_finish">Finalizar</string>
     <string name="onboarding_privacy_data_protected">Tus datos están protegidos y son privados.</string>
     <string name="onboarding_your_name">Tu Nombre</string>
+    <string name="onboarding_guest_btn">Continuar como Invitado</string>
+    <string name="onboarding_google_btn">Iniciar sesión con Google</string>
+    <string name="onboarding_back_btn">Atrás</string>
+    <string name="onboarding_language_title">Seleccionar Idioma</string>
+    <string name="onboarding_language_desc">Elige tu idioma de preferencia para la aplicación.</string>
+    <string name="onboarding_appearance_title">Elegir Apariencia</string>
+    <string name="onboarding_appearance_desc">Personaliza cómo se ve FabiToDo en tu dispositivo.</string>
+    <string name="onboarding_notifications_title">Mantente Notificado</string>
+    <string name="onboarding_notifications_desc">Activa los recordatorios para estar al tanto de tus actividades.</string>
 </resources>

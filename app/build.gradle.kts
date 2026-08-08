@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.compose)
@@ -16,8 +18,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 1
-    versionName = "1.0.0"
+    versionCode = 17
+    versionName = "1.7.1"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }
@@ -26,7 +28,7 @@ android {
   // (gitignored) is present at the repo root. Never hardcode signing passwords
   // in a public repository.
   val keystorePropsFile = rootProject.file("keystore.properties")
-  val keystoreProps = java.util.Properties()
+  val keystoreProps = Properties()
   if (keystorePropsFile.exists()) {
     keystoreProps.load(keystorePropsFile.inputStream())
     signingConfigs {

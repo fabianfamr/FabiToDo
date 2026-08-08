@@ -1718,7 +1718,7 @@ fun StepFinish(tempUserName: String, onUserNameChange: (String) -> Unit, selecte
  * Look up an onboarding flow string by its logical key.
  *
  * The translations used to live in a ~600-line inline `Map<String, Map<String, String>>`
- * in this file. They have been migrated to `res/values*/strings_onboarding.xml` so
+ * in this file. They have been migrated to `res/values/strings_onboarding.xml` so
  * that translators can work with standard string resources and Android's locale
  * fallback handles "system" language automatically.
  *

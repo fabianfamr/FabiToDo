@@ -85,7 +85,7 @@ class ReminderReceiver : BroadcastReceiver() {
                         
                         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
                         val reminderIntent = Intent(context, ReminderReceiver::class.java).apply {
-                            action = ACTION_TASK_REMINDER
+                            setAction(ACTION_TASK_REMINDER)
                             putExtra(EXTRA_TASK_ID, task.id)
                         }
                         val pendingIntent = PendingIntent.getBroadcast(
@@ -209,6 +209,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
         // Set Priority Label in notification
         val priorityTag = when (priority) {
+            "Critica" -> context.getString(R.string.priority_critical_label) + ": "
             "Alta" -> context.getString(R.string.priority_high_label) + ": "
             "Media" -> context.getString(R.string.priority_medium_label) + ": "
             "Baja" -> context.getString(R.string.priority_low_label) + ": "
