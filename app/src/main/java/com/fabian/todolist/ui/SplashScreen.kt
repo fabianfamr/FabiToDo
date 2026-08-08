@@ -134,14 +134,17 @@ fun PixelSplashScene(t: Float) {
         )
     }
 
+    val splashBgStart = Color(0xFF0F1015)
+    val splashBgEnd = Color(0xFF08080A)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        primaryColor,
-                        primaryColor.copy(alpha = 0.92f)
+                        splashBgStart,
+                        splashBgEnd
                     )
                 )
             )
