@@ -44,14 +44,50 @@ jobs:
           fi
 
       - name: Restore google-services.json
-        if: ${{ secrets.GOOGLE_SERVICES_JSON != '' }}
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
-          echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
+          mkdir -p app
+          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
+            echo "Restaurando google-services.json desde secreto..."
+            echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > app/google-services.json 2>/dev/null || echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
+          fi
+          if [ ! -f "app/google-services.json" ]; then
+            echo "Creando dummy app/google-services.json para compilación CI..."
+            cat << 'EOF' > app/google-services.json
+            {
+              "project_info": {
+                "project_number": "1234567890",
+                "project_id": "fabitodo-list",
+                "storage_bucket": "fabitodo-list.appspot.com"
+              },
+              "client": [
+                {
+                  "client_info": {
+                    "mobilesdk_app_id": "1:1234567890:android:abcdef1234567890",
+                    "android_client_info": {
+                      "package_name": "com.fabian.todolist"
+                    }
+                  },
+                  "oauth_client": [],
+                  "api_key": [
+                    {
+                      "current_key": "AIzaSyDummyApiKeyForGoogleServices"
+                    }
+                  ],
+                  "services": {
+                    "appinvite_service": {
+                      "other_platform_oauth_client": []
+                    }
+                  }
+                }
+              ],
+              "configuration_version": "1"
+            }
+            EOF
+          fi
 
       - name: Prepare Keystore
         run: |
+          mkdir -p app
           if [ -f "debug.keystore.base64" ]; then
             echo "Decoding debug.keystore.base64 to debug.keystore..."
             tr -d '\n\r' < debug.keystore.base64 | base64 -d > debug.keystore
@@ -72,6 +108,7 @@ jobs:
 
       - name: Restaurar Keystore Fijo
         run: |
+          mkdir -p app
           if [ -n "${{ secrets.CI_KEYSTORE_BASE64 }}" ]; then
             echo "Restaurando keystore desde secreto CI_KEYSTORE_BASE64..."
             echo "${{ secrets.CI_KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
@@ -126,6 +163,8 @@ jobs:
             Commit: ${{ github.sha }}
           draft: false
           prerelease: false
+          overwrite: true
+          fail_on_unmatched_files: false
           files: |
             app/build/outputs/apk/debug/*.apk
             app/build/outputs/apk/release/*.apk

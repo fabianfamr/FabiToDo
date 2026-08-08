@@ -48,7 +48,41 @@ jobs:
       - name: Prepare build environment
         run: |
           touch .env
+          mkdir -p app
           keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          if [ ! -f "app/google-services.json" ]; then
+            cat << 'EOF' > app/google-services.json
+            {
+              "project_info": {
+                "project_number": "1234567890",
+                "project_id": "fabitodo-list",
+                "storage_bucket": "fabitodo-list.appspot.com"
+              },
+              "client": [
+                {
+                  "client_info": {
+                    "mobilesdk_app_id": "1:1234567890:android:abcdef1234567890",
+                    "android_client_info": {
+                      "package_name": "com.fabian.todolist"
+                    }
+                  },
+                  "oauth_client": [],
+                  "api_key": [
+                    {
+                      "current_key": "AIzaSyDummyApiKeyForGoogleServices"
+                    }
+                  ],
+                  "services": {
+                    "appinvite_service": {
+                      "other_platform_oauth_client": []
+                    }
+                  }
+                }
+              ],
+              "configuration_version": "1"
+            }
+            EOF
+          fi
 
       - name: Build Debug App for CodeQL
         run: ./gradlew assembleDebug -x test
