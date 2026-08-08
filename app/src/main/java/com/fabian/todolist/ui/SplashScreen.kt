@@ -61,23 +61,43 @@ fun PixelSplashScene(t: Float) {
     val textOffsetY = remember { Animatable(30f) }
     val subtitleAlpha = remember { Animatable(0f) }
 
-    // Infinite gentle hovering / floating offset animation
-    // Adjusted to be subtle (minimal) and continuous from the start of the checkmark drawing
-    val infiniteTransition = rememberInfiniteTransition(label = "floating_bob")
+    // Floating bob animation
+    val infiniteTransition = rememberInfiniteTransition(label = "splash_infinite")
     val bobOffset by infiniteTransition.animateFloat(
-        initialValue = -5f, // Minimal, very subtle range
-        targetValue = 5f,
+        initialValue = -6f,
+        targetValue = 6f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2200, easing = EaseInOutQuad), // Slower, softer floating pacing
+            animation = tween(2200, easing = EaseInOutQuad),
             repeatMode = RepeatMode.Reverse
         ),
         label = "bob"
     )
 
+    // Pulsing outer aura ring
+    val auraPulse by infiniteTransition.animateFloat(
+        initialValue = 0.85f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "aura"
+    )
+
+    // Sparkle rotation
+    val sparkleRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(12000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "sparkle_rotation"
+    )
+
     val currentFloatY = bobOffset
 
     LaunchedEffect(Unit) {
-        // Smoothly scale & spring the icon container
         introProgress.animateTo(
             targetValue = 1f,
             animationSpec = spring(
@@ -86,20 +106,18 @@ fun PixelSplashScene(t: Float) {
             )
         )
 
-        // Draw checkmark path progressively after a slight spring settle keyframe
-        delay(300)
+        delay(250)
         checkmarkDrawProgress.animateTo(
             targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 1000,
+                durationMillis = 950,
                 easing = FastOutSlowInEasing
             )
         )
 
-        // Bring up FabiToDo branding text
         textAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(700, easing = EaseOutCubic)
+            animationSpec = tween(600, easing = EaseOutCubic)
         )
         textOffsetY.animateTo(
             targetValue = 0f,
@@ -109,18 +127,24 @@ fun PixelSplashScene(t: Float) {
             )
         )
 
-        // Smooth tagline delay transition
-        delay(150)
+        delay(120)
         subtitleAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(600, easing = LinearOutSlowInEasing)
+            animationSpec = tween(500, easing = LinearOutSlowInEasing)
         )
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(primaryColor)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        primaryColor,
+                        primaryColor.copy(alpha = 0.92f)
+                    )
+                )
+            )
             .graphicsLayer {
                 alpha = (1f - t).coerceIn(0f, 1f)
                 scaleX = lerp(1f, 1.05f, t)
@@ -128,6 +152,33 @@ fun PixelSplashScene(t: Float) {
             },
         contentAlignment = Alignment.Center
     ) {
+        // Floating Ambient Sparkles background canvas
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cx = size.width / 2f
+            val cy = size.height / 2f
+            
+            // Draw floating ambient starlets
+            rotate(sparkleRotation, pivot = androidx.compose.ui.geometry.Offset(cx, cy)) {
+                val r1 = 140.dp.toPx()
+                val r2 = 200.dp.toPx()
+                val r3 = 260.dp.toPx()
+                val radii = listOf(r1, r2, r3)
+                val angles = listOf(30f, 120f, 210f, 300f, 75f, 255f)
+                angles.forEachIndexed { idx, angle ->
+                    val r = radii[idx % radii.size]
+                    val rad = Math.toRadians(angle.toDouble())
+                    val x = cx + (r * kotlin.math.cos(rad)).toFloat()
+                    val y = cy + (r * kotlin.math.sin(rad)).toFloat()
+                    val starRadius = (3 + (idx % 3) * 2).dp.toPx()
+                    drawCircle(
+                        color = Color.White.copy(alpha = 0.25f),
+                        radius = starRadius,
+                        center = androidx.compose.ui.geometry.Offset(x, y)
+                    )
+                }
+            }
+        }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -135,32 +186,46 @@ fun PixelSplashScene(t: Float) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(160.dp) // Adjusted for more elegant proportions
+                    .size(170.dp)
                     .graphicsLayer {
                         translationY = currentFloatY * density
+                        scaleX = introProgress.value
+                        scaleY = introProgress.value
                     }
             ) {
-                // Core branding icon checkmark container styled beautifully
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val w = size.width
                     val h = size.height
 
-                    // Background circle
+                    // Pulsing Outer Glowing Ring
                     drawCircle(
-                        color = Color.White.copy(alpha = 0.2f),
+                        color = Color.White.copy(alpha = 0.12f * (2f - auraPulse)),
+                        radius = (w / 2f) * auraPulse
+                    )
+
+                    // Solid Inner Circle
+                    drawCircle(
+                        color = Color.White.copy(alpha = 0.22f),
                         radius = w / 2f
                     )
 
-                    // Mathematically animate draw progressive checkmark logic
+                    // Border Accent
+                    drawCircle(
+                        color = Color.White.copy(alpha = 0.4f),
+                        radius = w / 2f,
+                        style = Stroke(width = 3.dp.toPx())
+                    )
+
+                    // Draw progressive checkmark logic
                     val p = checkmarkDrawProgress.value
-                    val p0x = w * 0.34f
+                    val p0x = w * 0.33f
                     val p0y = h * 0.54f
 
-                    val p1x = w * 0.48f
-                    val p1y = h * 0.66f
+                    val p1x = w * 0.47f
+                    val p1y = h * 0.67f
 
-                    val p2x = w * 0.74f
-                    val p2y = h * 0.32f
+                    val p2x = w * 0.73f
+                    val p2y = h * 0.33f
 
                     if (p > 0f) {
                         val currentPath = Path().apply {
@@ -183,7 +248,7 @@ fun PixelSplashScene(t: Float) {
                             path = currentPath,
                             color = Color.White,
                             style = Stroke(
-                                width = 16f,
+                                width = 18f,
                                 cap = StrokeCap.Round,
                                 join = StrokeJoin.Round
                             )
@@ -192,7 +257,7 @@ fun PixelSplashScene(t: Float) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
             // Text Title block staggered slide on emergence
             Column(
@@ -206,7 +271,7 @@ fun PixelSplashScene(t: Float) {
                     text = "FabiToDo",
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 40.sp,
+                        fontSize = 42.sp,
                         letterSpacing = (-0.5).sp
                     ),
                     color = Color.White
@@ -220,7 +285,7 @@ fun PixelSplashScene(t: Float) {
                         letterSpacing = 0.5.sp,
                         fontWeight = FontWeight.Medium
                     ),
-                    color = Color.White.copy(alpha = subtitleAlpha.value * 0.8f)
+                    color = Color.White.copy(alpha = subtitleAlpha.value * 0.85f)
                 )
             }
         }

@@ -10,6 +10,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -810,6 +812,9 @@ fun StepVisualExperience(
 
         Spacer(modifier = Modifier.height(32.dp))
         
+        val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+        var isPreviewCompleted by remember { mutableStateOf(false) }
+
         // --- DYNAMIC PIXEL PREVIEW ---
         Card(
             modifier = Modifier
@@ -830,8 +835,23 @@ fun StepVisualExperience(
                     modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
                 )
 
+                val cardScale by animateFloatAsState(
+                    targetValue = if (isPreviewCompleted) 0.98f else 1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    label = "preview_scale"
+                )
+
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scale(cardScale)
+                        .clickable {
+                            isPreviewCompleted = !isPreviewCompleted
+                            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                        },
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = previewSurface
@@ -844,32 +864,46 @@ fun StepVisualExperience(
                             .padding(vertical = 18.dp, horizontal = 20.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(CircleShape)
-                                .background(previewAccentColor.copy(alpha = 0.15f))
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.RadioButtonUnchecked,
-                                contentDescription = null,
-                                tint = previewAccentColor,
-                                modifier = Modifier.size(26.dp)
-                            )
+                        AnimatedContent(
+                            targetState = isPreviewCompleted,
+                            transitionSpec = {
+                                (scaleIn(animationSpec = spring(Spring.DampingRatioMediumBouncy)) + fadeIn()).togetherWith(
+                                    scaleOut() + fadeOut()
+                                )
+                            },
+                            label = "checkbox_anim"
+                        ) { completed ->
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (completed) previewAccentColor else previewAccentColor.copy(alpha = 0.15f)
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = if (completed) Icons.Default.Check else Icons.Outlined.RadioButtonUnchecked,
+                                    contentDescription = null,
+                                    tint = if (completed) Color.White else previewAccentColor,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
+
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.settings_appearance_preview_task),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = previewOnSurface
+                                color = if (isPreviewCompleted) previewOnSurface.copy(alpha = 0.5f) else previewOnSurface,
+                                textDecoration = if (isPreviewCompleted) androidx.compose.ui.text.style.TextDecoration.LineThrough else androidx.compose.ui.text.style.TextDecoration.None
                             )
                             Text(
                                 text = stringResource(R.string.settings_appearance_preview_task_desc),
                                 fontSize = 13.sp,
-                                color = previewOnSurface.copy(alpha = 0.7f)
+                                color = previewOnSurface.copy(alpha = 0.6f)
                             )
                         }
                         Surface(
