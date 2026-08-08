@@ -1,0 +1,133 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Create empty .env file
+        run: |
+          touch .env
+          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+          fi
+          if [ -n "${{ secrets.GOOGLE_WEB_CLIENT_ID }}" ]; then
+            echo "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}" >> .env
+          fi
+
+      - name: Restore google-services.json
+        if: ${{ secrets.GOOGLE_SERVICES_JSON != '' }}
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
+
+      - name: Prepare Keystore
+        run: |
+          if [ -f "debug.keystore.base64" ]; then
+            echo "Decoding debug.keystore.base64 to debug.keystore..."
+            tr -d '\n\r' < debug.keystore.base64 | base64 -d > debug.keystore
+          fi
+          if [ ! -f "debug.keystore" ] && [ ! -f "release.keystore" ]; then
+            echo "No keystore found, generating a new debug.keystore..."
+            keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fabitodo-debug
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Restaurar Keystore Fijo
+        run: |
+          if [ -n "${{ secrets.CI_KEYSTORE_BASE64 }}" ]; then
+            echo "Restaurando keystore desde secreto CI_KEYSTORE_BASE64..."
+            echo "${{ secrets.CI_KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+          elif [ -f "debug.keystore.base64" ]; then
+            tr -d '\n\r' < debug.keystore.base64 | base64 -d > app/keystore.jks
+          elif [ -f "release.keystore" ]; then
+            cp release.keystore app/keystore.jks
+          elif [ -f "debug.keystore" ]; then
+            cp debug.keystore app/keystore.jks
+          else
+            echo "No keystore found, generating a temporary one..."
+            keytool -genkey -v -keystore app/keystore.jks -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      - name: Build Release APK
+        env:
+          KEYSTORE_PATH: "keystore.jks"
+          STORE_PASSWORD: "${{ secrets.CI_STORE_PASSWORD || 'android' }}"
+          KEY_ALIAS: "${{ secrets.CI_KEY_ALIAS || 'androiddebugkey' }}"
+          KEY_PASSWORD: "${{ secrets.CI_KEY_PASSWORD || 'android' }}"
+        run: ./gradlew assembleRelease
+
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fabitodo-release
+          path: app/build/outputs/apk/release/*.apk
+
+      - name: Get Version
+        id: get_version
+        run: |
+          if [ -f "VERSION" ]; then
+            VNAME=$(sed -n '1p' VERSION | tr -d '\r\n[:space:]')
+            VCODE=$(sed -n '2p' VERSION | tr -d '\r\n[:space:]')
+          else
+            VNAME=$(grep -E '^\s*versionName' app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+            VCODE=$(grep -E '^\s*versionCode' app/build.gradle.kts | head -1 | sed -E 's/[^0-9]*([0-9]+).*/\1/')
+          fi
+          echo "VERSION_NAME=$VNAME" >> $GITHUB_OUTPUT
+          echo "VERSION_CODE=$VCODE" >> $GITHUB_OUTPUT
+          echo "VERSION=$VNAME" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', steps.get_version.outputs.VERSION_NAME) }}
+          name: "v${{ steps.get_version.outputs.VERSION_NAME }} - FabiToDo"
+          body: |
+            Release generada automáticamente.
+            Versión: ${{ steps.get_version.outputs.VERSION_NAME }}
+            Código de Versión: ${{ steps.get_version.outputs.VERSION_CODE }}
+            Commit: ${{ github.sha }}
+          draft: false
+          prerelease: false
+          files: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
