@@ -134,7 +134,7 @@ fun TaskScreen(
     val hapticFeedbackOnComplete by settingsViewModel.hapticFeedbackOnComplete.collectAsStateWithLifecycle()
     val onboardingCompleted by settingsViewModel.onboardingCompleted.collectAsStateWithLifecycle()
     if (!onboardingCompleted) {
-        com.fabian.todolist.ui.components.settings.OnboardingScreen(
+        com.fabian.todolist.ui.components.onboarding.OnboardingScreen(
             settingsViewModel = settingsViewModel,
             authViewModel = authViewModel,
             onFinished = {
