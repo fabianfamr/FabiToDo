@@ -52,37 +52,7 @@ jobs:
           fi
           if [ ! -f "app/google-services.json" ]; then
             echo "Creando dummy app/google-services.json para compilación CI..."
-            cat << 'EOF' > app/google-services.json
-            {
-              "project_info": {
-                "project_number": "1234567890",
-                "project_id": "fabitodo-list",
-                "storage_bucket": "fabitodo-list.appspot.com"
-              },
-              "client": [
-                {
-                  "client_info": {
-                    "mobilesdk_app_id": "1:1234567890:android:abcdef1234567890",
-                    "android_client_info": {
-                      "package_name": "com.fabian.todolist"
-                    }
-                  },
-                  "oauth_client": [],
-                  "api_key": [
-                    {
-                      "current_key": "AIzaSyDummyApiKeyForGoogleServices"
-                    }
-                  ],
-                  "services": {
-                    "appinvite_service": {
-                      "other_platform_oauth_client": []
-                    }
-                  }
-                }
-              ],
-              "configuration_version": "1"
-            }
-            EOF
+            echo '{"project_info":{"project_number":"1234567890","project_id":"fabitodo-list","storage_bucket":"fabitodo-list.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:abcdef1234567890","android_client_info":{"package_name":"com.fabian.todolist"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyDummyApiKeyForGoogleServices"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
           fi
 
       - name: Prepare Keystore
