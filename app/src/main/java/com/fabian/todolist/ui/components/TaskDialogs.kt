@@ -32,7 +32,7 @@ fun TaskDeleteDialog(
             },
             text = {
                 Text(
-                    text = "¿Estás seguro de que deseas eliminar esta tarea?",
+                    text = stringResource(R.string.delete_single_confirm),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -69,14 +69,14 @@ fun TaskDeleteBatchDialog(
             containerColor = MaterialTheme.colorScheme.surface,
             title = {
                 Text(
-                    text = "Eliminar tareas",
+                    text = stringResource(R.string.delete_selected_title),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
                 Text(
-                    text = "¿Estás seguro de que deseas eliminar las ${tasksToDelete.size} tareas seleccionadas?",
+                    text = stringResource(R.string.delete_selected_confirm, tasksToDelete.size),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

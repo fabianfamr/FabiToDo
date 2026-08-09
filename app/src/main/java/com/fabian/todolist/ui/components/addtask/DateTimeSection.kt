@@ -67,7 +67,7 @@ fun DateTimeSection(
                 }
                 if (selectedDateInMillis != null || selectedTimeStr != null) {
                     Text(
-                        text = "Limpiar",
+                        text = stringResource(R.string.clear_button_label),
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,

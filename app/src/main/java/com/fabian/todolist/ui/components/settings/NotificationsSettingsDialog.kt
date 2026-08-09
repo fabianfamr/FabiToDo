@@ -486,13 +486,13 @@ fun NotificationsSettingsDialog(
                                             Spacer(modifier = Modifier.width(14.dp))
                                             Column(modifier = Modifier.weight(1f)) {
                                                 Text(
-                                                    text = "Horas de Silencio",
+                                                    text = stringResource(R.string.quiet_hours_title),
                                                     style = MaterialTheme.typography.bodyLarge,
                                                     fontWeight = FontWeight.Bold,
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 )
                                                 Text(
-                                                    text = "No sugerir de 10 PM a 8 AM",
+                                                    text = stringResource(R.string.quiet_hours_desc),
                                                     style = MaterialTheme.typography.labelMedium,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                                 )

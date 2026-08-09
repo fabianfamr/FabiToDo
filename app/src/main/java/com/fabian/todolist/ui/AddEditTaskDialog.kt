@@ -496,7 +496,7 @@ fun AddEditTaskDialog(
                                                 IconButton(onClick = { title = "" }) {
                                                     Icon(
                                                         Icons.Default.Clear,
-                                                        contentDescription = "Limpiar",
+                                                        contentDescription = stringResource(R.string.clear_button_label),
                                                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                                         modifier = Modifier.size(18.dp)
                                                     )

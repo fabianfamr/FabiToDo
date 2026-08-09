@@ -329,7 +329,7 @@ fun SubtaskSection(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Add,
-                                            contentDescription = "Add Subtask Button",
+                                            contentDescription = stringResource(R.string.add_subtask_desc),
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }

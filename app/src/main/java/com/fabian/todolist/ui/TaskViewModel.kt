@@ -617,10 +617,11 @@ class TaskViewModel @Inject constructor(
         // original task's displayOrder, corrupting Manual sort (two tasks at
         // the same slot → unstable compareBy ordering).
         val nextDisplayOrder = (allTasksListState.value.maxOfOrNull { it.displayOrder } ?: -1) + 1
+        val copySuffix = getApplication<Application>().getString(com.fabian.todolist.R.string.copy_suffix)
         val duplicatedTask = task.copy(
             id = 0,
             cloudId = java.util.UUID.randomUUID().toString(),
-            title = "${task.title} (Copia)",
+            title = "${task.title} ($copySuffix)",
             isCompleted = false,
             displayOrder = nextDisplayOrder,
             attachedImageUri = null, // do NOT clone the original's image-uri reference (orphaned file)

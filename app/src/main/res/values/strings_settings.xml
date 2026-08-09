@@ -225,6 +225,8 @@
     <string name="settings_delete_confirm_title">Confirm deletion</string>
     <string name="settings_enable_notif_desc">Enable task reminders and notifications.</string>
     <string name="settings_enable_notif_title">Notifications</string>
+    <string name="quiet_hours_title">Quiet Hours</string>
+    <string name="quiet_hours_desc">Do not suggest from 10 PM to 8 AM</string>
     <string name="settings_font_scale_desc">Adjust the app font size.</string>
     <string name="settings_font_scale_title">Font size</string>
     <string name="settings_language_title">Language</string>

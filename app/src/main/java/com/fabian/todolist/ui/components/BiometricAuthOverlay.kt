@@ -62,7 +62,7 @@ fun BiometricAuthOverlay(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "Lock",
+                    contentDescription = stringResource(R.string.biometric_lock_title),
                     modifier = Modifier.size(64.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )

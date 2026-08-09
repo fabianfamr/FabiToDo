@@ -112,6 +112,8 @@
 
     <!-- App Info -->
     <string name="settings_section_about">Acerca de</string>
+    <string name="quiet_hours_title">Horas de Silencio</string>
+    <string name="quiet_hours_desc">No sugerir de 10 PM a 8 AM</string>
     <string name="settings_version_title">Versión de la App</string>
     <string name="settings_privacy_title">Política de Privacidad</string>
     <string name="settings_privacy_desc">Lee cómo cuidamos tus datos.</string>

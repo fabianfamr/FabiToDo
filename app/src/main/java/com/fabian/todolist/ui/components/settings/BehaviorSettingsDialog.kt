@@ -204,7 +204,7 @@ fun BehaviorSettingsDialog(
                                                 if (isSelected) {
                                                     Icon(
                                                         imageVector = Icons.Default.CheckCircle,
-                                                        contentDescription = "Selected",
+                                                        contentDescription = stringResource(R.string.desc_selected),
                                                         tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.size(20.dp)
                                                     )
@@ -563,7 +563,7 @@ fun BehaviorSettingsDialog(
                                                 if (isSelected) {
                                                     Icon(
                                                         imageVector = Icons.Default.CheckCircle,
-                                                        contentDescription = "Selected",
+                                                        contentDescription = stringResource(R.string.desc_selected),
                                                         tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.size(20.dp)
                                                     )

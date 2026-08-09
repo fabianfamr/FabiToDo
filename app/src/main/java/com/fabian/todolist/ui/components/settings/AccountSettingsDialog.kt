@@ -128,7 +128,7 @@ fun AccountSettingsDialog(
                                                 if (user.photoUrl != null) {
                                                     androidx.compose.foundation.Image(
                                                         painter = rememberAsyncImagePainter(user.photoUrl),
-                                                        contentDescription = "User photo",
+                                                        contentDescription = stringResource(R.string.desc_user_photo),
                                                         modifier = Modifier
                                                             .fillMaxSize()
                                                             .clip(CircleShape)

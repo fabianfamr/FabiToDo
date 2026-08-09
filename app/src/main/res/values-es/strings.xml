@@ -78,4 +78,10 @@
     <string name="undo">Deshacer</string>
     <string name="task_deleted">Tarea eliminada</string>
     <string name="task_completed">¡Genial! Tarea completada.</string>
+    <string name="copy_suffix">Copia</string>
+    <string name="delete_selected_title">Eliminar tareas</string>
+    <string name="delete_single_confirm">¿Estás seguro de que deseas eliminar esta tarea?</string>
+    <string name="desc_selected">Seleccionado</string>
+    <string name="desc_confirmed">Confirmado</string>
+    <string name="desc_user_photo">Foto de usuario</string>
 </resources>

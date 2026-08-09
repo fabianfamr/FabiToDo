@@ -37,7 +37,7 @@ fun TaskSearchBar(
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { onSearchQueryChange("") }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = MaterialTheme.colorScheme.outline)
+                                Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear_button_label), tint = MaterialTheme.colorScheme.outline)
                             }
                         }
                     },

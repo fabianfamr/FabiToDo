@@ -317,7 +317,7 @@ fun OnboardingHeader(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver",
+                        contentDescription = stringResource(R.string.nav_back),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )
@@ -562,7 +562,7 @@ fun StepWelcomeAndLanguage(
                         if (currentUser.photoUrl != null) {
                             androidx.compose.foundation.Image(
                                 painter = rememberAsyncImagePainter(currentUser.photoUrl),
-                                contentDescription = "Avatar de Google",
+                                contentDescription = stringResource(R.string.desc_user_photo),
                                 modifier = Modifier
                                     .size(44.dp)
                                     .clip(CircleShape)
@@ -602,7 +602,7 @@ fun StepWelcomeAndLanguage(
                         IconButton(onClick = { authViewModel.signOut() }) {
                             Icon(
                                 imageVector = Icons.Default.Logout,
-                                contentDescription = "Desconectar",
+                                contentDescription = stringResource(R.string.settings_account_logout),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
@@ -752,7 +752,7 @@ fun StepWelcomeAndLanguage(
                     if (isSelected) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = "Seleccionado",
+                            contentDescription = stringResource(R.string.desc_selected),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -1464,7 +1464,7 @@ fun StepBrainAi(
                     if (isSelected) {
                         Icon(
                             imageVector = Icons.Rounded.CheckCircle,
-                            contentDescription = "Confirmado",
+                            contentDescription = stringResource(R.string.desc_confirmed),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -1543,7 +1543,7 @@ fun StepWelcome(selectedLang: String) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(onboardingString("step_welcome", selectedLang), style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("¡Bienvenido a tu nuevo organizador!", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+        Text(onboardingString("welcome_desc", selectedLang), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
     }
 }
 
@@ -1560,7 +1560,7 @@ fun StepAccount(authViewModel: Any, isLoggedIn: Boolean, isGuest: Boolean, isAut
             border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("Iniciar sesión con Google")
+            Text(onboardingString("google_btn", selectedLang))
         }
     }
 }
@@ -1599,12 +1599,12 @@ fun StepTheme(
         Text(onboardingString("step_visual", selectedLang), style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Modo Oscuro")
+            Text(onboardingString("theme_mode", selectedLang))
             Spacer(modifier = Modifier.weight(1f))
             Switch(checked = tempDark, onCheckedChange = onThemeSelected)
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Color de Acento")
+        Text(onboardingString("color_accent", selectedLang))
         Spacer(modifier = Modifier.height(8.dp))
         val accents = listOf("blue", "green", "rose")
         accents.forEach { accent ->
@@ -1627,12 +1627,12 @@ fun StepNotifications(tempNotifsEnabled: Boolean, onNotifsToggle: (Boolean) -> U
         Text(onboardingString("step_alerts", selectedLang), style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Habilitar Notificaciones")
+            Text(onboardingString("notifs_title", selectedLang))
             Spacer(modifier = Modifier.weight(1f))
             Switch(checked = tempNotifsEnabled, onCheckedChange = onNotifsToggle)
         }
         Button(onClick = requestPermission) {
-            Text("Solicitar Permiso")
+            Text(onboardingString("notifs_grant_btn", selectedLang))
         }
     }
 }
@@ -1642,16 +1642,16 @@ fun StepAlerts(tempSound: Boolean, onSoundToggle: (Boolean) -> Unit, tempVibrate
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Icon(Icons.Filled.VolumeUp, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Alertas", style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
+        Text(onboardingString("step_alerts", selectedLang), style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Sonido")
+            Text(onboardingString("sound_title", selectedLang))
             Spacer(modifier = Modifier.weight(1f))
             Switch(checked = tempSound, onCheckedChange = onSoundToggle)
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Vibración")
+            Text(onboardingString("vibrate_title", selectedLang))
             Spacer(modifier = Modifier.weight(1f))
             Switch(checked = tempVibrate, onCheckedChange = onVibrateToggle)
         }
@@ -1703,9 +1703,9 @@ fun StepAiComplexity(tempAiSubtaskCount: Int, onCountSelected: (Int) -> Unit, se
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Icon(Icons.Filled.Layers, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Complejidad", style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
+        Text(onboardingString("ai_complexity_title", selectedLang), style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Número de subtareas: $tempAiSubtaskCount")
+        Text("${onboardingString("subtasks_count_label", selectedLang)}: $tempAiSubtaskCount")
         Slider(value = tempAiSubtaskCount.toFloat(), onValueChange = { onCountSelected(it.toInt()) }, valueRange = 1f..10f)
     }
 }
@@ -1718,7 +1718,7 @@ fun StepSecurity(tempConfirmDelete: Boolean, onConfirmToggle: (Boolean) -> Unit,
         Text(onboardingString("step_security", selectedLang), style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Confirmar eliminación")
+            Text(onboardingString("confirm_delete_title", selectedLang))
             Spacer(modifier = Modifier.weight(1f))
             Switch(checked = tempConfirmDelete, onCheckedChange = onConfirmToggle)
         }
