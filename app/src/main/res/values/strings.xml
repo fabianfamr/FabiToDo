@@ -300,10 +300,22 @@
     <string name="task_deleted_msg">Task deleted</string>
     <string name="undo_action">Undo</string>
     <string name="widget_loading">Loading...</string>
-    <string name="matrix_q1">Do First (Urgent &amp; Important)</string>
-    <string name="matrix_q2">Schedule (Important, Not Urgent)</string>
-    <string name="matrix_q3">Delegate (Urgent, Not Important)</string>
-    <string name="matrix_q4">Eliminate (Neither Urgent nor Important)</string>
+    <string name="matrix_q1">1. Hacer Primero (Urgente e Importante)</string>
+    <string name="matrix_q2">2. Programar (Importante, No Urgente)</string>
+    <string name="matrix_q3">3. Delegar / Rápidas (Urgente, No Importante)</string>
+    <string name="matrix_q4">4. Descartar / Posponer (Ni Urgente ni Importante)</string>
+    <string name="matrix_q1_desc">Atender de inmediato. Prioridad Alta/Crítica + Vence pronto.</string>
+    <string name="matrix_q2_desc">Planificar con calma. Prioridad Alta/Crítica sin fecha urgente.</string>
+    <string name="matrix_q3_desc">Resolver o delegar. Vence pronto con prioridad Media/Baja.</string>
+    <string name="matrix_q4_desc">Revisar si eliminar o posponer. Prioridad Media/Baja sin urgencia.</string>
+    <string name="matrix_info_title">¿Cómo funciona la Matriz de Eisenhower?</string>
+    <string name="matrix_info_desc">Organiza tus tareas en 4 cuadrantes evaluando Importancia y Urgencia:\n\n• 🔴 Hacer Primero: Importante y Urgente (Alta prioridad, vence hoy o mañana).\n• 🔵 Programar: Importante pero No Urgente (Alta prioridad sin urgencia inmediata).\n• 🟡 Delegar: Urgente pero No Importante (Vence pronto con prioridad media/baja).\n• ⚪ Descartar: Ni Urgente ni Importante (Prioridad media/baja sin vencimiento).</string>
+    <string name="matrix_empty_quadrant">Sin tareas pendientes en este cuadrante</string>
+    <string name="trash_banner_title">Papelera de Reciclaje</string>
+    <string name="trash_banner_desc">Las tareas eliminadas se conservan aquí antes de ser eliminadas permanentemente.</string>
+    <string name="empty_trash_action">Vaciar Papelera</string>
+    <string name="empty_trash_confirm_title">¿Vaciar Papelera?</string>
+    <string name="empty_trash_confirm_msg">¿Estás seguro de que deseas eliminar permanentemente todas las tareas de la papelera? Esta acción no se puede deshacer.</string>
 
     <!-- Quick Add Notification Keys -->
     <string name="settings_quick_add_notification_title">Suggestive Quick-Add</string>

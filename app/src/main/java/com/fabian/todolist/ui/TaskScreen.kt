@@ -119,6 +119,7 @@ fun TaskScreen(
     var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
     var showStatsDialog by rememberSaveable { mutableStateOf(false) }
     var showFocusDrawer by rememberSaveable { mutableStateOf(false) }
+    var showEmptyTrashDialog by rememberSaveable { mutableStateOf(false) }
 
     val selectedTaskIds = remember { mutableStateListOf<Int>() }
     val longPressAction by settingsViewModel.longPressAction.collectAsStateWithLifecycle()
@@ -344,20 +345,22 @@ fun TaskScreen(
                 }
             },
             floatingActionButton = {
-                val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
-                ExtendedFloatingActionButton(
-                    text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
-                    icon = { Icon(Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_add_tasks)) },
-                    onClick = {
-                        taskToEdit = null
-                        showAddEditDialog = true
-                    },
-                    expanded = isFabExpanded,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.padding(16.dp)
-                )
+                if (selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                    val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+                    ExtendedFloatingActionButton(
+                        text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
+                        icon = { Icon(Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_add_tasks)) },
+                        onClick = {
+                            taskToEdit = null
+                            showAddEditDialog = true
+                        },
+                        expanded = isFabExpanded,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
         ) { paddingValues ->
             Box(
@@ -370,9 +373,7 @@ fun TaskScreen(
             val totalCount = tasks.size
             val completedCount = tasks.count { it.isCompleted }
 
-            if (tasks.isEmpty()) {
-                TaskEmptyState()
-            } else if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
+            if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
                 com.fabian.todolist.ui.components.EisenhowerMatrixView(
                     tasks = tasks,
                     categoryColors = categoryColors,
@@ -405,6 +406,8 @@ fun TaskScreen(
                     hapticFeedbackOnComplete = hapticFeedbackOnComplete,
                     confirmOnDelete = confirmOnDelete
                 )
+            } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                TaskEmptyState()
             } else {
                 val groupedTasks by viewModel.groupedTasks.collectAsStateWithLifecycle()
 
@@ -433,17 +436,80 @@ fun TaskScreen(
                         contentPadding = PaddingValues(top = 12.dp, bottom = 96.dp)
                     ) {
                         item {
-                            AnimatedVisibility(
-                                visible = isProgressVisible,
-                                enter = expandVertically() + fadeIn(),
-                                exit = shrinkVertically() + fadeOut()
-                            ) {
-                                com.fabian.todolist.ui.components.TaskProgressHeaderCard(
-                                    totalCount = totalCount,
-                                    completedCount = completedCount,
-                                    categoryName = selectedCategory,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
+                            if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH) {
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f)
+                                    )
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Icon(
+                                                    imageVector = Icons.Default.DeleteForever,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(10.dp))
+                                                Text(
+                                                    text = stringResource(R.string.trash_banner_title),
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                                )
+                                            }
+                                            if (tasks.isNotEmpty()) {
+                                                Button(
+                                                    onClick = { showEmptyTrashDialog = true },
+                                                    colors = ButtonDefaults.buttonColors(
+                                                        containerColor = MaterialTheme.colorScheme.error,
+                                                        contentColor = MaterialTheme.colorScheme.onError
+                                                    ),
+                                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                                    shape = RoundedCornerShape(12.dp)
+                                                ) {
+                                                    Text(
+                                                        text = stringResource(R.string.empty_trash_action),
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(
+                                            text = stringResource(R.string.trash_banner_desc),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f)
+                                        )
+                                    }
+                                }
+                            } else {
+                                AnimatedVisibility(
+                                    visible = isProgressVisible,
+                                    enter = expandVertically() + fadeIn(),
+                                    exit = shrinkVertically() + fadeOut()
+                                ) {
+                                    com.fabian.todolist.ui.components.TaskProgressHeaderCard(
+                                        totalCount = totalCount,
+                                        completedCount = completedCount,
+                                        categoryName = selectedCategory,
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+                                }
                             }
                         }
 
@@ -780,6 +846,31 @@ fun TaskScreen(
         onDismiss = { showAddCategoryDialog = false },
         onConfirm = { settingsViewModel.addCategory(it) }
     )
+
+    if (showEmptyTrashDialog) {
+        AlertDialog(
+            onDismissRequest = { showEmptyTrashDialog = false },
+            icon = { Icon(Icons.Default.DeleteForever, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
+            title = { Text(stringResource(R.string.empty_trash_confirm_title)) },
+            text = { Text(stringResource(R.string.empty_trash_confirm_msg)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.emptyTrash()
+                        showEmptyTrashDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(stringResource(R.string.empty_trash_action))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEmptyTrashDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     if (showFocusDrawer) {
         TaskSortBottomSheet(

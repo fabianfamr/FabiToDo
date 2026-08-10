@@ -32,12 +32,17 @@ class TaskRepository(
         }
     }
 
-    // Only return tasks that are not marked as deleted
-    val allTasks: Flow<List<Task>> = taskDao.getAllTasks()
+    // Returns all tasks (active and trashed) so ViewModel flows can route/filter correctly
+    val allTasks: Flow<List<Task>> = taskDao.getAllTasksIncludeDeleted()
     
     suspend fun getAllTasksSync(): List<Task> = taskDao.getAllTasksSync()
 
     suspend fun getAllTrashedTasksSync(): List<Task> = taskDao.getAllTrashedTasksSync()
+
+    suspend fun emptyTrash() {
+        taskDao.emptyTrash()
+        notifyWidget()
+    }
 
     suspend fun getTaskById(id: Int): Task? {
         return taskDao.getTaskById(id)

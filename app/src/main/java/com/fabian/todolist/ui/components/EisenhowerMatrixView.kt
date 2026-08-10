@@ -5,12 +5,18 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,6 +34,13 @@ import com.fabian.todolist.ui.TaskDetailedRow
 import java.util.Calendar
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+
+data class QuadrantInfo(
+    val title: String,
+    val description: String,
+    val color: Color,
+    val tasks: List<Task>
+)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,14 +60,14 @@ fun EisenhowerMatrixView(
 ) {
     val localView = androidx.compose.ui.platform.LocalView.current
     val scope = rememberCoroutineScope()
+    var isInfoExpanded by rememberSaveable { mutableStateOf(true) }
 
     val quadrantsList = remember(tasks) {
-        val now = Calendar.getInstance()
         val tomorrow = Calendar.getInstance().apply {
-             add(Calendar.DAY_OF_YEAR, 1)
-             set(Calendar.HOUR_OF_DAY, 23)
-             set(Calendar.MINUTE, 59)
-             set(Calendar.SECOND, 59)
+            add(Calendar.DAY_OF_YEAR, 1)
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
         }
         val tomorrowMillis = tomorrow.timeInMillis
 
@@ -82,40 +95,210 @@ fun EisenhowerMatrixView(
     val q4 = quadrantsList[3]
 
     val quadrants = listOf(
-        Triple(stringResource(R.string.matrix_q1), Color(0xFFEA4335), q1),
-        Triple(stringResource(R.string.matrix_q2), Color(0xFF4285F4), q2),
-        Triple(stringResource(R.string.matrix_q3), Color(0xFFFBBC05), q3),
-        Triple(stringResource(R.string.matrix_q4), Color(0xFF9E9E9E), q4)
+        QuadrantInfo(
+            title = stringResource(R.string.matrix_q1),
+            description = stringResource(R.string.matrix_q1_desc),
+            color = Color(0xFFEA4335),
+            tasks = q1
+        ),
+        QuadrantInfo(
+            title = stringResource(R.string.matrix_q2),
+            description = stringResource(R.string.matrix_q2_desc),
+            color = Color(0xFF4285F4),
+            tasks = q2
+        ),
+        QuadrantInfo(
+            title = stringResource(R.string.matrix_q3),
+            description = stringResource(R.string.matrix_q3_desc),
+            color = Color(0xFFFBBC05),
+            tasks = q3
+        ),
+        QuadrantInfo(
+            title = stringResource(R.string.matrix_q4),
+            description = stringResource(R.string.matrix_q4_desc),
+            color = Color(0xFF9E9E9E),
+            tasks = q4
+        )
     )
+
+    val totalActiveTasks = q1.size + q2.size + q3.size + q4.size
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(top = 12.dp, bottom = 96.dp)
     ) {
-        quadrants.forEach { (title, color, quadrantTasks) ->
-            if (quadrantTasks.isNotEmpty()) {
-                item {
+        // 1. Explanation Banner Card
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp)
+                ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { isInfoExpanded = !isInfoExpanded },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = stringResource(R.string.matrix_info_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                        Icon(
+                            imageVector = if (isInfoExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = isInfoExpanded,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Column(modifier = Modifier.padding(top = 10.dp)) {
+                            Text(
+                                text = stringResource(R.string.matrix_info_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.9f),
+                                lineHeight = 18.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Summary 2x2 Grid Pills
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    QuadrantSummaryChip(
+                        title = "1. Hacer",
+                        count = q1.size,
+                        color = Color(0xFFEA4335),
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuadrantSummaryChip(
+                        title = "2. Programar",
+                        count = q2.size,
+                        color = Color(0xFF4285F4),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    QuadrantSummaryChip(
+                        title = "3. Delegar",
+                        count = q3.size,
+                        color = Color(0xFFFBBC05),
+                        modifier = Modifier.weight(1f)
+                    )
+                    QuadrantSummaryChip(
+                        title = "4. Descartar",
+                        count = q4.size,
+                        color = Color(0xFF9E9E9E),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+
+        // 3. Quadrant Sections
+        quadrants.forEach { quad ->
+            item {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+                ) {
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(12.dp)
+                                .size(14.dp)
                                 .clip(CircleShape)
-                                .background(color)
+                                .background(quad.color)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = title,
+                            text = quad.title,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Surface(
+                            shape = CircleShape,
+                            color = quad.color.copy(alpha = 0.15f)
+                        ) {
+                            Text(
+                                text = "${quad.tasks.size}",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = quad.color,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = quad.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
+                    )
+                }
+            }
+
+            if (quad.tasks.isEmpty()) {
+                item {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 4.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.matrix_empty_quadrant),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(14.dp)
+                        )
                     }
                 }
-
-                itemsIndexed(quadrantTasks, key = { _, it -> it.id }) { index, task ->
+            } else {
+                itemsIndexed(quad.tasks, key = { _, it -> it.id }) { _, task ->
                     var isVisible by rememberSaveable { mutableStateOf(true) }
                     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -172,6 +355,51 @@ fun EisenhowerMatrixView(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun QuadrantSummaryChip(
+    title: String,
+    count: Int,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = color.copy(alpha = 0.12f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.3f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Text(
+                text = "$count",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.ExtraBold,
+                color = color
+            )
         }
     }
 }

@@ -425,12 +425,14 @@ class TaskViewModel @Inject constructor(
             }
 
             // Phase 2: User filters (Search & Status)
-            val statusMatch = when (state.selectedStatus) {
-                "Pendientes" -> !task.isCompleted
-                "Completadas" -> task.isCompleted
-                else -> true
+            if (!isTrash) {
+                val statusMatch = when (state.selectedStatus) {
+                    "Pendientes" -> !task.isCompleted
+                    "Completadas" -> task.isCompleted
+                    else -> true
+                }
+                if (!statusMatch) return@filter false
             }
-            if (!statusMatch) return@filter false
 
             if (queryLower.isNotBlank()) {
                 val searchMatch = task.title.lowercase().contains(queryLower) ||
@@ -591,6 +593,15 @@ class TaskViewModel @Inject constructor(
 
     fun restoreTask(task: Task) {
         updateTask(task.copy(isDeleted = false))
+    }
+
+    fun emptyTrash() {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val trashedTasks = repository.getAllTrashedTasksSync()
+            trashedTasks.forEach { cancelReminder(it) }
+            repository.emptyTrash()
+            incrementUnsynced()
+        }
     }
 
     fun deleteTask(task: Task, force: Boolean = false) {
