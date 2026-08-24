@@ -456,7 +456,10 @@ fun TaskScreen(
                                             horizontalArrangement = Arrangement.SpaceBetween,
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
                                                 Icon(
                                                     imageVector = Icons.Default.DeleteForever,
                                                     contentDescription = null,
@@ -479,12 +482,15 @@ fun TaskScreen(
                                                         contentColor = MaterialTheme.colorScheme.onError
                                                     ),
                                                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                                                    shape = RoundedCornerShape(12.dp)
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    modifier = Modifier.padding(start = 8.dp)
                                                 ) {
                                                     Text(
                                                         text = stringResource(R.string.empty_trash_action),
                                                         style = MaterialTheme.typography.labelMedium,
-                                                        fontWeight = FontWeight.Bold
+                                                        fontWeight = FontWeight.Bold,
+                                                        maxLines = 1,
+                                                        softWrap = false
                                                     )
                                                 }
                                             }

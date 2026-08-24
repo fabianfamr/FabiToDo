@@ -18,8 +18,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 27
-    versionName = "1.9.0"
+    versionCode = 30
+    versionName = "1.9.3"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }
@@ -49,13 +49,21 @@ android {
   val ciStorePass = (System.getenv("STORE_PASSWORD") ?: "").ifEmpty { null }
   val ciKeyAlias = (System.getenv("KEY_ALIAS") ?: "").ifEmpty { null }
   val ciKeyPass = (System.getenv("KEY_PASSWORD") ?: "").ifEmpty { null }
-  if (ciKeystorePath != null && ciStorePass != null && ciKeyAlias != null && ciKeyPass != null) {
-    signingConfigs {
+  
+  signingConfigs {
+    if (ciKeystorePath != null && ciStorePass != null && ciKeyAlias != null && ciKeyPass != null) {
       create("releaseConfig") {
         storeFile = file(ciKeystorePath)
         storePassword = ciStorePass
         keyAlias = ciKeyAlias
         keyPassword = ciKeyPass
+      }
+    } else {
+      create("releaseConfig") {
+        storeFile = file("../release.keystore")
+        storePassword = "fabian123"
+        keyAlias = "fabian_alias"
+        keyPassword = "fabian123"
       }
     }
   }
@@ -70,9 +78,7 @@ android {
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       // Sign with the CI-provided keystore when available.
-      if (ciKeystorePath != null && ciStorePass != null && ciKeyAlias != null && ciKeyPass != null) {
-        signingConfig = signingConfigs.getByName("releaseConfig")
-      }
+      signingConfig = signingConfigs.getByName("releaseConfig")
     }
     debug {
       if (keystorePropsFile.exists() && keystoreProps.getProperty("debugStoreFile") != null) {
