@@ -20,4 +20,22 @@
     <string name="google_feat_backup">Copias de seguridad automáticas</string>
     <string name="google_feat_secure">Almacenamiento seguro en la nube</string>
     <string name="error_google_login">No se pudieron cargar las cuentas</string>
+
+    <string name="login_welcome">Bienvenido a tu Lista</string>
+    <string name="login_description">Inicia sesión con tu cuenta de Google para sincronizar tus tareas de forma segura en todos tus dispositivos.</string>
+    <string name="login_button_google">Continuar con Google</string>
+    <string name="login_button_guest">Continuar como invitado</string>
+    <string name="error_no_accounts">No se detectaron credenciales de Google. Puedes continuar en Modo Invitado o usar el acceso Web sin requerir certificado SHA.</string>
+    <string name="google_login_guest_fallback_title">Cuenta de Google no detectada</string>
+    <string name="google_login_guest_fallback_desc">No se encontró una cuenta activa en el sistema. Puedes continuar como Invitado para guardar tus tareas localmente o acceder vía Web sin requerir SHA.</string>
+    <string name="google_login_guest_fallback_button">Continuar como Invitado (Modo Local)</string>
+    <string name="error_login_canceled">Inicio de sesión cancelado</string>
+    <string name="guest_user">Invitado</string>
+
+    <string name="google_login_title">Acceso Seguro</string>
+    <string name="google_login_desc">Sincroniza tus tareas al instante y de forma segura entre todos tus dispositivos con respaldos automáticos en la nube.</string>
+    <string name="google_login_button">Iniciar sesión con Google ID</string>
+    <string name="google_login_footer">Autenticación segura mediante Google</string>
+    <string name="google_login_web_option">Acceso Web (Sin requerir SHA)</string>
+    <string name="google_login_web_desc">Abre el navegador web seguro para iniciar sesión con Google sin depender de certificados SHA registrados.</string>
 </resources>

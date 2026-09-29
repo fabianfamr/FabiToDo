@@ -268,4 +268,15 @@
     <string name="theme_sunset">Sunset</string>
     <string name="time_format_12">12-hour</string>
     <string name="time_format_24">24-hour</string>
+
+    <!-- Storage and Cache Management Strings -->
+    <string name="storage_management_title">Storage &amp; Cache</string>
+    <string name="storage_management_desc">Manage database size, clear temporary cache and optimize storage.</string>
+    <string name="storage_db_size">Database size</string>
+    <string name="storage_cache_size">Temporary cache</string>
+    <string name="storage_clear_cache">Clear cache</string>
+    <string name="storage_optimize_db">Optimize DB</string>
+    <string name="storage_calculating">Calculating…</string>
+    <string name="toast_cache_cleared">Temporary cache cleared successfully!</string>
+    <string name="toast_db_optimized">Database compacted and optimized successfully!</string>
 </resources>

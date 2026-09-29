@@ -165,4 +165,29 @@
     <string name="benefit_bg_backup_desc">Nos encargaremos de respaldar tus tareas sin que tengas que hacer nada.</string>
     <string name="danger_zone">Zona de Peligro</string>
     <string name="notifications_permission_denied">Permiso de notificaciones denegado. Es posible que los recordatorios no se entreguen.</string>
+
+    <!-- Storage and Cache Management Strings -->
+    <string name="storage_management_title">Gestión de Almacenamiento y Caché</string>
+    <string name="storage_management_desc">Consulta el tamaño de la base de datos, limpia archivos temporales y optimiza el almacenamiento.</string>
+    <string name="storage_db_size">Base de datos</string>
+    <string name="storage_cache_size">Caché temporal</string>
+    <string name="storage_clear_cache">Limpiar caché</string>
+    <string name="storage_optimize_db">Optimizar BD</string>
+    <string name="storage_calculating">Calculando…</string>
+    <string name="toast_cache_cleared">¡Caché temporal eliminada correctamente!</string>
+    <string name="toast_db_optimized">¡Base de datos compactada y optimizada con éxito!</string>
+
+    <string name="settings_datetime_title">Fecha y Hora</string>
+    <string name="settings_datetime_desc">Personaliza los formatos de fecha y hora</string>
+    <string name="settings_behavior_title">Comportamiento</string>
+    <string name="settings_behavior_desc">Configura las respuestas táctiles y acciones de la lista.</string>
+    <string name="settings_confirm_delete_title">Confirmar al eliminar</string>
+    <string name="settings_confirm_delete_desc">Solicitar confirmación antes de eliminar una tarea definitivamente.</string>
+    <string name="settings_vibrate_complete_title">Vibrar al completar</string>
+    <string name="settings_vibrate_complete_desc">Produce una respuesta háptica suave al marcar tareas como completadas.</string>
+    <string name="settings_trash_retention_title">Retención en papelera</string>
+    <string name="settings_trash_retention_desc">Tiempo que permanecen las tareas en la papelera antes de eliminarse.</string>
+    <string name="settings_trash_keep_forever">Conservar para siempre</string>
+    <string name="settings_trash_days_format">%d días</string>
+    <string name="settings_trash_1_day">1 día</string>
 </resources>

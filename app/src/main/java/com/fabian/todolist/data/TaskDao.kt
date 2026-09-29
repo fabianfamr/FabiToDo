@@ -52,4 +52,7 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE cloudId = :cloudId LIMIT 1")
     suspend fun getTaskByCloudId(cloudId: String): Task?
+
+    @Query("SELECT * FROM tasks WHERE cloudId IN (:cloudIds)")
+    suspend fun getTasksByCloudIds(cloudIds: List<String>): List<Task>
 }

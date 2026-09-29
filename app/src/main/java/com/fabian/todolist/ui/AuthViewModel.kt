@@ -74,6 +74,39 @@ class AuthViewModel @Inject constructor(application: Application) : AndroidViewM
         }
     }
 
+    fun signInWithGoogleWeb(context: android.content.Context, onSuccess: () -> Unit) {
+        var act: android.app.Activity? = null
+        var ctx: android.content.Context? = context
+        while (ctx is android.content.ContextWrapper) {
+            if (ctx is android.app.Activity) {
+                act = ctx
+                break
+            }
+            ctx = ctx.baseContext
+        }
+
+        if (act == null) {
+            _error.value = getApplication<Application>().getString(R.string.error_login_canceled)
+            return
+        }
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            val result = authManager.signInWithGoogleWeb(act)
+            if (result.isSuccess) {
+                authManager.setGuestUser(false)
+                _isGuest.value = false
+                _isLoggedIn.value = true
+                onSuccess()
+            } else {
+                val exception = result.exceptionOrNull()
+                _error.value = exception?.localizedMessage ?: getApplication<Application>().getString(R.string.error_login_canceled)
+            }
+            _isLoading.value = false
+        }
+    }
+
     fun continueAsGuest(onSuccess: () -> Unit) {
         authManager.setGuestUser(true)
         _isGuest.value = true

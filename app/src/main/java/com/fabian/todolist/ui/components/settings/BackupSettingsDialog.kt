@@ -18,6 +18,10 @@ import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.CloudDownload
 import androidx.compose.material.icons.rounded.CloudUpload
+import androidx.compose.material.icons.rounded.Storage
+import androidx.compose.material.icons.rounded.CleaningServices
+import androidx.compose.material.icons.rounded.BuildCircle
+import androidx.compose.ui.unit.sp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,6 +48,7 @@ fun BackupSettingsDialog(
 ) {
     val showBackupCard by settingsViewModel.showBackupCard.collectAsStateWithLifecycle()
     val allTasksList by viewModel.allTasksListState.collectAsStateWithLifecycle()
+    val storageStats by settingsViewModel.storageStats.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,10 +61,13 @@ fun BackupSettingsDialog(
                 try {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                         val categoriesList = settingsViewModel.categories.value
-                        val backupString = viewModel.exportBackupToString(allTasksList, categoriesList)
-                        outputStream.write(backupString.toByteArray(Charsets.UTF_8))
+                        val success = viewModel.exportBackupToStream(outputStream, allTasksList, categoriesList)
+                        if (success) {
+                            Toast.makeText(context, context.getString(R.string.toast_backup_export_success), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.toast_backup_export_error, "Error al escribir"), Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    Toast.makeText(context, context.getString(R.string.toast_backup_export_success), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Toast.makeText(context, context.getString(R.string.toast_backup_export_error, e.message), Toast.LENGTH_SHORT).show()
                 }
@@ -75,8 +83,7 @@ fun BackupSettingsDialog(
             coroutineScope.launch {
                 try {
                     context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                        val jsonStr = inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-                        val success = viewModel.importBackupFromString(jsonStr) { importedCats ->
+                        val success = viewModel.importBackupFromStream(inputStream) { importedCats ->
                             settingsViewModel.saveCategories(importedCats)
                         }
                         if (success) {
@@ -325,6 +332,127 @@ fun BackupSettingsDialog(
                                         text = stringResource(R.string.settings_import_backup),
                                         fontWeight = FontWeight.Bold
                                     )
+                                }
+                            }
+                        }
+                    }
+
+                    // Storage & Cache Management Card
+                    item {
+                        Card(
+                            shape = RoundedCornerShape(26.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f)
+                            ),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(20.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(44.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Storage,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.secondary,
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(14.dp))
+                                    Column {
+                                        Text(
+                                            text = stringResource(R.string.storage_management_title),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.storage_management_desc),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = stringResource(R.string.storage_db_size),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = if (storageStats.isCalculating) stringResource(R.string.storage_calculating) else storageStats.dbFormatted,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+
+                                    Column(horizontalAlignment = Alignment.End) {
+                                        Text(
+                                            text = stringResource(R.string.storage_cache_size),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = if (storageStats.isCalculating) stringResource(R.string.storage_calculating) else storageStats.cacheFormatted,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.tertiary
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    OutlinedButton(
+                                        onClick = {
+                                            settingsViewModel.clearAppCache { success ->
+                                                val msg = if (success) context.getString(R.string.toast_cache_cleared) else "Error al limpiar caché"
+                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(48.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Icon(Icons.Rounded.CleaningServices, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(stringResource(R.string.storage_clear_cache), fontSize = 12.sp, maxLines = 1)
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            settingsViewModel.optimizeDatabase { success ->
+                                                val msg = if (success) context.getString(R.string.toast_db_optimized) else "Error al optimizar"
+                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(48.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Icon(Icons.Rounded.BuildCircle, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(stringResource(R.string.storage_optimize_db), fontSize = 12.sp, maxLines = 1)
+                                    }
                                 }
                             }
                         }

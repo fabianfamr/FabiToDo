@@ -36,4 +36,6 @@
     <string name="google_btn_loading">Loading…</string>
     <string name="login_perks_title">Why sign in?</string>
     <string name="login_title">Sign in</string>
+    <string name="google_login_web_option">Sign in via Web (No SHA required)</string>
+    <string name="google_login_web_desc">Use the browser to sign in securely with Google without requiring SHA certificates.</string>
 </resources>

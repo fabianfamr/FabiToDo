@@ -58,6 +58,17 @@ class TaskRepository(
         return id
     }
 
+    suspend fun insertTasks(tasks: List<Task>) {
+        val newTasks = tasks.map {
+            it.copy(
+                updatedAt = if (it.updatedAt == 0L) System.currentTimeMillis() else it.updatedAt,
+                isSynced = false
+            )
+        }
+        taskDao.insertTasks(newTasks)
+        notifyWidget()
+    }
+
     suspend fun update(task: Task) {
         val updatedTask = task.copy(
             updatedAt = System.currentTimeMillis(),

@@ -667,6 +667,217 @@ class TaskViewModel @Inject constructor(
         com.fabian.todolist.util.AlarmSchedulerHelper.cancelTaskAlarms(context, task)
     }
 
+    // Stream-based memory-safe backup export (prevents OutOfMemory on large databases)
+    suspend fun exportBackupToStream(
+        outputStream: java.io.OutputStream,
+        tasks: List<Task>,
+        customCategories: List<String>
+    ): Boolean = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
+            val writer = android.util.JsonWriter(java.io.OutputStreamWriter(outputStream, Charsets.UTF_8))
+            writer.setIndent("  ")
+            writer.beginObject()
+
+            // 1. Categories
+            writer.name("categories")
+            writer.beginArray()
+            for (cat in customCategories) {
+                writer.value(cat)
+            }
+            writer.endArray()
+
+            // 2. Tasks
+            writer.name("tasks")
+            writer.beginArray()
+            for (task in tasks) {
+                writer.beginObject()
+                writer.name("title").value(task.title)
+                writer.name("description").value(task.description)
+                if (task.dueDate != null) writer.name("dueDate").value(task.dueDate)
+                if (task.dueTime != null) writer.name("dueTime").value(task.dueTime)
+                writer.name("isCompleted").value(task.isCompleted)
+                writer.name("category").value(task.category)
+                writer.name("priority").value(task.priority)
+                if (task.reminderTime != null) writer.name("reminderTime").value(task.reminderTime)
+                writer.name("isRepeat").value(task.isRepeat)
+                writer.name("repeatType").value(task.repeatType)
+                writer.name("isDeleted").value(task.isDeleted)
+                writer.name("displayOrder").value(task.displayOrder)
+
+                writer.name("subtasks")
+                writer.beginArray()
+                for (sub in task.subtasks) {
+                    writer.beginObject()
+                    writer.name("id").value(sub.id)
+                    writer.name("title").value(sub.title)
+                    writer.name("isCompleted").value(sub.isCompleted)
+                    writer.endObject()
+                }
+                writer.endArray()
+
+                writer.endObject()
+            }
+            writer.endArray()
+
+            writer.endObject()
+            writer.flush()
+            true
+        } catch (e: Exception) {
+            if (com.fabian.todolist.BuildConfig.DEBUG) {
+                Log.e("TaskViewModel", "Error streaming backup export", e)
+            }
+            false
+        }
+    }
+
+    // Stream-based memory-safe backup import (prevents OutOfMemory and blocks on IO thread)
+    suspend fun importBackupFromStream(
+        inputStream: java.io.InputStream,
+        onCategoriesImported: (List<String>) -> Unit = {}
+    ): Boolean = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
+            val reader = android.util.JsonReader(java.io.InputStreamReader(inputStream, Charsets.UTF_8))
+            reader.beginObject()
+            val importedTasks = mutableListOf<Task>()
+            val importedCategories = mutableListOf<String>()
+
+            while (reader.hasNext()) {
+                when (reader.nextName()) {
+                    "categories" -> {
+                        reader.beginArray()
+                        while (reader.hasNext()) {
+                            val cat = reader.nextString().trim()
+                            if (cat.isNotEmpty() && !importedCategories.contains(cat)) {
+                                importedCategories.add(cat)
+                            }
+                        }
+                        reader.endArray()
+                    }
+                    "tasks" -> {
+                        reader.beginArray()
+                        while (reader.hasNext()) {
+                            reader.beginObject()
+                            var title = ""
+                            var description = ""
+                            var dueDate: Long? = null
+                            var dueTime: String? = null
+                            var isCompleted = false
+                            var category = "General"
+                            var priority = TaskPriority.MEDIUM
+                            var reminderTime: Long? = null
+                            var isRepeat = false
+                            var repeatType = "Ninguno"
+                            var isDeleted = false
+                            var displayOrder = 0
+                            val subtasks = mutableListOf<Subtask>()
+
+                            while (reader.hasNext()) {
+                                when (reader.nextName()) {
+                                    "title" -> title = reader.nextString()
+                                    "description" -> description = reader.nextString()
+                                    "dueDate" -> {
+                                        if (reader.peek() == android.util.JsonToken.NULL) {
+                                            reader.nextNull()
+                                        } else {
+                                            dueDate = reader.nextLong()
+                                        }
+                                    }
+                                    "dueTime" -> {
+                                        if (reader.peek() == android.util.JsonToken.NULL) {
+                                            reader.nextNull()
+                                        } else {
+                                            dueTime = reader.nextString()
+                                        }
+                                    }
+                                    "isCompleted" -> isCompleted = reader.nextBoolean()
+                                    "category" -> category = reader.nextString()
+                                    "priority" -> priority = reader.nextString()
+                                    "reminderTime" -> {
+                                        if (reader.peek() == android.util.JsonToken.NULL) {
+                                            reader.nextNull()
+                                        } else {
+                                            reminderTime = reader.nextLong()
+                                        }
+                                    }
+                                    "isRepeat" -> isRepeat = reader.nextBoolean()
+                                    "repeatType" -> repeatType = reader.nextString()
+                                    "isDeleted" -> isDeleted = reader.nextBoolean()
+                                    "displayOrder" -> displayOrder = reader.nextInt()
+                                    "subtasks" -> {
+                                        reader.beginArray()
+                                        while (reader.hasNext()) {
+                                            reader.beginObject()
+                                            var subId = java.util.UUID.randomUUID().toString()
+                                            var subTitle = ""
+                                            var subCompleted = false
+                                            while (reader.hasNext()) {
+                                                when (reader.nextName()) {
+                                                    "id" -> subId = reader.nextString()
+                                                    "title" -> subTitle = reader.nextString()
+                                                    "isCompleted" -> subCompleted = reader.nextBoolean()
+                                                    else -> reader.skipValue()
+                                                }
+                                            }
+                                            reader.endObject()
+                                            if (subTitle.isNotBlank()) {
+                                                subtasks.add(Subtask(id = subId, title = subTitle, isCompleted = subCompleted))
+                                            }
+                                        }
+                                        reader.endArray()
+                                    }
+                                    else -> reader.skipValue()
+                                }
+                            }
+                            reader.endObject()
+
+                            if (title.isNotBlank()) {
+                                importedTasks.add(
+                                    Task(
+                                        title = title,
+                                        description = description,
+                                        dueDate = dueDate,
+                                        dueTime = dueTime,
+                                        isCompleted = isCompleted,
+                                        category = category,
+                                        priority = priority,
+                                        reminderTime = reminderTime,
+                                        isRepeat = isRepeat,
+                                        repeatType = repeatType,
+                                        isDeleted = isDeleted,
+                                        displayOrder = displayOrder,
+                                        subtasks = subtasks
+                                    )
+                                )
+                            }
+                        }
+                        reader.endArray()
+                    }
+                    else -> reader.skipValue()
+                }
+            }
+            reader.endObject()
+
+            if (importedCategories.isNotEmpty()) {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    onCategoriesImported(importedCategories)
+                }
+            }
+
+            if (importedTasks.isNotEmpty()) {
+                importedTasks.chunked(250).forEach { chunk ->
+                    repository.insertTasks(chunk)
+                }
+                incrementUnsynced()
+            }
+            true
+        } catch (e: Exception) {
+            if (com.fabian.todolist.BuildConfig.DEBUG) {
+                Log.e("TaskViewModel", "Error streaming backup import", e)
+            }
+            false
+        }
+    }
+
     // Export data to a custom JSON string structure
     fun exportBackupToString(tasks: List<Task>, customCategories: List<String>): String {
         return try {

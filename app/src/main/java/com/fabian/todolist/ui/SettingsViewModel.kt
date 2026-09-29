@@ -389,4 +389,115 @@ class SettingsViewModel @Inject constructor(
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
         prefs.edit().putString("category_icons", jsonObject.toString()).apply()
     }
+
+    data class StorageStats(
+        val dbSizeBytes: Long = 0L,
+        val cacheSizeBytes: Long = 0L,
+        val dbFormatted: String = "0 KB",
+        val cacheFormatted: String = "0 KB",
+        val isCalculating: Boolean = false
+    )
+
+    private val _storageStats = MutableStateFlow(StorageStats(isCalculating = true))
+    val storageStats: StateFlow<StorageStats> = _storageStats.asStateFlow()
+
+    init {
+        refreshStorageStats()
+    }
+
+    fun refreshStorageStats() {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            _storageStats.value = _storageStats.value.copy(isCalculating = true)
+            val context = getApplication<Application>().applicationContext
+            
+            // Database file size (including WAL and SHM)
+            val dbFile = context.getDatabasePath("fabitodo_database")
+            val walFile = context.getDatabasePath("fabitodo_database-wal")
+            val shmFile = context.getDatabasePath("fabitodo_database-shm")
+            var dbSize = 0L
+            if (dbFile.exists()) dbSize += dbFile.length()
+            if (walFile.exists()) dbSize += walFile.length()
+            if (shmFile.exists()) dbSize += shmFile.length()
+
+            // Cache size
+            val cacheSize = getDirectorySize(context.cacheDir) + getDirectorySize(context.codeCacheDir)
+
+            _storageStats.value = StorageStats(
+                dbSizeBytes = dbSize,
+                cacheSizeBytes = cacheSize,
+                dbFormatted = formatBytes(dbSize),
+                cacheFormatted = formatBytes(cacheSize),
+                isCalculating = false
+            )
+        }
+    }
+
+    private fun getDirectorySize(dir: java.io.File?): Long {
+        if (dir == null || !dir.exists()) return 0L
+        var total = 0L
+        val children = dir.listFiles() ?: return 0L
+        for (child in children) {
+            total += if (child.isDirectory) getDirectorySize(child) else child.length()
+        }
+        return total
+    }
+
+    private fun formatBytes(bytes: Long): String {
+        return when {
+            bytes <= 0 -> "0 KB"
+            bytes < 1024 * 1024 -> String.format(Locale.US, "%.1f KB", bytes / 1024f)
+            else -> String.format(Locale.US, "%.2f MB", bytes / (1024f * 1024f))
+        }
+    }
+
+    fun clearAppCache(onComplete: (Boolean) -> Unit = {}) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val context = getApplication<Application>().applicationContext
+            var success = true
+            try {
+                deleteDirContent(context.cacheDir)
+                coil.Coil.imageLoader(context).diskCache?.clear()
+                coil.Coil.imageLoader(context).memoryCache?.clear()
+            } catch (e: Exception) {
+                success = false
+            }
+            refreshStorageStats()
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                onComplete(success)
+            }
+        }
+    }
+
+    private fun deleteDirContent(dir: java.io.File?): Boolean {
+        if (dir == null || !dir.exists()) return true
+        val children = dir.listFiles() ?: return true
+        var allDeleted = true
+        for (child in children) {
+            if (child.isDirectory) {
+                deleteDirContent(child)
+            }
+            if (!child.delete()) {
+                allDeleted = false
+            }
+        }
+        return allDeleted
+    }
+
+    fun optimizeDatabase(onComplete: (Boolean) -> Unit = {}) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val context = getApplication<Application>().applicationContext
+            var success = true
+            try {
+                val db = com.fabian.todolist.data.AppDatabase.getDatabase(context)
+                db.openHelper.writableDatabase.execSQL("VACUUM")
+                db.openHelper.writableDatabase.execSQL("PRAGMA wal_checkpoint(FULL)")
+            } catch (e: Exception) {
+                success = false
+            }
+            refreshStorageStats()
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                onComplete(success)
+            }
+        }
+    }
 }
