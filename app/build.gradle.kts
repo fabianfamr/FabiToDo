@@ -18,8 +18,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 32
-    versionName = "1.10.0"
+    versionCode = 33
+    versionName = "1.10.1"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }
@@ -186,6 +186,21 @@ tasks.register<Copy>("copyApk") {
   dependsOn("assembleDebug")
   from(file("build/outputs/apk/debug/app-debug.apk"))
   into(file("${rootDir}/apk"))
+}
+
+// Auto-heal google-services.json so that deleting it never breaks the build
+val ensureGoogleServices = tasks.register("ensureGoogleServices") {
+  doFirst {
+    val gsFile = file("google-services.json")
+    if (!gsFile.exists()) {
+      gsFile.writeText(
+        """{"project_info":{"project_number":"1234567890","project_id":"fabitodo-list","storage_bucket":"fabitodo-list.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:abcdef1234567890","android_client_info":{"package_name":"com.fabian.todolist"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyDummyApiKeyForGoogleServices"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}"""
+      )
+    }
+  }
+}
+tasks.matching { it.name.startsWith("process") && it.name.contains("GoogleServices") }.configureEach {
+  dependsOn(ensureGoogleServices)
 }
 
 

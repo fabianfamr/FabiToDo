@@ -38,4 +38,6 @@
     <string name="login_title">Sign in</string>
     <string name="google_login_web_option">Sign in via Web (No SHA required)</string>
     <string name="google_login_web_desc">Use the browser to sign in securely with Google without requiring SHA certificates.</string>
+    <string name="error_empty_credentials">Please enter both email and password.</string>
+    <string name="error_password_too_short">Password must be at least 6 characters.</string>
 </resources>

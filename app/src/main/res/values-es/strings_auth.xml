@@ -38,4 +38,6 @@
     <string name="google_login_footer">Autenticación segura mediante Google</string>
     <string name="google_login_web_option">Acceso Web (Sin requerir SHA)</string>
     <string name="google_login_web_desc">Abre el navegador web seguro para iniciar sesión con Google sin depender de certificados SHA registrados.</string>
+    <string name="error_empty_credentials">Por favor ingresa tanto el correo como la contraseña.</string>
+    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres.</string>
 </resources>

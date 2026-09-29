@@ -106,6 +106,30 @@ class AuthManager(context: Context) {
         }
     }
 
+    /**
+     * Email / Password authentication.
+     * Requires ZERO SHA certificates or Google Play Services setup!
+     */
+    suspend fun signInWithEmail(email: String, pass: String): Result<Unit> {
+        return try {
+            auth.signInWithEmailAndPassword(email.trim(), pass).await()
+            setGuestUser(false)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun signUpWithEmail(email: String, pass: String): Result<Unit> {
+        return try {
+            auth.createUserWithEmailAndPassword(email.trim(), pass).await()
+            setGuestUser(false)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     private fun findActivity(context: Context): Activity? {
         var currentContext = context
         while (currentContext is ContextWrapper) {

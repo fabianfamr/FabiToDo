@@ -114,6 +114,48 @@ class AuthViewModel @Inject constructor(application: Application) : AndroidViewM
         onSuccess()
     }
 
+    fun signInWithEmail(email: String, pass: String, onSuccess: () -> Unit) {
+        if (email.isBlank() || pass.isBlank()) {
+            _error.value = getApplication<Application>().getString(R.string.error_empty_credentials)
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            val result = authManager.signInWithEmail(email, pass)
+            if (result.isSuccess) {
+                _isGuest.value = false
+                _isLoggedIn.value = true
+                onSuccess()
+            } else {
+                val msg = result.exceptionOrNull()?.localizedMessage ?: "Error"
+                _error.value = msg
+            }
+            _isLoading.value = false
+        }
+    }
+
+    fun signUpWithEmail(email: String, pass: String, onSuccess: () -> Unit) {
+        if (email.isBlank() || pass.length < 6) {
+            _error.value = getApplication<Application>().getString(R.string.error_password_too_short)
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            val result = authManager.signUpWithEmail(email, pass)
+            if (result.isSuccess) {
+                _isGuest.value = false
+                _isLoggedIn.value = true
+                onSuccess()
+            } else {
+                val msg = result.exceptionOrNull()?.localizedMessage ?: "Error"
+                _error.value = msg
+            }
+            _isLoading.value = false
+        }
+    }
+
     fun signOut() {
         authManager.signOut()
         _isGuest.value = false
