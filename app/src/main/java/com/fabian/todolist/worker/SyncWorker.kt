@@ -28,7 +28,17 @@ class SyncWorker(
             // Initializing dependencies manually since HiltWorker isn't configured
             val taskDao = AppDatabase.getDatabase(applicationContext).taskDao()
             val authManager = AuthManager(applicationContext)
-            val firestore = FirebaseFirestore.getInstance()
+            val databaseId = try {
+                val resId = applicationContext.resources.getIdentifier("firestore_database_id", "string", applicationContext.packageName)
+                if (resId != 0) applicationContext.getString(resId) else null
+            } catch (_: Exception) {
+                null
+            }
+            val firestore = if (!databaseId.isNullOrBlank()) {
+                FirebaseFirestore.getInstance(databaseId)
+            } else {
+                FirebaseFirestore.getInstance()
+            }
             val syncManager = CloudSyncManager(firestore, taskDao, authManager)
 
             // Real sync process

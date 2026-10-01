@@ -46,10 +46,17 @@ class AuthManager(context: Context) {
     suspend fun signInWithGoogle(context: Context): Result<Unit> {
         val activity = findActivity(context)
 
-        val clientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
-        val isClientIdConfigured = clientId.isNotBlank() &&
-                clientId != "PLACEHOLDER_NOT_CONFIGURED" &&
-                clientId != "YOUR_GOOGLE_WEB_CLIENT_ID"
+        val defaultWebClientIdRes = context.resources.getIdentifier("default_web_client_id", "string", context.packageName)
+        val resolvedWebClientId = if (defaultWebClientIdRes != 0) context.getString(defaultWebClientIdRes) else BuildConfig.GOOGLE_WEB_CLIENT_ID
+        val clientId = if (resolvedWebClientId.isNotBlank() &&
+            resolvedWebClientId != "PLACEHOLDER_NOT_CONFIGURED" &&
+            resolvedWebClientId != "YOUR_GOOGLE_WEB_CLIENT_ID"
+        ) {
+            resolvedWebClientId
+        } else {
+            "14026788849-6o166494a1rsfqj0ed5lm849upa9l2ds.apps.googleusercontent.com"
+        }
+        val isClientIdConfigured = clientId.isNotBlank()
 
         // 1. Try native Credential Manager if Client ID is present
         if (isClientIdConfigured) {
@@ -102,30 +109,6 @@ class AuthManager(context: Context) {
             if (BuildConfig.DEBUG) {
                 Log.e("AuthManager", "Error in Web OAuth Provider sign-in", e)
             }
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * Email / Password authentication.
-     * Requires ZERO SHA certificates or Google Play Services setup!
-     */
-    suspend fun signInWithEmail(email: String, pass: String): Result<Unit> {
-        return try {
-            auth.signInWithEmailAndPassword(email.trim(), pass).await()
-            setGuestUser(false)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun signUpWithEmail(email: String, pass: String): Result<Unit> {
-        return try {
-            auth.createUserWithEmailAndPassword(email.trim(), pass).await()
-            setGuestUser(false)
-            Result.success(Unit)
-        } catch (e: Exception) {
             Result.failure(e)
         }
     }

@@ -41,8 +41,18 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseFirestore(): com.google.firebase.firestore.FirebaseFirestore {
-        return com.google.firebase.firestore.FirebaseFirestore.getInstance()
+    fun provideFirebaseFirestore(@ApplicationContext context: Context): com.google.firebase.firestore.FirebaseFirestore {
+        val databaseId = try {
+            val resId = context.resources.getIdentifier("firestore_database_id", "string", context.packageName)
+            if (resId != 0) context.getString(resId) else null
+        } catch (_: Exception) {
+            null
+        }
+        return if (!databaseId.isNullOrBlank()) {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance(databaseId)
+        } else {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        }
     }
 
     @Provides
