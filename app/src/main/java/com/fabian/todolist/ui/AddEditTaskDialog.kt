@@ -686,8 +686,8 @@ fun AddEditTaskDialog(
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // SECTION 3: Priority selection with modern segmented buttons grid
-                        val currentPriorityColor = Color(com.fabian.todolist.ui.AppIcons.getPriorityColor(selectedPriority))
-                        val currentPriorityLabelRes = com.fabian.todolist.ui.AppIcons.getPriorityLabelRes(selectedPriority)
+                        val currentPriorityColor = Color(com.fabian.todolist.ui.Appicons.getPriorityColor(selectedPriority))
+                        val currentPriorityLabelRes = com.fabian.todolist.ui.Appicons.getPriorityLabelRes(selectedPriority)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 6.dp, bottom = 8.dp)
@@ -721,9 +721,9 @@ fun AddEditTaskDialog(
                             items(priorities.size) { index ->
                                 val p = priorities[index]
                                 val isSelected = selectedPriority == p
-                                val baseColor = Color(com.fabian.todolist.ui.AppIcons.getPriorityColor(p))
-                                val pName = stringResource(com.fabian.todolist.ui.AppIcons.getPriorityLabelRes(p))
-                                val pDrawable = com.fabian.todolist.ui.AppIcons.getPriorityDrawable(p)
+                                val baseColor = Color(com.fabian.todolist.ui.Appicons.getPriorityColor(p))
+                                val pName = stringResource(com.fabian.todolist.ui.Appicons.getPriorityLabelRes(p))
+                                val pDrawable = com.fabian.todolist.ui.Appicons.getPriorityDrawable(p)
                                 
                                 Card(
                                     onClick = { selectedPriority = p },

@@ -333,7 +333,7 @@ fun TaskScreen(
                     val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
                     ExtendedFloatingActionButton(
                         text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
-                        icon = { Icon(painterResource(com.fabian.todolist.ui.AppIcons.DRAWABLE_SVG_ADD), contentDescription = stringResource(R.string.content_desc_add_tasks)) },
+                        icon = { Icon(painterResource(com.fabian.todolist.ui.Appicons.ICON_ADD), contentDescription = stringResource(R.string.content_desc_add_tasks)) },
                         onClick = {
                             taskToEdit = null
                             showAddEditDialog = true
