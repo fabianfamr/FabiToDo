@@ -30,7 +30,7 @@ object HapticUtil {
     }
     
     fun performHeavyClick(context: Context) {
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        val vibrator = context.getSystemService(Vibrator::class.java)
         if (vibrator?.hasVibrator() == true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))

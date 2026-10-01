@@ -99,7 +99,7 @@ class SettingsViewModel @Inject constructor(
     private val _showBackupCard = MutableStateFlow(prefs.getBoolean("show_backup_card", true))
     val showBackupCard: StateFlow<Boolean> = _showBackupCard.asStateFlow()
 
-    private val _onboardingCompleted = MutableStateFlow(prefs.getBoolean("onboarding_completed", false))
+    private val _onboardingCompleted = MutableStateFlow(prefs.getBoolean("onboarding_completed", true))
     val onboardingCompleted: StateFlow<Boolean> = _onboardingCompleted.asStateFlow()
 
     private val _userName = MutableStateFlow(prefs.getString("user_display_name", "") ?: "")
@@ -450,6 +450,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    @OptIn(coil.annotation.ExperimentalCoilApi::class)
     fun clearAppCache(onComplete: (Boolean) -> Unit = {}) {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             val context = getApplication<Application>().applicationContext

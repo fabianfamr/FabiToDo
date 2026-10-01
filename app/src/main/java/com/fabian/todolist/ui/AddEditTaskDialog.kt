@@ -686,36 +686,44 @@ fun AddEditTaskDialog(
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // SECTION 3: Priority selection with modern segmented buttons grid
-                        Text(
-                            text = stringResource(R.string.priority),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
+                        val currentPriorityColor = Color(com.fabian.todolist.ui.AppIcons.getPriorityColor(selectedPriority))
+                        val currentPriorityLabelRes = com.fabian.todolist.ui.AppIcons.getPriorityLabelRes(selectedPriority)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 6.dp, bottom = 8.dp)
-                        )
+                        ) {
+                            Text(
+                                text = stringResource(R.string.priority),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            if (selectedPriority.isNotBlank() && selectedPriority != com.fabian.todolist.data.TaskPriority.NONE) {
+                                Text(
+                                    text = " • " + stringResource(currentPriorityLabelRes),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = currentPriorityColor
+                                )
+                            }
+                        }
 
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            val priorities = listOf(com.fabian.todolist.data.TaskPriority.LOW, com.fabian.todolist.data.TaskPriority.MEDIUM, com.fabian.todolist.data.TaskPriority.HIGH, com.fabian.todolist.data.TaskPriority.CRITICAL)
+                            val priorities = listOf(
+                                com.fabian.todolist.data.TaskPriority.LOW,
+                                com.fabian.todolist.data.TaskPriority.MEDIUM,
+                                com.fabian.todolist.data.TaskPriority.HIGH,
+                                com.fabian.todolist.data.TaskPriority.CRITICAL
+                            )
                             items(priorities.size) { index ->
                                 val p = priorities[index]
                                 val isSelected = selectedPriority == p
-                                val baseColor = when(p) {
-                                    com.fabian.todolist.data.TaskPriority.CRITICAL -> Color(0xFFB3261E)
-                                    com.fabian.todolist.data.TaskPriority.HIGH -> Color(0xFFEA4335)
-                                    com.fabian.todolist.data.TaskPriority.MEDIUM -> Color(0xFFFBBC05)
-                                    com.fabian.todolist.data.TaskPriority.LOW -> Color(0xFF34A853)
-                                    else -> Color.Gray
-                                }
-                                val pName = when(p) {
-                                    com.fabian.todolist.data.TaskPriority.CRITICAL -> stringResource(R.string.priority_critical_label).split(" ")[0]
-                                    com.fabian.todolist.data.TaskPriority.HIGH -> stringResource(R.string.priority_high_label).split(" ")[0]
-                                    com.fabian.todolist.data.TaskPriority.MEDIUM -> stringResource(R.string.priority_medium_label).split(" ")[0]
-                                    com.fabian.todolist.data.TaskPriority.LOW -> stringResource(R.string.priority_low_label).split(" ")[0]
-                                    else -> ""
-                                }
+                                val baseColor = Color(com.fabian.todolist.ui.AppIcons.getPriorityColor(p))
+                                val pName = stringResource(com.fabian.todolist.ui.AppIcons.getPriorityLabelRes(p))
+                                val pDrawable = com.fabian.todolist.ui.AppIcons.getPriorityDrawable(p)
                                 
                                 Card(
                                     onClick = { selectedPriority = p },
@@ -738,7 +746,7 @@ fun AddEditTaskDialog(
                                             horizontalArrangement = Arrangement.Center
                                         ) {
                                             Icon(
-                                                imageVector = Icons.Default.Flag,
+                                                painter = androidx.compose.ui.res.painterResource(pDrawable),
                                                 contentDescription = null,
                                                 tint = if (isSelected) baseColor else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                                 modifier = Modifier.size(16.dp)

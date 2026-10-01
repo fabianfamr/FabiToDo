@@ -71,7 +71,7 @@ class CompleteTaskAction : ActionCallback {
         val taskId = parameters[taskIdKey] ?: return
         
         // Haptic feedback
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+        val vibrator = context.getSystemService(android.os.Vibrator::class.java)
         if (vibrator?.hasVibrator() == true) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 vibrator.vibrate(android.os.VibrationEffect.createPredefined(android.os.VibrationEffect.EFFECT_CLICK))

@@ -133,25 +133,6 @@ fun TaskScreen(
     val shouldShowAddDialog by viewModel.shouldShowAddDialog.collectAsStateWithLifecycle()
     val confirmOnDelete by settingsViewModel.confirmOnDelete.collectAsStateWithLifecycle()
     val hapticFeedbackOnComplete by settingsViewModel.hapticFeedbackOnComplete.collectAsStateWithLifecycle()
-    val onboardingCompleted by settingsViewModel.onboardingCompleted.collectAsStateWithLifecycle()
-    if (!onboardingCompleted) {
-        com.fabian.todolist.ui.components.onboarding.OnboardingScreen(
-            settingsViewModel = settingsViewModel,
-            authViewModel = authViewModel,
-            onFinished = {
-                // Refresh the orientation or layout to trigger standard setup
-                var currentContext = context
-                while (currentContext is android.content.ContextWrapper) {
-                    if (currentContext is android.app.Activity) {
-                        currentContext.recreate()
-                        break
-                    }
-                    currentContext = currentContext.baseContext
-                }
-            }
-        )
-        return
-    }
     var taskToDelete by remember { mutableStateOf<Task?>(null) }
     var tasksToDeleteBatch by remember { mutableStateOf<List<Task>?>(null) }
     val hapticFeedback = androidx.compose.ui.platform.LocalHapticFeedback.current
@@ -172,11 +153,14 @@ fun TaskScreen(
         }
     }
 
-    // Request notification permission if SDK >= 33
+    // Request notification permission if SDK >= 33 on arriving at main screen
     var hasPostNotificationPermission by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                false
+                androidx.core.content.ContextCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
             } else {
                 true
             }
@@ -349,7 +333,7 @@ fun TaskScreen(
                     val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
                     ExtendedFloatingActionButton(
                         text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
-                        icon = { Icon(Icons.Default.Add, contentDescription = stringResource(R.string.content_desc_add_tasks)) },
+                        icon = { Icon(painterResource(com.fabian.todolist.ui.AppIcons.DRAWABLE_SVG_ADD), contentDescription = stringResource(R.string.content_desc_add_tasks)) },
                         onClick = {
                             taskToEdit = null
                             showAddEditDialog = true

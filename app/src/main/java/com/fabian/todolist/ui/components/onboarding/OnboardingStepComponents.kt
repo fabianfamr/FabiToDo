@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.*
@@ -209,7 +210,7 @@ fun StepAccount(
 
                     IconButton(onClick = { authViewModel.signOut() }) {
                         Icon(
-                            imageVector = Icons.Default.Logout,
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
                             contentDescription = stringResource(R.string.settings_account_logout),
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -271,7 +272,7 @@ fun StepAccount(
                         } else {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
-                                    imageVector = Icons.Default.Login,
+                                    imageVector = Icons.AutoMirrored.Filled.Login,
                                     contentDescription = null,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -610,7 +611,7 @@ fun StepAlerts(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.VolumeUp,
+                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)

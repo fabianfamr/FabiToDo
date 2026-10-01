@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -193,7 +194,7 @@ private fun getStepIcon(step: Int): ImageVector {
         3 -> Icons.Default.Language
         4 -> Icons.Default.Palette
         5 -> Icons.Default.NotificationsActive
-        6 -> Icons.Default.VolumeUp
+        6 -> Icons.AutoMirrored.Filled.VolumeUp
         7 -> Icons.Default.Repeat
         8 -> Icons.Default.Psychology
         9 -> Icons.Default.Tune
