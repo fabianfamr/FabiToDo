@@ -128,7 +128,6 @@ class MainActivity : AppCompatActivity() {
         val authViewModel: AuthViewModel = hiltViewModel()
         val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
         val isGuest by authViewModel.isGuest.collectAsStateWithLifecycle()
-        val onboardingCompleted by settingsViewModel.onboardingCompleted.collectAsStateWithLifecycle()
         val navController = rememberNavController()
 
         val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
@@ -139,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
         val currentRoute = currentBackStackEntry?.destination?.route
 
-        LaunchedEffect(isLoggedIn, isGuest, currentRoute, onboardingCompleted) {
+        LaunchedEffect(isLoggedIn, isGuest, currentRoute) {
           if (currentRoute != null) {
             val shouldRedirectToHome = if (currentRoute == "google_login") {
               isLoggedIn && !isGuest
@@ -152,17 +151,11 @@ class MainActivity : AppCompatActivity() {
                 popUpTo("login") { inclusive = true }
                 popUpTo("google_login") { inclusive = true }
               }
-            } else if (!isLoggedIn && currentRoute == "home" && onboardingCompleted) {
-              navController.navigate("login") {
-                popUpTo(0) { inclusive = true }
-              }
             }
           }
         }
 
-        val startDestination = remember(onboardingCompleted, isLoggedIn) {
-          if (!onboardingCompleted || isLoggedIn) "home" else "login"
-        }
+        val startDestination = "home"
         val appContent: @Composable () -> Unit = {
           NavHost(
             navController = navController,
