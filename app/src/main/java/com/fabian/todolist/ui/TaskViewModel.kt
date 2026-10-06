@@ -120,13 +120,8 @@ class TaskViewModel @Inject constructor(
 
     private fun incrementUnsynced() {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            // Atomic CAS — two concurrent increments previously could both read
-            // value=5, both compute next=6, and both write 6, losing an increment.
             val next = _unsyncedTasksCount.updateAndGet { it + 1 }
             prefs.edit().putInt("unsynced_tasks_count", next).apply()
-            if (isAppInForeground) {
-                triggerEventDrivenSync()
-            }
         }
     }
 
@@ -136,32 +131,11 @@ class TaskViewModel @Inject constructor(
 
     fun onAppForegroundStateChanged(isForeground: Boolean) {
         isAppInForeground = isForeground
-        if (isForeground) {
-            triggerEventDrivenSync()
-        }
-    }
-
-    private fun triggerEventDrivenSync() {
-        // Use WorkManager for all sync operations to ensure reliability and battery efficiency
-        val workRequest = androidx.work.OneTimeWorkRequestBuilder<com.fabian.todolist.worker.SyncWorker>()
-            .setConstraints(
-                androidx.work.Constraints.Builder()
-                    .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
-                    .build()
-            )
-            .build()
-            
-        androidx.work.WorkManager.getInstance(getApplication()).enqueueUniqueWork(
-            "SyncWork_Event",
-            androidx.work.ExistingWorkPolicy.REPLACE,
-            workRequest
-        )
     }
 
     fun markAllSynced() {
         _unsyncedTasksCount.value = 0
         prefs.edit().putInt("unsynced_tasks_count", 0).apply()
-        triggerEventDrivenSync()
     }
 
     fun generateSubtasksWithAI(

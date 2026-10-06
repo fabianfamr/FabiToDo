@@ -6,21 +6,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fabian.todolist.ui.components.auth.*
 
 @Composable
 fun LoginScreen(
     viewModel: AuthViewModel,
     onLoginSuccess: () -> Unit,
-    onNavigateToGoogle: () -> Unit
+    onNavigateToGoogle: () -> Unit = onLoginSuccess
 ) {
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val error by viewModel.error.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
 
     Box(
@@ -29,9 +25,7 @@ fun LoginScreen(
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        if (!isLoading) {
-            AmbientBackground()
-        }
+        AmbientBackground()
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,23 +39,20 @@ fun LoginScreen(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            LogoSegment(isLoading)
+            LogoSegment(isLoading = false)
 
             Spacer(modifier = Modifier.height(44.dp))
             
             LoginHeader()
-            
-            error?.let { LoginErrorCard(it) }
 
-            Spacer(modifier = Modifier.height(56.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
             LoginButtonSection(
-                isLoading = isLoading,
-                onGuestClick = { viewModel.continueAsGuest(onLoginSuccess) },
-                onGoogleClick = onNavigateToGoogle
+                isLoading = false,
+                onStartClick = { viewModel.completeWelcome(onLoginSuccess) }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             LoginFooter()
 

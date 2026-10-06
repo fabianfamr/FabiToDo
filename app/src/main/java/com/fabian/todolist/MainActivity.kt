@@ -36,7 +36,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fabian.todolist.ui.LoginScreen
 import com.fabian.todolist.ui.AuthViewModel
-import com.fabian.todolist.ui.GoogleLoginScreen
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -126,36 +125,13 @@ class MainActivity : AppCompatActivity() {
         selectedDarkTheme = themeDark
       ) {
         val authViewModel: AuthViewModel = hiltViewModel()
-        val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
-        val isGuest by authViewModel.isGuest.collectAsStateWithLifecycle()
+        val welcomeSeen by authViewModel.welcomeSeen.collectAsStateWithLifecycle()
         val navController = rememberNavController()
-
         val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
         LaunchedEffect(Unit) {
           transition.start()
         }
-
-        val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
-        val currentRoute = currentBackStackEntry?.destination?.route
-
-        LaunchedEffect(isLoggedIn, isGuest, currentRoute) {
-          if (currentRoute != null) {
-            val shouldRedirectToHome = if (currentRoute == "google_login") {
-              isLoggedIn && !isGuest
-            } else {
-              isLoggedIn
-            }
-
-            if (shouldRedirectToHome && (currentRoute == "login" || (currentRoute == "google_login" && !isGuest))) {
-              navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
-                popUpTo("google_login") { inclusive = true }
-              }
-            }
-          }
-        }
-
-        val startDestination = "home"
+        val startDestination = if (welcomeSeen) "home" else "login"
         val appContent: @Composable () -> Unit = {
           NavHost(
             navController = navController,
@@ -166,30 +142,10 @@ class MainActivity : AppCompatActivity() {
               LoginScreen(
                 viewModel = authViewModel,
                 onLoginSuccess = {
-                  if (navController.currentDestination?.route == "login") {
-                    navController.navigate("home") {
-                      popUpTo("login") { inclusive = true }
-                    }
+                  navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
                   }
-                },
-                onNavigateToGoogle = {
-                  navController.navigate("google_login")
                 }
-              )
-            }
-            composable("google_login") {
-              GoogleLoginScreen(
-                viewModel = authViewModel,
-                onLoginSuccess = {
-                  if (navController.currentDestination?.route == "google_login") {
-                    if (!navController.popBackStack("home", false)) {
-                      navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                      }
-                    }
-                  }
-                },
-                onBack = { navController.popBackStack() }
               )
             }
             composable("home") {
@@ -197,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel = viewModel,
                 settingsViewModel = settingsViewModel,
                 authViewModel = authViewModel,
-                onNavigateToGoogleLogin = { navController.navigate("google_login") },
+                onNavigateToGoogleLogin = {},
                 modifier = Modifier.fillMaxSize()
               )
             }

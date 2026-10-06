@@ -32,36 +32,4 @@ object DatabaseModule {
     fun provideTaskRepository(taskDao: TaskDao, @ApplicationContext context: Context): TaskRepository {
         return TaskRepository(taskDao, context)
     }
-
-    @Provides
-    @Singleton
-    fun provideAuthManager(@ApplicationContext context: Context): com.fabian.todolist.data.AuthManager {
-        return com.fabian.todolist.data.AuthManager(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseFirestore(@ApplicationContext context: Context): com.google.firebase.firestore.FirebaseFirestore {
-        val databaseId = try {
-            val resId = context.resources.getIdentifier("firestore_database_id", "string", context.packageName)
-            if (resId != 0) context.getString(resId) else null
-        } catch (_: Exception) {
-            null
-        }
-        return if (!databaseId.isNullOrBlank()) {
-            com.google.firebase.firestore.FirebaseFirestore.getInstance(databaseId)
-        } else {
-            com.google.firebase.firestore.FirebaseFirestore.getInstance()
-        }
-    }
-
-    @Provides
-    @Singleton
-    fun provideCloudSyncManager(
-        firestore: com.google.firebase.firestore.FirebaseFirestore,
-        taskDao: TaskDao,
-        authManager: com.fabian.todolist.data.AuthManager
-    ): com.fabian.todolist.data.CloudSyncManager {
-        return com.fabian.todolist.data.CloudSyncManager(firestore, taskDao, authManager)
-    }
 }

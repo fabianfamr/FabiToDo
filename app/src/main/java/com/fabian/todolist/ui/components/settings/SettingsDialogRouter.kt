@@ -65,16 +65,6 @@ fun SettingsDialogRouter(
         )
     }
 
-    if (currentDestination == SettingsDestinations.ACCOUNT) {
-        AccountSettingsDialog(
-            authViewModel = authViewModel,
-            viewModel = viewModel,
-            settingsViewModel = settingsViewModel,
-            onNavigateToGoogleLogin = onNavigateToGoogleLogin,
-            onDismiss = { onDestinationChanged(SettingsDestinations.NONE) }
-        )
-    }
-
     if (currentDestination == SettingsDestinations.BACKUP) {
         BackupSettingsDialog(
             viewModel = viewModel,

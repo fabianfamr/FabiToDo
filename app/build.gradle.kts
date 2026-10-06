@@ -5,7 +5,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.roborazzi)
-  alias(libs.plugins.google.services)
+  // alias(libs.plugins.google.services)
   alias(libs.plugins.hilt.android)
   alias(libs.plugins.secrets)
 }
@@ -18,8 +18,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 40
-    versionName = "1.13.0"
+    versionCode = 41
+    versionName = "1.14.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }
@@ -116,7 +116,7 @@ secrets {
 // Forced configuration refresh
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
-  implementation(platform(libs.firebase.bom))
+  // implementation(platform(libs.firebase.bom))
   // implementation("libs.accompanist.permissions")
   implementation(libs.androidx.activity.compose)
   // implementation(libs.androidx.camera.camera2)
@@ -141,12 +141,12 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.work.runtime.ktx)
   implementation("androidx.biometric:biometric:1.1.0")
-  implementation(libs.firebase.auth)
-  implementation(libs.firebase.firestore)
-  implementation(libs.play.services.auth)
-  implementation(libs.androidx.credentials)
-  implementation(libs.androidx.credentials.play.services.auth)
-  implementation(libs.googleid)
+  // implementation(libs.firebase.auth)
+  // implementation(libs.firebase.firestore)
+  // implementation(libs.play.services.auth)
+  // implementation(libs.androidx.credentials)
+  // implementation(libs.androidx.credentials.play.services.auth)
+  // implementation(libs.googleid)
   implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
   // implementation(libs.firebase.ai)

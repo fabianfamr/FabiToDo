@@ -94,7 +94,6 @@ fun TaskScreen(
     val categories by settingsViewModel.categories.collectAsStateWithLifecycle()
     val categoryColors by settingsViewModel.categoryColors.collectAsStateWithLifecycle()
     val categoryIcons by settingsViewModel.categoryIcons.collectAsStateWithLifecycle()
-    val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
     
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedCategory = uiState.selectedCategory

@@ -144,9 +144,6 @@ fun SettingsPreferencesDialog(
 
     val globalNotificationsEnabled by settingsViewModel.notificationsEnabled.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val authManager = remember { AuthManager(context) }
-    val user = authManager.getCurrentUser()
-    val isGuest = authManager.isGuestUser()
     
     val titleAppearance = stringResource(R.string.settings_category_appearance)
     val descAppearance = stringResource(R.string.settings_appearance_desc)
@@ -171,15 +168,6 @@ fun SettingsPreferencesDialog(
     
     val titleSync = stringResource(R.string.backup_restore_title)
     val descSync = stringResource(R.string.settings_sync_desc)
-    
-    val titleAccount = stringResource(R.string.accounts_title)
-    val descAccount = when {
-        user != null -> user.displayName ?: user.email ?: stringResource(R.string.settings_account_desc)
-        isGuest -> stringResource(R.string.guest_user)
-        else -> stringResource(R.string.settings_account_desc)
-    }
-
-    val userAvatarDescription = stringResource(R.string.content_desc_user_avatar)
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -387,7 +375,7 @@ fun SettingsPreferencesDialog(
                         }
                     }
 
-                    // --- Grupo 4: Cuenta, Sincronización y Seguridad ---
+                    // --- Grupo 4: Copias de Seguridad ---
                     item {
                         Spacer(modifier = Modifier.height(14.dp))
                         Row(
@@ -401,7 +389,7 @@ fun SettingsPreferencesDialog(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = stringResource(R.string.settings_section_account_backup),
+                                text = stringResource(R.string.settings_backup_header),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.primary,
@@ -415,28 +403,6 @@ fun SettingsPreferencesDialog(
                                 icon = Icons.Filled.CloudSync,
                                 iconContainerColor = Color(0xFF455A64),
                                 onClick = { currentDestination = SettingsDestinations.BACKUP }
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-                            )
-                            SettingsPreferenceItem(
-                                title = titleAccount,
-                                subtitle = descAccount,
-                                icon = Icons.Rounded.AccountCircle,
-                                iconContainerColor = Color(0xFF607D8B),
-                                onClick = { currentDestination = SettingsDestinations.ACCOUNT },
-                                trailingContent = if (user?.photoUrl != null) {
-                                    {
-                                        androidx.compose.foundation.Image(
-                                            painter = coil.compose.rememberAsyncImagePainter(user.photoUrl),
-                                            contentDescription = userAvatarDescription,
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .clip(CircleShape)
-                                        )
-                                    }
-                                } else null
                             )
                         }
                     }

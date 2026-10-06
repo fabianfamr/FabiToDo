@@ -22,9 +22,10 @@
 
     <string name="login_subtitle">Let\'s get things done</string>
     <string name="login_desc_main">Manage your daily tasks, set smart reminders, and stay on top of your day.</string>
-    <string name="login_guest_btn">Start as Guest</string>
+    <string name="login_start_btn">Get Started</string>
+    <string name="login_guest_btn">Get Started</string>
     <string name="login_google_btn">Continue with Google</string>
-    <string name="login_footer_text">You can sign in and sync your tasks anytime from the Settings menu.</string>
+    <string name="login_footer_text">Your tasks are stored securely and privately on your device.</string>
     <string name="login_tagline">Organize your life ✨</string>
 
     <!-- ===== Strings backfilled from locale-specific files to satisfy

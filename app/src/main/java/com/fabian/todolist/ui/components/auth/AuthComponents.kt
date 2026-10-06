@@ -385,28 +385,20 @@ fun LoginErrorCard(error: String) {
 }
 
 @Composable
-fun GoogleGIcon(modifier: Modifier = Modifier) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_google_logo),
-        contentDescription = "Google Logo",
-        tint = Color.Unspecified,
-        modifier = modifier.size(24.dp)
-    )
-}
-
-@Composable
 fun LoginButtonSection(
-    isLoading: Boolean,
-    onGuestClick: () -> Unit,
-    onGoogleClick: () -> Unit
+    isLoading: Boolean = false,
+    onStartClick: () -> Unit = {},
+    onGuestClick: () -> Unit = onStartClick,
+    onGoogleClick: () -> Unit = onStartClick
 ) {
     val haptic = LocalHapticFeedback.current
+    val targetClick = if (onStartClick != {}) onStartClick else onGuestClick
 
-    // PRIMARY GUEST BUTTON
+    // PRIMARY "¡COMENZAR!" BUTTON
     Button(
         onClick = { 
             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            onGuestClick() 
+            targetClick() 
         },
         enabled = !isLoading,
         modifier = Modifier
@@ -424,46 +416,14 @@ fun LoginButtonSection(
         } else {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 Text(
-                    text = stringResource(R.string.login_guest_btn),
+                    text = stringResource(R.string.login_start_btn),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
+                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = null, modifier = Modifier.size(22.dp))
             }
-        }
-    }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    // SLEEK OUTLINED GOOGLE BUTTON
-    OutlinedButton(
-        onClick = { 
-            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            onGoogleClick() 
-        },
-        enabled = !isLoading,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(LoginDimens.ButtonHeight),
-        shape = LoginDimens.ButtonShape,
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-            GoogleGIcon()
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = stringResource(R.string.login_google_btn),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.2.sp
-            )
         }
     }
 }
@@ -478,8 +438,8 @@ fun LoginFooter() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Rounded.CloudSync,
-            contentDescription = "Safe Sync",
+            imageVector = Icons.Rounded.Security,
+            contentDescription = "Safe Storage",
             modifier = Modifier.size(20.dp),
             tint = MaterialTheme.colorScheme.secondary
         )
@@ -492,49 +452,5 @@ fun LoginFooter() {
             lineHeight = 16.sp,
             modifier = Modifier.weight(1f)
         )
-    }
-}
-
-@Composable
-fun GoogleLogoEmblem(rotation: Float) {
-    // Retained for backward compatibility with GoogleLoginScreen
-    val infiniteTransition = rememberInfiniteTransition(label = "google_emblem_anim")
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f, targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(tween(2000, easing = EaseInOutSine), RepeatMode.Reverse), label = "pulse_scale"
-    )
-    val waveScale by infiniteTransition.animateFloat(
-        initialValue = 0.95f, targetValue = 1.3f,
-        animationSpec = infiniteRepeatable(tween(3000, easing = EaseOutSine), RepeatMode.Restart), label = "wave_scale"
-    )
-    val waveAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.4f, targetValue = 0f,
-        animationSpec = infiniteRepeatable(tween(3000, easing = EaseOutSine), RepeatMode.Restart), label = "wave_alpha"
-    )
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(190.dp).scale(pulseScale)
-    ) {
-        Box(modifier = Modifier.fillMaxSize().scale(waveScale).border(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = waveAlpha), CircleShape))
-        Box(modifier = Modifier.size(160.dp).scale(1.12f).border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f), CircleShape))
-        Canvas(modifier = Modifier.size(140.dp).rotate(rotation)) {
-            val stroke = Stroke(width = 5.dp.toPx(), cap = StrokeCap.Round)
-            drawArc(Color(0xFF4285F4), 0f, 70f, false, style = stroke)
-            drawArc(Color(0xFF34A853), 90f, 70f, false, style = stroke)
-            drawArc(Color(0xFFFBBC05), 180f, 70f, false, style = stroke)
-            drawArc(Color(0xFFEA4335), 270f, 70f, false, style = stroke)
-        }
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.size(102.dp),
-            tonalElevation = 6.dp,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(painter = painterResource(id = R.drawable.ic_google_logo), contentDescription = "Google Logo", tint = Color.Unspecified, modifier = Modifier.size(52.dp))
-            }
-        }
     }
 }
