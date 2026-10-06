@@ -13,6 +13,7 @@
     <string name="add_list">Añadir Categoría</string>
     <string name="new_list">Nueva Categoría</string>
     <string name="list_name">Nombre de Categoría</string>
+    <string name="nav_categories">Categorías</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="save">Guardar</string>

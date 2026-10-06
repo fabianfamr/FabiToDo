@@ -29,7 +29,8 @@ fun TaskTopAppBar(
     onMenuClick: () -> Unit,
     onSortClick: () -> Unit,
     onToggleSearch: () -> Unit,
-    onStatsClick: () -> Unit
+    onStatsClick: () -> Unit,
+    showNavigationIcon: Boolean = true
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -65,8 +66,10 @@ fun TaskTopAppBar(
             }
         },
         navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.menu_label), tint = MaterialTheme.colorScheme.onSurface)
+            if (showNavigationIcon) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.menu_label), tint = MaterialTheme.colorScheme.onSurface)
+                }
             }
         },
         actions = {

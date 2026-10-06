@@ -308,16 +308,32 @@ fun AddEditTaskDialog(
         onDismissRequest = attemptDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .systemBarsPadding()
+            val isTablet = maxWidth >= 600.dp
+            Surface(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(min = 400.dp, max = 640.dp)
+                        .fillMaxHeight(0.92f)
+                        .clip(RoundedCornerShape(32.dp))
+                        .shadow(16.dp, RoundedCornerShape(32.dp))
+                } else {
+                    Modifier.fillMaxSize()
+                },
+                color = MaterialTheme.colorScheme.background,
+                shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)
             ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .then(if (!isTablet) Modifier.systemBarsPadding() else Modifier.padding(top = 8.dp))
+                ) {
                 // Background beautiful radial aura to elevate visuals
                 Box(
                     modifier = Modifier
@@ -842,6 +858,7 @@ fun AddEditTaskDialog(
                 }
             }
         }
+    }
     }
 
     if (showAddCategoryDialog) {

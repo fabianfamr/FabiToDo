@@ -235,124 +235,160 @@ fun TaskScreen(
         }
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            TaskDrawerContent(
-        drawerState = drawerState,
-        selectedCategory = selectedCategory,
-        categories = categories,
-        categoryColors = categoryColors,
-        categoryIcons = categoryIcons,
-        languageCode = languageCode,
-        onCategorySelected = { viewModel.setSelectedCategory(it) },
-        onSettingsSelected = { showSettingsDialog = true }
-    )
-        }
-    ) {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            containerColor = Color.Transparent,
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                AnimatedContent(
-                    targetState = selectedTaskIds.isNotEmpty(),
-                    transitionSpec = {
-                        slideInVertically { height -> -height } + fadeIn() togetherWith
-                        slideOutVertically { height -> -height } + fadeOut()
-                    },
-                    label = "TopAppBarTransition"
-                ) { isSelectionActive ->
-                    if (isSelectionActive) {
-                        MySelectionTopAppBar(
-                            selectedCount = selectedTaskIds.size,
-                            onClearSelection = { selectedTaskIds.clear() },
-                            onEditSelected = {
-                                val singleTaskId = selectedTaskIds.firstOrNull()
-                                val singleTask = tasks.find { it.id == singleTaskId }
-                                if (singleTask != null) {
-                                    taskToEdit = singleTask
-                                    showAddEditDialog = true
-                                    selectedTaskIds.clear()
-                                }
-                            },
-                            onShareSelected = {
-                                val selectedTasks = tasks.filter { it.id in selectedTaskIds }
-                                val textToShare = selectedTasks.joinToString("\n\n---\n\n") { t ->
-                                    val subtasks = t.getSubtasks()
-                                    val subtasksText = if (subtasks.isNotEmpty()) {
-                                        "\n\nSubtareas:\n" + subtasks.joinToString("\n") { "- " + (if (it.isCompleted) "[✔] " else "[ ] ") + it.title }
-                                    } else ""
-                                    
-                                    "Tarea: ${t.title}\n" +
-                                    (if (t.description.isNotEmpty()) "Descripción: ${t.description}\n" else "") +
-                                    "Categoría: ${t.category}\n" +
-                                    "Prioridad: ${t.priority}\n" +
-                                    (t.dueDate?.let { context.getString(R.string.due_date_prefix) + com.fabian.todolist.util.DateTimeUtils.formatDateSimpleSlash(it) + "\n" } ?: "") +
-                                    (if (t.isRepeat) "Repetición: ${t.repeatType}\n" else "") +
-                                    subtasksText
-                                }
-                                val sendIntent: android.content.Intent = android.content.Intent().apply {
-                                    action = android.content.Intent.ACTION_SEND
-                                    putExtra(android.content.Intent.EXTRA_TEXT, textToShare)
-                                    type = "text/plain"
-                                }
-                                val shareIntent = android.content.Intent.createChooser(sendIntent, null)
-                                context.startActivity(shareIntent)
-                            },
-                            onDeleteSelected = {
-                                if (hapticFeedbackOnComplete) {
-                                    com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
-                                }
-                                val selectedTasks = tasks.filter { it.id in selectedTaskIds }
-                                if (confirmOnDelete) {
-                                    tasksToDeleteBatch = selectedTasks
-                                } else {
-                                    selectedTasks.forEach { t -> viewModel.deleteTask(t) }
-                                    showUndoBatchSnackbar(selectedTasks)
-                                    selectedTaskIds.clear()
-                                }
-                            },
-                            isTrashCategory = selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH
-                        )
-                    } else {
-                        TaskTopAppBar(
-                            selectedCategory = selectedCategory,
-                            categoryColors = categoryColors,
-                            pendingTasksCount = pendingTasksCount,
-                            onMenuClick = { scope.launch { drawerState.open() } },
-                            onSortClick = { showFocusDrawer = true },
-                            onToggleSearch = { isSearchExpanded = !isSearchExpanded },
-                            onStatsClick = { showStatsDialog = true }
-                        )
-                    }
-                }
-            },
-            floatingActionButton = {
-                if (selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                    val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
-                    ExtendedFloatingActionButton(
-                        text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
-                        icon = { Icon(painterResource(com.fabian.todolist.ui.Appicons.ICON_ADD), contentDescription = stringResource(R.string.content_desc_add_tasks)) },
-                        onClick = {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val screenWidth = maxWidth
+        val isTablet = screenWidth >= 600.dp
+        val isExpandedScreen = screenWidth >= 840.dp
+
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = !isTablet,
+            drawerContent = {
+                TaskDrawerContent(
+                    drawerState = drawerState,
+                    selectedCategory = selectedCategory,
+                    categories = categories,
+                    categoryColors = categoryColors,
+                    categoryIcons = categoryIcons,
+                    languageCode = languageCode,
+                    onCategorySelected = { viewModel.setSelectedCategory(it) },
+                    onSettingsSelected = { showSettingsDialog = true }
+                )
+            }
+        ) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                if (isTablet) {
+                    com.fabian.todolist.ui.components.TaskNavigationRail(
+                        selectedCategory = selectedCategory,
+                        onCategorySelected = { viewModel.setSelectedCategory(it) },
+                        onOpenCategoriesDrawer = { scope.launch { drawerState.open() } },
+                        onAddClick = {
                             taskToEdit = null
                             showAddEditDialog = true
                         },
-                        expanded = isFabExpanded,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier.padding(16.dp)
+                        onStatsClick = { showStatsDialog = true },
+                        onSettingsClick = { showSettingsDialog = true }
                     )
                 }
-            }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(paddingValues)
-            ) {
+
+                Scaffold(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    containerColor = Color.Transparent,
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    topBar = {
+                        AnimatedContent(
+                            targetState = selectedTaskIds.isNotEmpty(),
+                            transitionSpec = {
+                                slideInVertically { height -> -height } + fadeIn() togetherWith
+                                slideOutVertically { height -> -height } + fadeOut()
+                            },
+                            label = "TopAppBarTransition"
+                        ) { isSelectionActive ->
+                            if (isSelectionActive) {
+                                MySelectionTopAppBar(
+                                    selectedCount = selectedTaskIds.size,
+                                    onClearSelection = { selectedTaskIds.clear() },
+                                    onEditSelected = {
+                                        val singleTaskId = selectedTaskIds.firstOrNull()
+                                        val singleTask = tasks.find { it.id == singleTaskId }
+                                        if (singleTask != null) {
+                                            taskToEdit = singleTask
+                                            showAddEditDialog = true
+                                            selectedTaskIds.clear()
+                                        }
+                                    },
+                                    onShareSelected = {
+                                        val selectedTasks = tasks.filter { it.id in selectedTaskIds }
+                                        val textToShare = selectedTasks.joinToString("\n\n---\n\n") { t ->
+                                            val subtasks = t.getSubtasks()
+                                            val subtasksText = if (subtasks.isNotEmpty()) {
+                                                "\n\nSubtareas:\n" + subtasks.joinToString("\n") { "- " + (if (it.isCompleted) "[✔] " else "[ ] ") + it.title }
+                                            } else ""
+                                            
+                                            "Tarea: ${t.title}\n" +
+                                            (if (t.description.isNotEmpty()) "Descripción: ${t.description}\n" else "") +
+                                            "Categoría: ${t.category}\n" +
+                                            "Prioridad: ${t.priority}\n" +
+                                            (t.dueDate?.let { context.getString(R.string.due_date_prefix) + com.fabian.todolist.util.DateTimeUtils.formatDateSimpleSlash(it) + "\n" } ?: "") +
+                                            (if (t.isRepeat) "Repetición: ${t.repeatType}\n" else "") +
+                                            subtasksText
+                                        }
+                                        val sendIntent: android.content.Intent = android.content.Intent().apply {
+                                            action = android.content.Intent.ACTION_SEND
+                                            putExtra(android.content.Intent.EXTRA_TEXT, textToShare)
+                                            type = "text/plain"
+                                        }
+                                        val shareIntent = android.content.Intent.createChooser(sendIntent, null)
+                                        context.startActivity(shareIntent)
+                                    },
+                                    onDeleteSelected = {
+                                        if (hapticFeedbackOnComplete) {
+                                            com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
+                                        }
+                                        val selectedTasks = tasks.filter { it.id in selectedTaskIds }
+                                        if (confirmOnDelete) {
+                                            tasksToDeleteBatch = selectedTasks
+                                        } else {
+                                            selectedTasks.forEach { t -> viewModel.deleteTask(t) }
+                                            showUndoBatchSnackbar(selectedTasks)
+                                            selectedTaskIds.clear()
+                                        }
+                                    },
+                                    isTrashCategory = selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH
+                                )
+                            } else {
+                                TaskTopAppBar(
+                                    selectedCategory = selectedCategory,
+                                    categoryColors = categoryColors,
+                                    pendingTasksCount = pendingTasksCount,
+                                    onMenuClick = { scope.launch { drawerState.open() } },
+                                    onSortClick = { showFocusDrawer = true },
+                                    onToggleSearch = { isSearchExpanded = !isSearchExpanded },
+                                    onStatsClick = { showStatsDialog = true },
+                                    showNavigationIcon = !isTablet
+                                )
+                            }
+                        }
+                    },
+                    floatingActionButton = {
+                        if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                            val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+                            ExtendedFloatingActionButton(
+                                text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
+                                icon = { Icon(painterResource(com.fabian.todolist.ui.Appicons.ICON_ADD), contentDescription = stringResource(R.string.content_desc_add_tasks)) },
+                                onClick = {
+                                    taskToEdit = null
+                                    showAddEditDialog = true
+                                },
+                                expanded = isFabExpanded,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                shape = RoundedCornerShape(20.dp),
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                ) { paddingValues ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .then(
+                                    if (selectedCategory != com.fabian.todolist.data.SystemCategory.EISENHOWER && isTablet) {
+                                        Modifier.widthIn(max = if (isExpandedScreen) 920.dp else 740.dp)
+                                    } else {
+                                        Modifier
+                                    }
+                                )
+                        ) {
                 // Task statistics details
             val totalCount = tasks.size
             val completedCount = tasks.count { it.isCompleted }
@@ -741,6 +777,8 @@ fun TaskScreen(
             }
         }
     }
+    }
+    }
 
     if (showSettingsDialog) {
         SettingsPreferencesDialog(
@@ -870,6 +908,7 @@ fun TaskScreen(
             onDismiss = { showFocusDrawer = false }
         )
     }
+}
 }
 }
 

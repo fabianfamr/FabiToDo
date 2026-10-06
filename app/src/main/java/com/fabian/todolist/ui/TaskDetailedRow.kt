@@ -159,9 +159,9 @@ fun TaskDetailedRow(
                 border = if (isSelected) {
                     BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
                 } else {
-                    null
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
                 },
-                shape = SettingsDimens.CardRadiusRoot
+                shape = RoundedCornerShape(22.dp)
             ) {
                 Column(
                     modifier = Modifier

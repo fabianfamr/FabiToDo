@@ -185,15 +185,31 @@ fun SettingsPreferencesDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.45f)),
+            contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .systemBarsPadding()
+            val isTablet = maxWidth >= 600.dp
+            Surface(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(min = 400.dp, max = 640.dp)
+                        .fillMaxHeight(0.92f)
+                        .clip(RoundedCornerShape(32.dp))
+                        .shadow(16.dp, RoundedCornerShape(32.dp))
+                } else {
+                    Modifier.fillMaxSize()
+                },
+                color = MaterialTheme.colorScheme.background,
+                shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(if (!isTablet) Modifier.systemBarsPadding() else Modifier.padding(top = 16.dp))
+                ) {
                 // High-fidelity elegant top actions bar
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -452,6 +468,7 @@ fun SettingsPreferencesDialog(
                 }
             }
         }
+    }
     }
 
     SettingsDialogRouter(
