@@ -591,5 +591,11 @@
     <string name="calendar_add_task_day">Add task for this date</string>
     <string name="calendar_today">Today</string>
     <string name="calendar_upcoming_deadlines">Upcoming Deadlines</string>
+    <string name="calendar_switch_tasks">Tasks</string>
+    <string name="calendar_switch_calendar">Calendar</string>
+    <string name="back_to_tasks">Back to task list</string>
+    <string name="drawer_section_views">Views</string>
+    <string name="drawer_section_categories">Categories</string>
+    <string name="drawer_section_system">System</string>
     <string name="calendar_toggle_pane">Toggle Calendar</string>
 </resources>

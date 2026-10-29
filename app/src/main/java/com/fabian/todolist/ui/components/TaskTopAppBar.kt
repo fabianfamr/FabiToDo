@@ -1,5 +1,6 @@
 package com.fabian.todolist.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,43 +74,112 @@ fun TaskTopAppBar(
         },
         navigationIcon = {
             if (showNavigationIcon) {
-                IconButton(onClick = onMenuClick) {
-                    Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.menu_label), tint = MaterialTheme.colorScheme.onSurface)
+                Surface(
+                    onClick = onMenuClick,
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    modifier = Modifier.padding(start = 12.dp).size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = stringResource(R.string.menu_label),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         },
         actions = {
-            IconButton(onClick = onCalendarClick) {
-                Icon(
-                    imageVector = Icons.Default.CalendarToday,
-                    contentDescription = stringResource(R.string.calendar_nav_title),
-                    tint = if (isCalendarActive || (isDualPane && showCalendarPane)) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                )
+            // Calendar Button with prominent delineation
+            val isCalSelected = isCalendarActive || (isDualPane && showCalendarPane)
+            Surface(
+                onClick = onCalendarClick,
+                shape = RoundedCornerShape(12.dp),
+                color = if (isCalSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(
+                    width = if (isCalSelected) 1.5.dp else 1.dp,
+                    color = if (isCalSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                ),
+                modifier = Modifier.padding(end = 6.dp).size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = stringResource(R.string.calendar_nav_title),
+                        tint = if (isCalSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
-            IconButton(onClick = onStatsClick) {
-                Icon(
-                    imageVector = Icons.Default.Insights,
-                    contentDescription = stringResource(R.string.stats_label),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+
+            Surface(
+                onClick = onStatsClick,
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                modifier = Modifier.padding(end = 6.dp).size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = Icons.Default.Insights,
+                        contentDescription = stringResource(R.string.stats_label),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
-            IconButton(onClick = onSortClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Sort,
-                    contentDescription = stringResource(R.string.sort_by),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+
+            Surface(
+                onClick = onSortClick,
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                modifier = Modifier.padding(end = if (pendingTasksCount > 0) 6.dp else 12.dp).size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Sort,
+                        contentDescription = stringResource(R.string.sort_by),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
+
             if (pendingTasksCount > 0) {
-                IconButton(onClick = onToggleSearch, modifier = Modifier.padding(end = 4.dp)) {
-                    Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search_title), tint = MaterialTheme.colorScheme.onSurface)
+                Surface(
+                    onClick = onToggleSearch,
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    modifier = Modifier.padding(end = 12.dp).size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.search_title),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+            containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface
         ),
-        modifier = Modifier.shadow(elevation = 2.dp)
+        modifier = Modifier.drawBehind {
+            val strokeWidth = 1.dp.toPx()
+            drawLine(
+                color = androidx.compose.ui.graphics.Color.Gray.copy(alpha = 0.2f),
+                start = androidx.compose.ui.geometry.Offset(0f, size.height),
+                end = androidx.compose.ui.geometry.Offset(size.width, size.height),
+                strokeWidth = strokeWidth
+            )
+        }
     )
 }

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
@@ -249,6 +250,14 @@ fun TaskScreen(
         val isDualPane = screenWidth >= 780.dp
         var showCalendarPaneOnDual by rememberSaveable { mutableStateOf(true) }
 
+        BackHandler(enabled = drawerState.isOpen) {
+            scope.launch { drawerState.close() }
+        }
+
+        BackHandler(enabled = !isDualPane && selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {
+            viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+        }
+
         ModalNavigationDrawer(
             drawerState = drawerState,
             gesturesEnabled = !isTablet,
@@ -465,8 +474,89 @@ fun TaskScreen(
                                 TaskSearchBar(
                                     isSearchExpanded = isSearchExpanded,
                                     searchQuery = searchQuery,
-                        onSearchQueryChange = { viewModel.setSearchQuery(it) }
-                    )
+                                    onSearchQueryChange = { viewModel.setSearchQuery(it) }
+                                )
+
+                                if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH && selectedCategory != com.fabian.todolist.data.SystemCategory.EISENHOWER) {
+                                    Surface(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 6.dp),
+                                        shape = RoundedCornerShape(14.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(3.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            val isCal = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR
+                                            Surface(
+                                                onClick = {
+                                                    if (isCal) {
+                                                        viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+                                                    }
+                                                },
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = if (!isCal) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                                border = if (!isCal) BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)) else null,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(vertical = 7.dp),
+                                                    horizontalArrangement = Arrangement.Center,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Checklist,
+                                                        contentDescription = null,
+                                                        tint = if (!isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                    Text(
+                                                        text = stringResource(R.string.calendar_switch_tasks),
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        fontWeight = if (!isCal) FontWeight.Bold else FontWeight.Medium,
+                                                        color = if (!isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+
+                                            Surface(
+                                                onClick = {
+                                                    viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.CALENDAR)
+                                                },
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = if (isCal) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                                border = if (isCal) BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)) else null,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(vertical = 7.dp),
+                                                    horizontalArrangement = Arrangement.Center,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.CalendarToday,
+                                                        contentDescription = null,
+                                                        tint = if (isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                    Text(
+                                                        text = stringResource(R.string.calendar_switch_calendar),
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        fontWeight = if (isCal) FontWeight.Bold else FontWeight.Medium,
+                                                        color = if (isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
 
                     LazyColumn(
                         state = listState,
@@ -829,7 +919,10 @@ fun TaskScreen(
                     )
                     showAddEditDialog = true
                 },
-                isDualPane = dual
+                isDualPane = dual,
+                onBackToTasks = {
+                    viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+                }
             )
         }
 

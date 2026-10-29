@@ -586,5 +586,11 @@
     <string name="calendar_add_task_day">Añadir tarea para este día</string>
     <string name="calendar_today">Hoy</string>
     <string name="calendar_upcoming_deadlines">Próximos vencimientos</string>
+    <string name="calendar_switch_tasks">Tareas</string>
+    <string name="calendar_switch_calendar">Calendario</string>
+    <string name="back_to_tasks">Volver a la lista</string>
+    <string name="drawer_section_views">Vistas principales</string>
+    <string name="drawer_section_categories">Mis categorías</string>
+    <string name="drawer_section_system">Sistema</string>
     <string name="calendar_toggle_pane">Alternar panel de calendario</string>
 </resources>
