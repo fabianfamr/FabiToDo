@@ -258,22 +258,7 @@ fun TaskScreen(
             viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
         }
 
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            gesturesEnabled = !isTablet,
-            drawerContent = {
-                TaskDrawerContent(
-                    drawerState = drawerState,
-                    selectedCategory = selectedCategory,
-                    categories = categories,
-                    categoryColors = categoryColors,
-                    categoryIcons = categoryIcons,
-                    languageCode = languageCode,
-                    onCategorySelected = { viewModel.setSelectedCategory(it) },
-                    onSettingsSelected = { showSettingsDialog = true }
-                )
-            }
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.fillMaxSize()) {
                 if (isTablet) {
                     com.fabian.todolist.ui.components.TaskNavigationRail(
@@ -936,7 +921,14 @@ fun TaskScreen(
                     if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
                         eisenhowerContent()
                     } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                        TaskEmptyState()
+                        TaskEmptyState(
+                            onAddTask = {
+                                taskToEdit = null
+                                showAddEditDialog = true
+                            },
+                            onOpenCategories = { scope.launch { drawerState.open() } },
+                            onOpenStats = { showStatsDialog = true }
+                        )
                     } else {
                         taskListContent()
                     }
@@ -976,10 +968,51 @@ fun TaskScreen(
                 } else if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
                     eisenhowerContent()
                 } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                    TaskEmptyState()
+                    TaskEmptyState(
+                        onAddTask = {
+                            taskToEdit = null
+                            showAddEditDialog = true
+                        },
+                        onOpenCategories = { scope.launch { drawerState.open() } },
+                        onOpenStats = { showStatsDialog = true }
+                    )
                 } else {
                     taskListContent()
                 }
+            }
+        }
+
+        // Quick Access Drawer Overlay (Does NOT close when tapping outside space)
+        androidx.compose.animation.AnimatedVisibility(
+            visible = drawerState.isOpen,
+            enter = androidx.compose.animation.slideInHorizontally(initialOffsetX = { -it }) + androidx.compose.animation.fadeIn(),
+            exit = androidx.compose.animation.slideOutHorizontally(targetOffsetX = { -it }) + androidx.compose.animation.fadeOut()
+        ) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                TaskDrawerContent(
+                    drawerState = drawerState,
+                    selectedCategory = selectedCategory,
+                    categories = categories,
+                    categoryColors = categoryColors,
+                    categoryIcons = categoryIcons,
+                    languageCode = languageCode,
+                    onCategorySelected = { viewModel.setSelectedCategory(it) },
+                    onSettingsSelected = { showSettingsDialog = true }
+                )
+
+                // Translucent backdrop covering remaining space on right
+                // Tapping this empty space DOES NOT close the menu, fulfilling user's quick access requirement!
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.32f))
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                        ) {
+                            // Empty action: DOES NOT CLOSE THE MENU
+                        }
+                )
             }
         }
     }
@@ -1021,9 +1054,18 @@ fun TaskScreen(
         val filteredListCategories = categories.filter { it != com.fabian.todolist.data.SystemCategory.ALL_TASKS && it != com.fabian.todolist.data.SystemCategory.COMPLETED }
         val defaultOffsetMinutes by settingsViewModel.reminderOffsetMinutes.collectAsStateWithLifecycle()
         val isGeneratingAI by viewModel.isGeneratingAI.collectAsStateWithLifecycle()
+        val defaultCategoryForNewTask = if (selectedCategory in listOf(
+                com.fabian.todolist.data.SystemCategory.ALL_TASKS,
+                com.fabian.todolist.data.SystemCategory.COMPLETED,
+                com.fabian.todolist.data.SystemCategory.TRASH,
+                com.fabian.todolist.data.SystemCategory.EISENHOWER,
+                com.fabian.todolist.data.SystemCategory.CALENDAR
+            )) "General" else selectedCategory
+
         AddEditTaskDialog(
             task = taskToEdit,
             categories = if (filteredListCategories.isEmpty()) listOf("General") else filteredListCategories,
+            initialCategory = defaultCategoryForNewTask,
             defaultOffsetMinutes = defaultOffsetMinutes,
             categoryColors = categoryColors,
             categoryIcons = categoryIcons,
@@ -1042,10 +1084,16 @@ fun TaskScreen(
                 } else {
                     viewModel.updateTask(finishedTask)
                 }
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.setSearchQuery("")
+                }
                 showAddEditDialog = false
             },
             onSaveBatch = { tasks ->
                 viewModel.insertTasks(tasks)
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.setSearchQuery("")
+                }
                 showAddEditDialog = false
             },
             onDismiss = { showAddEditDialog = false }

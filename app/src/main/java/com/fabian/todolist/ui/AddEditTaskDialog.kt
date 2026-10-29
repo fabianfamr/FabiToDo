@@ -70,6 +70,7 @@ fun AddEditTaskDialog(
     categories: List<String>,
     onSave: (Task) -> Unit,
     onSaveBatch: (List<Task>) -> Unit = {},
+    initialCategory: String = "General",
     defaultOffsetMinutes: Int = 0,
     categoryColors: Map<String, Int> = emptyMap(),
     categoryIcons: Map<String, String> = emptyMap(),
@@ -82,7 +83,7 @@ fun AddEditTaskDialog(
 
     var title by remember { mutableStateOf(task?.title ?: "") }
     var description by remember { mutableStateOf(task?.description ?: "") }
-    var selectedCategory by remember { mutableStateOf(task?.category ?: "") }
+    var selectedCategory by remember { mutableStateOf(task?.category ?: initialCategory.ifBlank { "General" }) }
     var localSubtasks by remember { mutableStateOf(task?.getSubtasks() ?: emptyList()) }
     var isSubtasksExpanded by remember { mutableStateOf(localSubtasks.isNotEmpty()) }
     var newSubtaskText by remember { mutableStateOf("") }
@@ -308,15 +309,23 @@ fun AddEditTaskDialog(
         onDismissRequest = attemptDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
     ) {
+        val backdropInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable(
+                    indication = null,
+                    interactionSource = backdropInteractionSource
+                ) {
+                    attemptDismiss()
+                },
             contentAlignment = Alignment.Center
         ) {
             val isTablet = maxWidth >= 600.dp
+            val surfaceInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
             Surface(
-                modifier = if (isTablet) {
+                modifier = (if (isTablet) {
                     Modifier
                         .widthIn(min = 400.dp, max = 640.dp)
                         .fillMaxHeight(0.92f)
@@ -324,6 +333,11 @@ fun AddEditTaskDialog(
                         .shadow(16.dp, RoundedCornerShape(32.dp))
                 } else {
                     Modifier.fillMaxSize()
+                }).clickable(
+                    indication = null,
+                    interactionSource = surfaceInteractionSource
+                ) {
+                    // Consume clicks inside the dialog so tapping form content doesn't trigger backdrop dismiss
                 },
                 color = MaterialTheme.colorScheme.background,
                 shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)
@@ -360,16 +374,16 @@ fun AddEditTaskDialog(
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp, vertical = 14.dp)
                     ) {
-                        IconButton(
+                        FilledTonalIconButton(
                             onClick = attemptDismiss,
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close, 
-                                contentDescription = stringResource(R.string.cancel), 
-                                tint = MaterialTheme.colorScheme.onSurface
+                                contentDescription = stringResource(R.string.cancel)
                             )
                         }
                         
