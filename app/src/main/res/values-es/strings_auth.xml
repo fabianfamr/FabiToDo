@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Elementos de la pantalla de inicio de sesión -->
-    <string name="login_title">Te damos la bienvenida a FabiToDo</string>
-    <string name="login_subtitle">Hagamos que las cosas sucedan.</string>
-    <string name="login_desc_main">Organiza tus tareas diarias, configura recordatorios inteligentes y mantén todo bajo control sin estrés.</string>
-    <string name="login_start_btn">¡Comenzar!</string>
-    <string name="login_guest_btn">¡Comenzar!</string>
-    <string name="login_google_btn">Continuar</string>
-    <string name="login_footer_text">Tus tareas se guardan de forma privada y segura en tu dispositivo.</string>
-    <string name="login_tagline">Organiza tu vida ✨</string>
-
     <string name="auth_state_checking">Verificando tu cuenta…</string>
-    <string name="auth_state_success">¡Hola de nuevo!</string>
     <string name="auth_state_error">Hubo un problema al iniciar sesión: %s</string>
-    
+    <string name="auth_state_success">¡Hola de nuevo!</string>
+    <string name="desc_error">Error</string>
+    <string name="desc_priority">Prioridad</string>
+    <string name="desc_safe_storage">Almacenamiento seguro</string>
+    <string name="desc_success">Éxito</string>
+    <string name="desc_task_done">Tarea completada</string>
+    <string name="error_empty_credentials">Por favor ingresa tanto el correo como la contraseña.</string>
+    <string name="error_google_login">No se pudieron cargar las cuentas</string>
+    <string name="error_login_canceled">Inicio de sesión cancelado</string>
+    <string name="error_no_accounts">No se detectaron credenciales de Google. Puedes continuar en Modo Invitado o usar el acceso Web sin requerir certificado SHA.</string>
+    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres.</string>
     <string name="google_btn_loading">Conectando…</string>
-    
-    <string name="login_perks_title">¿Por qué usar una cuenta?</string>
-    <string name="google_feat_sync">Tus tareas en todos tus dispositivos</string>
     <string name="google_feat_backup">Copias de seguridad automáticas</string>
     <string name="google_feat_secure">Almacenamiento seguro en la nube</string>
-    <string name="error_google_login">No se pudieron cargar las cuentas</string>
-
-    <string name="login_welcome">Bienvenido a tu Lista</string>
-    <string name="login_description">Inicia sesión con tu cuenta de Google para sincronizar tus tareas de forma segura en todos tus dispositivos.</string>
+    <string name="google_feat_sync">Tus tareas en todos tus dispositivos</string>
+    <string name="google_login_button">Iniciar sesión con Google ID</string>
+    <string name="google_login_desc">Sincroniza tus tareas al instante y de forma segura entre todos tus dispositivos con respaldos automáticos en la nube.</string>
+    <string name="google_login_footer">Autenticación segura mediante Google</string>
+    <string name="google_login_guest_fallback_button">Continuar como Invitado (Modo Local)</string>
+    <string name="google_login_guest_fallback_desc">No se encontró una cuenta activa en el sistema. Puedes continuar como Invitado para guardar tus tareas localmente o acceder vía Web sin requerir SHA.</string>
+    <string name="google_login_guest_fallback_title">Cuenta de Google no detectada</string>
+    <string name="google_login_title">Acceso Seguro</string>
+    <string name="google_login_web_desc">Abre el navegador web seguro para iniciar sesión con Google sin depender de certificados SHA registrados.</string>
+    <string name="google_login_web_option">Acceso Web (Sin requerir SHA)</string>
+    <string name="guest_user">Invitado</string>
     <string name="login_button_google">Continuar con Google</string>
     <string name="login_button_guest">Continuar como invitado</string>
-    <string name="error_no_accounts">No se detectaron credenciales de Google. Puedes continuar en Modo Invitado o usar el acceso Web sin requerir certificado SHA.</string>
-    <string name="google_login_guest_fallback_title">Cuenta de Google no detectada</string>
-    <string name="google_login_guest_fallback_desc">No se encontró una cuenta activa en el sistema. Puedes continuar como Invitado para guardar tus tareas localmente o acceder vía Web sin requerir SHA.</string>
-    <string name="google_login_guest_fallback_button">Continuar como Invitado (Modo Local)</string>
-    <string name="error_login_canceled">Inicio de sesión cancelado</string>
-    <string name="guest_user">Invitado</string>
-
-    <string name="google_login_title">Acceso Seguro</string>
-    <string name="google_login_desc">Sincroniza tus tareas al instante y de forma segura entre todos tus dispositivos con respaldos automáticos en la nube.</string>
-    <string name="google_login_button">Iniciar sesión con Google ID</string>
-    <string name="google_login_footer">Autenticación segura mediante Google</string>
-    <string name="google_login_web_option">Acceso Web (Sin requerir SHA)</string>
-    <string name="google_login_web_desc">Abre el navegador web seguro para iniciar sesión con Google sin depender de certificados SHA registrados.</string>
-    <string name="error_empty_credentials">Por favor ingresa tanto el correo como la contraseña.</string>
-    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres.</string>
+    <string name="login_desc_main">Organiza tus tareas diarias, configura recordatorios inteligentes y mantén todo bajo control sin estrés.</string>
+    <string name="login_description">Inicia sesión con tu cuenta de Google para sincronizar tus tareas de forma segura en todos tus dispositivos.</string>
+    <string name="login_footer_text">Tus tareas se guardan de forma privada y segura en tu dispositivo.</string>
+    <string name="login_google_btn">Continuar con Google</string>
+    <string name="login_guest_btn">¡Comenzar!</string>
+    <string name="login_perks_title">¿Por qué usar una cuenta?</string>
+    <string name="login_start_btn">¡Comenzar!</string>
+    <string name="login_subtitle">Hagamos que las cosas sucedan.</string>
+    <string name="login_tagline">Organiza tu vida ✨</string>
+    <string name="login_title">Te damos la bienvenida a FabiToDo</string>
+    <string name="login_welcome">Bienvenido a tu Lista</string>
 </resources>

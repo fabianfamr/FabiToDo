@@ -1,74 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- AI Center Strings -->
-    <string name="ai_center_title">Fonctions Intelligentes</string>
-    <string name="ai_center_back">Retour</string>
-    <string name="ai_banner_magic">Magie de l\'IA</string>
-    <string name="ai_banner_title">Découpage automatique</string>
-    <string name="ai_banner_body">Laissez l\'IA vous aider à diviser vos tâches complexes en petites étapes simples. Elle peut aussi vous suggérer une catégorie et une priorité.</string>
-    <string name="ai_banner_hide">Masquer</string>
-    
-    <string name="ai_section_model">Modèle d\'IA</string>
-    <string name="ai_select_motor_title">Choisissez votre assistant :</string>
-    <string name="ai_select_motor_desc">Vous pouvez utiliser les modèles ultra-rapides de Gemini, ou d\'autres grands noms comme GPT, Claude, DeepSeek ou Llama.</string>
-    
-    <string name="ai_section_access">Clé API</string>
-    <string name="ai_provider_key_label">Clé API du fournisseur</string>
     <string name="ai_badge_recommended">Recommandé</string>
     <string name="ai_badge_required">Requis</string>
-    
-    <string name="ai_key_req_gemini">Vous aurez besoin d\'une clé Google AI Studio (gratuite sur ai.google.dev).</string>
-    <string name="ai_key_req_gpt">Nécessite une clé API OpenAI.</string>
-    <string name="ai_key_req_claude">Nécessite une clé API Anthropic.</string>
-    <string name="ai_key_req_deepseek">Nécessite une clé API DeepSeek.</string>
-    <string name="ai_key_req_llama">Nécessite une clé API Groq.</string>
-    <string name="ai_key_req_generic">Entrez votre clé API pour le modèle choisi.</string>
-    
-    <string name="ai_key_placeholder">Collez votre clé API ici…</string>
-    <string name="ai_key_icon_desc">Icône clé API</string>
-    <string name="ai_key_show">Afficher</string>
-    
-    <string name="ai_security_desc">Confidentialité et Sécurité</string>
-    <string name="ai_security_body">Vos clés sont sauvegardées de manière totalement sécurisée sur votre appareil.</string>
-    
-    <string name="ai_section_lab">Faites un essai</string>
-    <string name="ai_lab_title">Testez la connexion</string>
-    <string name="ai_lab_desc">Tapez une tâche ci-dessous pour voir comment l\'IA s\'en occupe.</string>
-    <string name="ai_lab_field_label">Tâche de test</string>
-    <string name="ai_lab_err_empty">Veuillez d\'abord entrer une tâche à tester</string>
-    <string name="ai_lab_test_desc_default">Organiser une fête d\'anniversaire</string>
-    
-    <string name="ai_btn_connecting">Je réfléchis…</string>
-    <string name="ai_btn_test_now">Tester la connexion</string>
-    <string name="ai_btn_test_desc">Tester</string>
-    
-    <string name="ai_result_success">Connexion réussie !</string>
-    <string name="ai_result_parsed_header">Voici ce que l\'IA suggère :</string>
-    <string name="ai_result_suggested_desc">Description : </string>
-    <string name="ai_result_suggested_cat">Catégorie</string>
-    <string name="ai_result_suggested_prio">Priorité</string>
-    <string name="ai_result_subtasks_count">Étapes suggérées (%d) :</string>
-    
-    <string name="ai_result_error_title">Connexion impossible</string>
-    <string name="ai_result_error_generic">Oups, une erreur est survenue.</string>
-    <string name="ai_result_error_tips">Astuce : Vérifiez que votre clé API est correcte et que vous êtes connecté(e) à internet.</string>
-
-    <!-- Gemini config strings -->
-    <string name="settings_ai_title">Fonctions Intelligentes</string>
-    <string name="settings_ai_desc">Configurez votre assistant intelligent.</string>
-    <string name="settings_ai_model_title">Modèle</string>
-    <string name="settings_ai_model_desc">Choisissez l\'IA qui vous aidera.</string>
-    <string name="settings_ai_apikey_title">Clave API</string>
-    <string name="settings_ai_apikey_desc">Ajoutez votre propre clé API.</string>
-    <string name="subtasks_generate_magic">Suggérer des étapes</string>
-    <string name="subtasks_generating">Je réfléchis...</string>
-    <string name="subtasks_generate_error">Mince, impossible de générer les étapes.</string>
-    <string name="ai_subtasks_settings">Suggestions d\'étapes</string>
-    <string name="ai_subtasks_amount">Nombre d\'étapes</string>
-    <string name="ai_subtasks_desc">Combien d\'étapes voulez-vous que l\'IA suggère ?</string>
-    <string name="ai_subtasks_count">%d étapes</string>
-
-    <!-- Low Latency Config -->
-    <string name="ai_ultra_low_latency_title">Réponses ultra-rapides</string>
-    <string name="ai_ultra_low_latency_desc">Utiliser un modèle plus léger pour avoir des suggestions instantanées.</string>
+    <string name="ai_banner_body">Laissez l\\'IA vous aider à diviser vos tâches complexes en petites étapes simples. Elle peut aussi vous suggérer une catégorie et une priorité.</string>
+    <string name="ai_banner_hide">Masquer</string>
+    <string name="ai_banner_magic">Magie de l\\'IA</string>
+    <string name="ai_banner_title">Générer les étapes</string>
+    <string name="ai_btn_connecting">Test de connexion…</string>
+    <string name="ai_btn_diagnostics">Exécuter le diagnostic</string>
+    <string name="ai_btn_get_free_key">Obtenir une clé gratuite</string>
+    <string name="ai_btn_save_key">Enregistrer la clé</string>
+    <string name="ai_btn_test_key">Tester la clé</string>
+    <string name="ai_cat_general">Général</string>
+    <string name="ai_cat_personal">Personnel</string>
+    <string name="ai_cat_shopping">Achats</string>
+    <string name="ai_cat_studies">Études</string>
+    <string name="ai_cat_work">Travail</string>
+    <string name="ai_center_back">Retour</string>
+    <string name="ai_center_badge_auto">AUTO</string>
+    <string name="ai_center_badge_cloud">CLOUD</string>
+    <string name="ai_center_badge_smart">SMART</string>
+    <string name="ai_center_beta_desc">Les fonctionnalités intelligentes utilisent Gemini pour décupler votre productivité.</string>
+    <string name="ai_center_beta_title">Moteur IA Gemini</string>
+    <string name="ai_center_desc">Configurez Gemini pour décomposer vos sous-tâches, organiser vos catégories et prioriser automatiquement vos tâches.</string>
+    <string name="ai_center_hero_body">Automatisez la gestion de vos tâches grâce à l\\'intelligence artificielle.</string>
+    <string name="ai_center_hero_chip">Accélérateur de productivité</string>
+    <string name="ai_center_hero_title">Assistant Intelligent</string>
+    <string name="ai_center_sec_config">Configuration de l\\'API Gemini</string>
+    <string name="ai_center_sec_config_desc">Entrez votre clé Google AI Studio pour activer l\\'IA.</string>
+    <string name="ai_center_sec_features">Fonctions IA Actives</string>
+    <string name="ai_center_sec_features_desc">Outils alimentés par le moteur d\\'IA.</string>
+    <string name="ai_center_sec_status">État du Système</string>
+    <string name="ai_center_sec_status_desc">État opérationnel du moteur d\\'IA.</string>
+    <string name="ai_center_title">Fonctions Intelligentes</string>
+    <string name="ai_desc_breakdown">Découpe n\\'importe quel objectif en étapes concrètes.</string>
+    <string name="ai_desc_smart_cat">Classe automatiquement vos tâches selon leur titre et contexte.</string>
+    <string name="ai_desc_smart_prio">Détermine l\\'urgence et l\\'importance selon la matrice d\\'Eisenhower.</string>
+    <string name="ai_diag_cloud_ok">Services Google Cloud &amp; Firebase accessibles</string>
+    <string name="ai_diag_key_valid">Clé API valide et opérationnelle</string>
+    <string name="ai_diag_model_ready">Modèle Gemini prêt</string>
+    <string name="ai_diag_title">Diagnostic et Santé</string>
+    <string name="ai_error_generic">Service IA temporairement indisponible. Vérifiez votre connexion ou clé API.</string>
+    <string name="ai_error_key_invalid">Clé API invalide. Vérifiez vos identifiants Google AI Studio.</string>
+    <string name="ai_error_quota">Quota dépassé. Veuillez patienter un instant avant de réessayer.</string>
+    <string name="ai_feat_breakdown">Générateur de Sous-tâches</string>
+    <string name="ai_feat_smart_cat">Catégorisation Automatique</string>
+    <string name="ai_feat_smart_prio">Priorisation Intelligente</string>
+    <string name="ai_free_quota_note">Google AI Studio offre un forfait gratuit parfait pour un usage personnel quotidien.</string>
+    <string name="ai_key_configured">Configurée</string>
+    <string name="ai_key_custom">Clé personnalisée active</string>
+    <string name="ai_key_dialog_title">Configurer la Clé Gemini API</string>
+    <string name="ai_key_hint">AIzaSy…</string>
+    <string name="ai_key_missing">Non configurée</string>
+    <string name="ai_key_server">Clé serveur active</string>
+    <string name="ai_loading_steps">Génération des sous-tâches par IA…</string>
+    <string name="ai_prompt_prefix">Analyse cette tâche et génère sous-tâches, catégorie et priorité : </string>
+    <string name="ai_result_category">Catégorie suggérée</string>
+    <string name="ai_result_priority">Priorité suggérée</string>
+    <string name="ai_result_subtasks">Sous-tâches générées</string>
+    <string name="ai_result_success">Analyse IA terminée</string>
+    <string name="ai_status_active">Prêt &amp; Actif</string>
+    <string name="ai_status_inactive">Configuration requise</string>
+    <string name="ai_tab_features">Fonctions</string>
+    <string name="ai_tab_keys">Clés API</string>
+    <string name="ai_tab_logs">Diagnostic</string>
+    <string name="ai_test_task_title">Organiser un week-end à la montagne</string>
+    <string name="settings_ai_apikey_desc">Nécessaire pour planifier intelligemment vos tâches.</string>
+    <string name="settings_ai_apikey_title">Clé API</string>
 </resources>

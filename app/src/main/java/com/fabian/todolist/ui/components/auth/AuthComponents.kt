@@ -266,7 +266,7 @@ fun LogoSegment(isLoading: Boolean) {
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Check,
-                        contentDescription = "Task Done",
+                        contentDescription = stringResource(R.string.desc_task_done),
                         modifier = Modifier.size(20.dp),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -300,7 +300,7 @@ fun LogoSegment(isLoading: Boolean) {
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Star,
-                        contentDescription = "Priority",
+                        contentDescription = stringResource(R.string.desc_priority),
                         modifier = Modifier.size(13.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -372,7 +372,7 @@ fun LoginErrorCard(error: String) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Rounded.Warning, contentDescription = "Error", tint = MaterialTheme.colorScheme.error)
+            Icon(Icons.Rounded.Warning, contentDescription = stringResource(R.string.desc_error), tint = MaterialTheme.colorScheme.error)
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = error,
@@ -439,7 +439,7 @@ fun LoginFooter() {
     ) {
         Icon(
             imageVector = Icons.Rounded.Security,
-            contentDescription = "Safe Storage",
+            contentDescription = stringResource(R.string.desc_safe_storage),
             modifier = Modifier.size(20.dp),
             tint = MaterialTheme.colorScheme.secondary
         )

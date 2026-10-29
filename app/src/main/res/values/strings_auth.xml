@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="login_welcome">Welcome to your List</string>
-    <string name="login_description">Sign in with your Google account to sync your tasks across all your devices securely.</string>
+    <string name="auth_state_checking">Checking your account…</string>
+    <string name="auth_state_error">Authentication problem: %s</string>
+    <string name="auth_state_success">Welcome back!</string>
+    <string name="desc_error">Error</string>
+    <string name="desc_priority">Priority</string>
+    <string name="desc_safe_storage">Secure Storage</string>
+    <string name="desc_success">Success</string>
+    <string name="desc_task_done">Task completed</string>
+    <string name="error_empty_credentials">Please enter both email and password.</string>
+    <string name="error_google_login">Could not retrieve Google accounts</string>
+    <string name="error_login_canceled">Login canceled</string>
+    <string name="error_no_accounts">No Google credentials detected. You can continue as Guest or access via Web without requiring a SHA certificate.</string>
+    <string name="error_password_too_short">Password must be at least 6 characters.</string>
+    <string name="google_btn_loading">Connecting…</string>
+    <string name="google_feat_backup">Automatic cloud backups</string>
+    <string name="google_feat_secure">Secure cloud storage</string>
+    <string name="google_feat_sync">Your tasks across all your devices</string>
+    <string name="google_login_button">Sign in with Google ID</string>
+    <string name="google_login_desc">Sync your tasks instantly and securely across all your devices with automatic cloud backups.</string>
+    <string name="google_login_footer">Secure authentication via Google Play Services</string>
+    <string name="google_login_guest_fallback_button">Continue as Guest (Local Mode)</string>
+    <string name="google_login_guest_fallback_desc">No active system account was found. You can continue as Guest to store your tasks locally or sign in via Web.</string>
+    <string name="google_login_guest_fallback_title">Google Account Not Detected</string>
+    <string name="google_login_title">Secure Access</string>
+    <string name="google_login_web_desc">Open the secure web browser to sign in with Google without requiring registered SHA certificates.</string>
+    <string name="google_login_web_option">Web Access (No SHA required)</string>
+    <string name="guest_user">Guest</string>
     <string name="login_button_google">Continue with Google</string>
     <string name="login_button_guest">Continue as guest</string>
-    <string name="error_no_accounts">Could not retrieve Google credentials. In local development, make sure to register your SHA-1 fingerprint in Firebase / Google Cloud console for this Client ID. You can continue as a Guest to use the app locally.</string>
-    <string name="google_login_guest_fallback_title">Google Account Not Found</string>
-    <string name="google_login_guest_fallback_desc">No active Google account was detected on this device. You can continue as a Guest to save all your tasks locally on this device instead.</string>
-    <string name="google_login_guest_fallback_button">Continue as Guest (Local Mode)</string>
-    <string name="error_login_canceled">Login canceled</string>
-    <string name="guest_user">Guest</string>
-
-    <string name="google_login_title">Secure Access</string>
-    <string name="google_login_desc">Sync your tasks instantly and securely across all your devices and keep automatic backups on your Google Drive.</string>
-    <string name="google_login_button">Sign in with Google ID</string>
-    <string name="google_login_footer">Secure authentication via Google Play Services</string>
-    <string name="google_feat_sync">Real-time task synchronization</string>
-    <string name="google_feat_backup">Automatic Google Drive backup</string>
-    <string name="google_feat_secure">Secure, encrypted cloud storage</string>
-    <string name="error_google_login">Error viewing accounts</string>
-
-    <string name="login_subtitle">Let\'s get things done</string>
-    <string name="login_desc_main">Manage your daily tasks, set smart reminders, and stay on top of your day.</string>
-    <string name="login_start_btn">Get Started</string>
-    <string name="login_guest_btn">Get Started</string>
+    <string name="login_desc_main">Organize your daily tasks, configure smart reminders, and keep everything under control effortlessly.</string>
+    <string name="login_description">Sign in with your Google account to sync your tasks securely across all your devices.</string>
+    <string name="login_footer_text">Your tasks are stored privately and securely on your device.</string>
     <string name="login_google_btn">Continue with Google</string>
-    <string name="login_footer_text">Your tasks are stored securely and privately on your device.</string>
+    <string name="login_guest_btn">Get Started!</string>
+    <string name="login_perks_title">Why use an account?</string>
+    <string name="login_start_btn">Get Started!</string>
+    <string name="login_subtitle">Let\\'s make things happen.</string>
     <string name="login_tagline">Organize your life ✨</string>
-
-    <!-- ===== Strings backfilled from locale-specific files to satisfy
-         resource shrinker (isShrinkResources=true). These are the
-         English defaults; locale-specific overrides live in values-*/. -->
-    <string name="auth_state_checking">Checking authentication…</string>
-    <string name="auth_state_error">Authentication error</string>
-    <string name="auth_state_success">Authenticated successfully</string>
-    <string name="google_btn_loading">Loading…</string>
-    <string name="login_perks_title">Why sign in?</string>
-    <string name="login_title">Sign in</string>
-    <string name="google_login_web_option">Sign in via Web (No SHA required)</string>
-    <string name="google_login_web_desc">Use the browser to sign in securely with Google without requiring SHA certificates.</string>
-    <string name="error_empty_credentials">Please enter both email and password.</string>
-    <string name="error_password_too_short">Password must be at least 6 characters.</string>
+    <string name="login_title">Welcome to FabiToDo</string>
+    <string name="login_welcome">Welcome to your List</string>
 </resources>

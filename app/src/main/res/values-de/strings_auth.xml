@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="login_title">Willkommen bei FabiToDo</string>
-    <string name="login_subtitle">Lass uns was schaffen.</string>
-    <string name="login_desc_main">Verwalte deine täglichen Aufgaben, setze clevere Erinnerungen und behalte deinen Tag entspannt im Griff.</string>
-    <string name="login_guest_btn">Als Gast starten</string>
-    <string name="login_google_btn">Weiter mit Google</string>
-    <string name="login_footer_text">Du kannst dich jederzeit in den Einstellungen anmelden und deine Aufgaben synchronisieren.</string>
-    <string name="login_tagline">Organisiere dein Leben ✨</string>
-
     <string name="auth_state_checking">Konto wird überprüft…</string>
-    <string name="auth_state_success">Schön, dass du wieder da bist!</string>
-    <string name="auth_state_error">Es gab ein Problem bei der Anmeldung: %s</string>
-    
-    <string name="google_btn_loading">Verbinde…</string>
-    
-    <string name="login_perks_title">Warum ein Konto erstellen?</string>
+    <string name="auth_state_error">Anmeldefehler: %s</string>
+    <string name="auth_state_success">Willkommen zurück!</string>
+    <string name="desc_error">Fehler</string>
+    <string name="desc_priority">Priorität</string>
+    <string name="desc_safe_storage">Sichere Speicherung</string>
+    <string name="desc_success">Erfolg</string>
+    <string name="desc_task_done">Aufgabe erledigt</string>
+    <string name="error_empty_credentials">Bitte gib sowohl E-Mail als auch Passwort ein.</string>
+    <string name="error_google_login">Google-Konten konnten nicht geladen werden</string>
+    <string name="error_login_canceled">Anmeldung abgebrochen</string>
+    <string name="error_no_accounts">Keine Google-Anmeldeinformationen gefunden. Du kannst als Gast fortfahren oder dich über das Web anmelden.</string>
+    <string name="error_password_too_short">Das Passwort muss mindestens 6 Zeichen lang sein.</string>
+    <string name="google_btn_loading">Verbindung wird hergestellt…</string>
+    <string name="google_feat_backup">Automatische Cloud-Backups</string>
+    <string name="google_feat_secure">Sicherer Cloud-Speicher</string>
     <string name="google_feat_sync">Deine Aufgaben auf allen Geräten</string>
-    <string name="google_feat_backup">Automatische Backups</string>
-    <string name="google_feat_secure">Sichere Cloud-Speicherung</string>
-    <string name="error_google_login">Konten konnten nicht geladen werden</string>
+    <string name="google_login_button">Mit Google ID anmelden</string>
+    <string name="google_login_desc">Synchronisiere deine Aufgaben sofort und sicher auf allen deinen Geräten mit automatischen Cloud-Backups.</string>
+    <string name="google_login_footer">Sichere Authentifizierung über Google Play Services</string>
+    <string name="google_login_guest_fallback_button">Als Gast fortfahren (Lokaler Modus)</string>
+    <string name="google_login_guest_fallback_desc">Kein aktives Konto gefunden. Du kannst als Gast fortfahren, um Aufgaben lokal zu speichern.</string>
+    <string name="google_login_guest_fallback_title">Google-Konto nicht gefunden</string>
+    <string name="google_login_title">Sicherer Zugriff</string>
+    <string name="google_login_web_desc">Öffne den sicheren Webbrowser, um dich mit Google anzumelden.</string>
+    <string name="google_login_web_option">Web-Zugriff (Kein SHA erforderlich)</string>
+    <string name="guest_user">Gast</string>
+    <string name="login_button_google">Mit Google fortfahren</string>
+    <string name="login_button_guest">Als Gast fortfahren</string>
+    <string name="login_desc_main">Organisiere deine täglichen Aufgaben, erstelle smarte Erinnerungen und behalte den Überblick.</string>
+    <string name="login_description">Melde dich mit deinem Google-Konto an, um deine Aufgaben sicher auf allen Geräten zu synchronisieren.</string>
+    <string name="login_footer_text">Deine Aufgaben werden privat und sicher auf deinem Gerät gespeichert.</string>
+    <string name="login_google_btn">Mit Google fortfahren</string>
+    <string name="login_guest_btn">Loslegen!</string>
+    <string name="login_perks_title">Warum ein Konto nutzen?</string>
+    <string name="login_start_btn">Loslegen!</string>
+    <string name="login_subtitle">Packen wir es an.</string>
+    <string name="login_tagline">Organisiere dein Leben ✨</string>
+    <string name="login_title">Willkommen bei FabiToDo</string>
+    <string name="login_welcome">Willkommen bei deiner Aufgabenliste</string>
 </resources>

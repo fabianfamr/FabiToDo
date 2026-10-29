@@ -202,13 +202,13 @@ fun EisenhowerMatrixView(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     QuadrantSummaryChip(
-                        title = "1. Hacer",
+                        title = stringResource(R.string.matrix_q1_short),
                         count = q1.size,
                         color = Color(0xFFEA4335),
                         modifier = Modifier.weight(1f)
                     )
                     QuadrantSummaryChip(
-                        title = "2. Programar",
+                        title = stringResource(R.string.matrix_q2_short),
                         count = q2.size,
                         color = Color(0xFF4285F4),
                         modifier = Modifier.weight(1f)
@@ -220,13 +220,13 @@ fun EisenhowerMatrixView(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     QuadrantSummaryChip(
-                        title = "3. Delegar",
+                        title = stringResource(R.string.matrix_q3_short),
                         count = q3.size,
                         color = Color(0xFFFBBC05),
                         modifier = Modifier.weight(1f)
                     )
                     QuadrantSummaryChip(
-                        title = "4. Descartar",
+                        title = stringResource(R.string.matrix_q4_short),
                         count = q4.size,
                         color = Color(0xFF9E9E9E),
                         modifier = Modifier.weight(1f)

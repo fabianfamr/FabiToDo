@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="login_title">Benvenuto in FabiToDo</string>
-    <string name="login_subtitle">Facciamo in modo che succeda.</string>
-    <string name="login_desc_main">Gestisci le tue attività quotidiane, imposta promemoria intelligenti e tieni tutto sotto controllo senza stress.</string>
-    <string name="login_guest_btn">Entra come ospite</string>
-    <string name="login_google_btn">Continua con Google</string>
-    <string name="login_footer_text">Puoi accedere e sincronizzare le tue attività in qualsiasi momento dalle Impostazioni.</string>
-    <string name="login_tagline">Organizza la tua vita ✨</string>
-
-    <string name="auth_state_checking">Verifica account in corso…</string>
+    <string name="auth_state_checking">Verifica dell\\'account in corso…</string>
+    <string name="auth_state_error">Problema di accesso: %s</string>
     <string name="auth_state_success">Bentornato!</string>
-    <string name="auth_state_error">Si è verificato un problema durante l\'accesso: %s</string>
-    
+    <string name="desc_error">Errore</string>
+    <string name="desc_priority">Priorità</string>
+    <string name="desc_safe_storage">Archiviazione sicura</string>
+    <string name="desc_success">Successo</string>
+    <string name="desc_task_done">Attività completata</string>
+    <string name="error_empty_credentials">Inserisci sia l\\'e-mail che la password.</string>
+    <string name="error_google_login">Impossibile caricare gli account Google</string>
+    <string name="error_login_canceled">Accesso annullato</string>
+    <string name="error_no_accounts">Nessuna credenziale Google rilevata. Puoi continuare come Ospite o accedere via Web.</string>
+    <string name="error_password_too_short">La password deve contenere almeno 6 caratteri.</string>
     <string name="google_btn_loading">Connessione in corso…</string>
-    
-    <string name="login_perks_title">Perché usare un account?</string>
+    <string name="google_feat_backup">Backup automatici nel cloud</string>
+    <string name="google_feat_secure">Archiviazione cloud sicura</string>
     <string name="google_feat_sync">Le tue attività su tutti i dispositivi</string>
-    <string name="google_feat_backup">Backup automatici</string>
-    <string name="google_feat_secure">Archiviazione sicura nel cloud</string>
-    <string name="error_google_login">Impossibile caricare gli account</string>
+    <string name="google_login_button">Accedi con Google ID</string>
+    <string name="google_login_desc">Sincronizza le tue attività all\\'istante e in modo sicuro su tutti i tuoi dispositivi.</string>
+    <string name="google_login_footer">Autenticazione sicura tramite Google Play Services</string>
+    <string name="google_login_guest_fallback_button">Continua come Ospite (Modalità locale)</string>
+    <string name="google_login_guest_fallback_desc">Nessun account attivo trovato. Puoi continuare come Ospite per salvare le attività localmente.</string>
+    <string name="google_login_guest_fallback_title">Account Google non trovato</string>
+    <string name="google_login_title">Accesso sicuro</string>
+    <string name="google_login_web_desc">Apri il browser web sicuro per accedere con Google.</string>
+    <string name="google_login_web_option">Accesso Web (Senza certificato SHA)</string>
+    <string name="guest_user">Ospite</string>
+    <string name="login_button_google">Continua con Google</string>
+    <string name="login_button_guest">Continua come ospite</string>
+    <string name="login_desc_main">Organizza le tue attività quotidiane, imposta promemoria intelligenti e mantieni il controllo.</string>
+    <string name="login_description">Accedi con il tuo account Google per sincronizzare le attività in sicurezza su tutti i dispositivi.</string>
+    <string name="login_footer_text">Le tue attività sono salvate in modo privato e sicuro sul tuo dispositivo.</string>
+    <string name="login_google_btn">Continua con Google</string>
+    <string name="login_guest_btn">Inizia ora!</string>
+    <string name="login_perks_title">Perché usare un account?</string>
+    <string name="login_start_btn">Inizia ora!</string>
+    <string name="login_subtitle">Facciamo accadere le cose.</string>
+    <string name="login_tagline">Organizza la tua vita ✨</string>
+    <string name="login_title">Benvenuto su FabiToDo</string>
+    <string name="login_welcome">Benvenuto nella tua Lista</string>
 </resources>

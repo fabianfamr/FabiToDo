@@ -1,193 +1,259 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="settings_info">Ajustes</string>
-    <string name="settings_category_appearance">Apariencia</string>
-    <string name="settings_category_general">General</string>
-    <string name="settings_category_notifications">Notificaciones</string>
-    <string name="settings_section_ai">Funciones Inteligentes</string>
-    <string name="settings_section_organization">Organización</string>
-    <string name="settings_section_account_backup">Cuenta y Respaldo</string>
-
-    <string name="settings_theme_title">Tema visual</string>
-    <string name="settings_theme_desc">Personaliza los colores de FabiToDo a tu gusto.</string>
-    
-    <!-- Theme Names -->
-    <string name="theme_default">Por defecto</string>
-    <string name="theme_dynamic">Dinámico</string>
-    <string name="theme_monochrome">Monocromático</string>
-    <string name="theme_ocean">Océano</string>
-    <string name="theme_forest">Bosque</string>
-    <string name="theme_sunset">Atardecer</string>
-    <string name="theme_lavender">Lavanda</string>
-    <string name="theme_rose">Rosa</string>
-    <string name="theme_amber">Ámbar</string>
-
-    <string name="settings_dark_mode_title">Modo Oscuro</string>
-    <string name="settings_dark_mode_desc">Cambia el aspecto general de la aplicación.</string>
-    <string name="dark_mode_system">Por defecto del sistema</string>
-    <string name="dark_mode_on">Activado</string>
-    <string name="dark_mode_off">Desactivado</string>
-
-    <string name="settings_font_scale_title">Tamaño de la fuente</string>
-    <string name="settings_font_scale_desc">Ajusta el tamaño del texto para leer mejor.</string>
-
-    <!-- General Settings -->
-    <string name="settings_date_format_title">Formato de fecha</string>
-    <string name="settings_date_format_desc">Elige cómo se ven las fechas.</string>
-    
-    <string name="settings_time_format_title">Formato de hora</string>
-    <string name="settings_time_format_desc">Usa un reloj de 12 horas o de 24 horas.</string>
-    <string name="time_format_12">12 Horas (AM/PM)</string>
-    <string name="time_format_24">24 Horas</string>
-
-    <string name="settings_language_title">Idioma</string>
-    <string name="settings_language_desc">Cambia el idioma de FabiToDo.</string>
-
-    <!-- Organization -->
-    <string name="settings_categories_title">Gestionar Categorías</string>
-    <string name="settings_categories_desc">Añade o quita categorías para organizar tus tareas.</string>
-    
-    <string name="settings_default_prio_title">Prioridad por defecto</string>
-    <string name="settings_default_prio_desc">Nivel de prioridad cuando creas una nueva tarea.</string>
-    
-    <string name="settings_default_sort_title">Orden predeterminado</string>
-    <string name="settings_default_sort_desc">Elige cómo quieres ordenar tus tareas por defecto.</string>
-
-    <!-- Notification Settings -->
-    <string name="settings_enable_notif_title">Activar notificaciones</string>
-    <string name="settings_enable_notif_desc">Recibe avisos para que no olvides ninguna tarea.</string>
-    
-    <string name="settings_daily_summary_title">Resumen diario</string>
-    <string name="settings_daily_summary_desc">Recibe un resumen con lo que tienes que hacer hoy.</string>
-    
-    <string name="settings_summary_time_title">Hora del resumen diario</string>
-    <string name="settings_summary_time_desc">¿A qué hora quieres recibir tu resumen?</string>
-
-    <string name="settings_badge_title">Globos de notificación</string>
-    <string name="settings_badge_desc">Muestra un pequeño punto en el ícono de la aplicación.</string>
-
-    <!-- Behavior -->
-    <string name="settings_delete_confirm_title">Confirmar al eliminar</string>
-    <string name="settings_delete_confirm_desc">Pide confirmación antes de borrar una tarea de forma definitiva.</string>
-    
-    <string name="settings_swipe_action_title">Acción al deslizar</string>
-    <string name="settings_swipe_action_desc">Elige qué pasa al deslizar una tarea hacia un lado.</string>
-    <string name="swipe_complete">Completar tarea</string>
-    <string name="swipe_delete">Eliminar tarea</string>
-    <string name="swipe_none">No hacer nada</string>
-
-    <string name="settings_move_completed_title">Mover tareas completadas</string>
-    <string name="settings_move_completed_desc">Manda las tareas que termines al final de la lista de forma automática.</string>
-    
-    <string name="settings_quick_add_title">Notificación para añadir rápido</string>
-    <string name="settings_quick_add_desc">Mantén una notificación fija para crear tareas sin abrir la aplicación.</string>
-    
-    <!-- Account & Backup Settings -->
-    <string name="settings_account_title">Tu cuenta</string>
-    <string name="settings_account_desc">Gestiona cómo inicias sesión en la aplicación.</string>
-
-    <string name="settings_sync_title">Sincronización en la nube</string>
-    <string name="settings_sync_desc">Guarda y sincroniza tus tareas de forma segura usando tu cuenta de Google.</string>
-    
-    <string name="settings_backup_title">Copia de seguridad local</string>
-    <string name="settings_backup_desc">Crea o restaura una copia de tus tareas en este dispositivo.</string>
-
-    <!-- Dialog / UI Strings -->
-    <string name="dialog_cancel">Cancelar</string>
-    <string name="dialog_ok">Aceptar</string>
-    <string name="dialog_save">Guardar</string>
-    
-    <string name="category_manage_add">Añadir nueva categoría</string>
-    <string name="category_manage_empty">No hay categorías personalizadas aún.</string>
-    
-    <string name="category_edit_title">Editar Categoría</string>
-    <string name="category_edit_name">Nombre de la categoría</string>
-    
-    <string name="backup_create_title">Crear copia de seguridad</string>
-    <string name="backup_create_desc">Tus tareas se guardarán de forma segura en un archivo local.</string>
-    <string name="backup_restore_title">Restaurar tareas</string>
-    <string name="backup_restore_desc">Recupera tus tareas a partir de un archivo guardado. (Ojo: esto borrará las que tienes ahora).</string>
-    <string name="backup_btn_create">Crear copia</string>
-    <string name="backup_btn_restore">Restaurar copia</string>
-
-    <!-- App Info -->
-    <string name="settings_section_about">Acerca de</string>
-    <string name="quiet_hours_title">Horas de Silencio</string>
-    <string name="quiet_hours_desc">No sugerir de 10 PM a 8 AM</string>
-    <string name="settings_version_title">Versión de la App</string>
-    <string name="settings_privacy_title">Política de Privacidad</string>
-    <string name="settings_privacy_desc">Lee cómo cuidamos tus datos.</string>
-    <string name="settings_terms_title">Términos de Servicio</string>
-    <string name="settings_terms_desc">Condiciones y reglas de uso.</string>
-    
-    <!-- Biometrics Settings -->
-    <string name="settings_section_security">Seguridad</string>
-    <string name="settings_biometrics_title">Desbloqueo con huella/rostro</string>
-    <string name="settings_biometrics_desc">Pide tu huella o rostro para abrir FabiToDo.</string>
-    
-    <!-- Language Settings -->
-    <string name="lang_sys">Por defecto del sistema</string>
-    <string name="lang_en">English</string>
-    <string name="lang_es">Español</string>
-    <string name="lang_fr">Français</string>
-    <string name="lang_de">Deutsch</string>
-    <string name="lang_it">Italiano</string>
-    <string name="lang_pt">Português</string>
-    <string name="lang_ru">Русский</string>
-    <string name="lang_ja">日本語</string>
-    <string name="lang_ar">العربية</string>
-    <string name="lang_zh">中文</string>
-    
-    <!-- Cloud & Account settings additions -->
     <string name="account_guest">Estás como Invitado</string>
     <string name="account_guest_desc">No has iniciado sesión con ninguna cuenta.</string>
-    <string name="btn_login_google">Vincular con Google</string>
-    <string name="btn_logout">Cerrar sesión</string>
-    <string name="logout_confirmation_title">¿Quieres cerrar sesión?</string>
-    <string name="logout_confirmation_desc">Si cierras sesión, ya no podremos guardar tus cambios en la nube hasta que vuelvas a entrar. Las tareas que crees ahora se quedarán solo en este dispositivo.</string>
-    
-    <string name="sync_status_idle">Tus tareas están sincronizadas y seguras.</string>
-    <string name="sync_status_syncing">Sincronizando tareas…</string>
-    <string name="sync_status_error">No se pudo sincronizar hace poco. ¿Tienes internet?</string>
-    <string name="sync_status_offline">Tus cambios se guardarán cuando te conectes a internet.</string>
-    <string name="sync_status_disabled">La sincronización con la nube está desactivada (Inicia sesión para activarla).</string>
-    <string name="sync_never">Última sincronización: Nunca</string>
-    <string name="sync_last">Última sincronización: %s</string>
-    
-    <string name="toast_manual_sync_success">¡Tareas sincronizadas correctamente!</string>
-    <string name="syncing">Sincronizando…</string>
-    <string name="sync_now">Sincronizar ahora</string>
+    <string name="accounts_active">Activa</string>
+    <string name="accounts_available">Disponible</string>
+    <string name="accounts_connected_desc">Administra tus proveedores vinculados y mantén cada integración bajo control.</string>
+    <string name="accounts_connected_header">Cuentas Vinculadas</string>
+    <string name="accounts_no_linked">Aún no hay cuentas vinculadas</string>
+    <string name="accounts_no_linked_desc">Conecta un proveedor para administrarlo desde esta pantalla.</string>
+    <string name="accounts_title">Cuentas</string>
+    <string name="backup_btn_create">Crear copia</string>
+    <string name="backup_btn_restore">Restaurar copia</string>
+    <string name="backup_create_desc">Tus tareas se guardarán de forma segura en un archivo local.</string>
+    <string name="backup_create_title">Crear copia de seguridad</string>
+    <string name="backup_export_desc">Todas las secciones seleccionadas. Crea un archivo de respaldo .fabiantodo.</string>
+    <string name="backup_export_title">Exportar Copia de Seguridad</string>
+    <string name="backup_how_works_desc">Elige las secciones, exporta un archivo .fabiantodo (Local o Drive) e impórtalo más tarde. Restaurar solo reemplaza las secciones que elijas.</string>
+    <string name="backup_how_works_title">Cómo funcionan las copias de seguridad</string>
+    <string name="backup_import_desc">Explora o selecciona copias de seguridad recientes. Los datos seleccionados reemplazarán los actuales.</string>
+    <string name="backup_import_title">Importar Copia de Seguridad</string>
+    <string name="backup_restore_desc">Recupera tus tareas a partir de un archivo guardado. (Ojo: esto borrará las que tienes ahora).</string>
+    <string name="backup_restore_header">Restaurar Copia de Seguridad</string>
+    <string name="backup_restore_title">Restaurar tareas</string>
+    <string name="backup_select_export">Seleccionar y Exportar</string>
+    <string name="benefit_bg_backup">Respaldo automático</string>
+    <string name="benefit_bg_backup_desc">Nos encargaremos de respaldar tus tareas sin que tengas que hacer nada.</string>
     <string name="benefit_cloud_access">Mantén tus tareas a salvo</string>
     <string name="benefit_cloud_access_desc">Nunca perderás tus tareas, ni aunque pierdas el móvil.</string>
     <string name="benefit_multidevice">Dispositivos sincronizados</string>
     <string name="benefit_multidevice_desc">Accede a tus tareas desde cualquier parte y en cualquier momento.</string>
-    <string name="benefit_bg_backup">Respaldo automático</string>
-    <string name="benefit_bg_backup_desc">Nos encargaremos de respaldar tus tareas sin que tengas que hacer nada.</string>
+    <string name="btn_login_google">Vincular con Google</string>
+    <string name="btn_logout">Cerrar sesión</string>
+    <string name="category_default">Predeterminada</string>
+    <string name="category_edit_name">Nombre de la categoría</string>
+    <string name="category_edit_title">Editar Categoría</string>
+    <string name="category_manage_add">Añadir nueva categoría</string>
+    <string name="category_manage_empty">No hay categorías personalizadas aún.</string>
+    <string name="category_status_custom">Personalizada</string>
+    <string name="category_status_system">Sistema (Fija)</string>
+    <string name="color_system_desc">Tonos dinámicos de Material You basados en el fondo de pantalla.</string>
+    <string name="connect_netease">Conectar Netease</string>
+    <string name="connect_qq_music">Conectar QQ Music</string>
+    <string name="connect_telegram">Conectar Telegram</string>
+    <string name="content_desc_drag_reorder">Arrastrar para reordenar</string>
+    <string name="content_desc_user_avatar">Avatar de usuario</string>
     <string name="danger_zone">Zona de Peligro</string>
+    <string name="dark_mode_off">Desactivado</string>
+    <string name="dark_mode_on">Activado</string>
+    <string name="dark_mode_system">Por defecto del sistema</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_ok">Aceptar</string>
+    <string name="dialog_save">Guardar</string>
+    <string name="google_drive_coming">Google Drive (Próximamente)</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_de_sub">Alemán (Alemania)</string>
+    <string name="lang_en">Inglés</string>
+    <string name="lang_en_sub">Inglés (EE. UU.)</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_es_sub">Español (Latinoamérica / España)</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_fr_sub">Francés (Francia)</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_it_sub">Italiano (Italia)</string>
+    <string name="lang_ja">日本語</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pt_sub">Portugués (Brasil)</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sys">Por defecto del sistema</string>
+    <string name="lang_system_sub">Usar idioma del sistema operativo</string>
+    <string name="lang_zh">中文</string>
+    <string name="logout_confirmation_desc">Si cierras sesión, ya no podremos guardar tus cambios en la nube hasta que vuelvas a entrar. Las tareas que crees ahora se quedarán solo en este dispositivo.</string>
+    <string name="logout_confirmation_title">¿Quieres cerrar sesión?</string>
     <string name="notifications_permission_denied">Permiso de notificaciones denegado. Es posible que los recordatorios no se entreguen.</string>
-
-    <!-- Storage and Cache Management Strings -->
-    <string name="storage_management_title">Gestión de Almacenamiento y Caché</string>
-    <string name="storage_management_desc">Consulta el tamaño de la base de datos, limpia archivos temporales y optimiza el almacenamiento.</string>
-    <string name="storage_db_size">Base de datos</string>
+    <string name="notifications_permission_granted">Permiso de notificaciones del sistema concedido correctamente.</string>
+    <string name="quiet_hours_desc">No sugerir de 10 PM a 8 AM</string>
+    <string name="quiet_hours_title">Horas de Silencio</string>
+    <string name="settings_accent_color_desc">Elige un color de acento vibrante para personalizar alertas, botones y elementos destacados.</string>
+    <string name="settings_account_backed_up_desc">Tu información está respaldada de forma segura en la nube.</string>
+    <string name="settings_account_data_protected">Datos Protegidos</string>
+    <string name="settings_account_desc">Gestiona cómo inicias sesión en la aplicación.</string>
+    <string name="settings_account_register">Registrar Cuenta</string>
+    <string name="settings_account_register_desc">Asocia tu cuenta para disfrutar de sincronización en tiempo real y copias de seguridad automáticas.</string>
+    <string name="settings_account_sync_active">Copia de Seguridad Continua Activa</string>
+    <string name="settings_account_sync_active_desc">Tus tareas están sincronizadas en la nube</string>
+    <string name="settings_account_title">Tu cuenta</string>
+    <string name="settings_app_subtitle">Agenda y Tareas • v4.9</string>
+    <string name="settings_app_title">FabiToDo</string>
+    <string name="settings_appearance_desc">Temas, diseño y personalizaciones visuales</string>
+    <string name="settings_appearance_preview_desc">Cómo se adapta la fila de tareas a tus opciones de apariencia.</string>
+    <string name="settings_backup_desc">Crea o restaura una copia de tus tareas en este dispositivo.</string>
+    <string name="settings_backup_desc_detailed">Protege tus tareas localmente o en la nube para recuperarlas en cualquier momento.</string>
+    <string name="settings_backup_local_desc">Copia de seguridad local sin conexión</string>
+    <string name="settings_backup_title">Copia de seguridad local</string>
+    <string name="settings_backup_title_main">Copia de Seguridad y Restauración</string>
+    <string name="settings_badge_desc">Muestra un pequeño punto en el ícono de la aplicación.</string>
+    <string name="settings_badge_title">Globos de notificación</string>
+    <string name="settings_behavior_desc">Configura las respuestas táctiles y acciones de la lista.</string>
+    <string name="settings_behavior_title">Comportamiento</string>
+    <string name="settings_biometrics_desc">Pide tu huella o rostro para abrir FabiToDo.</string>
+    <string name="settings_biometrics_title">Desbloqueo con huella/rostro</string>
+    <string name="settings_categories_desc">Añade o quita categorías para organizar tus tareas.</string>
+    <string name="settings_categories_desc_detailed">Organiza tus actividades jerárquicamente. Arrastra desde los laterales para reordenar.</string>
+    <string name="settings_categories_title">Gestionar Categorías</string>
+    <string name="settings_category_account">CUENTA</string>
+    <string name="settings_category_appearance">Apariencia</string>
+    <string name="settings_category_general">General</string>
+    <string name="settings_category_notifications">Notificaciones</string>
+    <string name="settings_category_sync">SINCRONIZACIÓN CON GOOGLE DRIVE</string>
+    <string name="settings_confirm_delete_desc">Solicitar confirmación antes de eliminar una tarea definitivamente.</string>
+    <string name="settings_confirm_delete_title">Confirmar al eliminar</string>
+    <string name="settings_daily_summary_desc">Recibe un resumen con lo que tienes que hacer hoy.</string>
+    <string name="settings_daily_summary_title">Resumen diario</string>
+    <string name="settings_dark_mode_desc">Cambia el aspecto general de la aplicación.</string>
+    <string name="settings_dark_mode_title">Modo Oscuro</string>
+    <string name="settings_date_format_desc">Elige cómo se ven las fechas.</string>
+    <string name="settings_date_format_dmy">Día / Mes / Año (Ej: 30/05/26)</string>
+    <string name="settings_date_format_mdy">Mes / Día / Año (Ej: 05/30/26)</string>
+    <string name="settings_date_format_title">Formato de fecha</string>
+    <string name="settings_date_format_ymd">Año / Mes / Día (Ej: 26/05/30)</string>
+    <string name="settings_datetime_desc">Personaliza los formatos de fecha y hora</string>
+    <string name="settings_datetime_title">Fecha y Hora</string>
+    <string name="settings_default_prio_desc">Nivel de prioridad cuando creas una nueva tarea.</string>
+    <string name="settings_default_prio_title">Prioridad por defecto</string>
+    <string name="settings_default_sort_desc">Elige cómo quieres ordenar tus tareas por defecto.</string>
+    <string name="settings_default_sort_title">Orden predeterminado</string>
+    <string name="settings_delete_confirm_desc">Pide confirmación antes de borrar una tarea de forma definitiva.</string>
+    <string name="settings_delete_confirm_title">Confirmar al eliminar</string>
+    <string name="settings_enable_notif_desc">Recibe avisos para que no olvides ninguna tarea.</string>
+    <string name="settings_enable_notif_title">Activar notificaciones</string>
+    <string name="settings_font_scale_desc">Ajusta el tamaño del texto para leer mejor.</string>
+    <string name="settings_font_scale_title">Tamaño de la fuente</string>
+    <string name="settings_info">Ajustes</string>
+    <string name="settings_language_desc">Cambia el idioma de FabiToDo.</string>
+    <string name="settings_language_desc_detailed">Elige tu idioma preferido para la interfaz, formatos de fecha y notificaciones del sistema.</string>
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_long_press_action">Acción al Mantener Pulsado</string>
+    <string name="settings_long_press_desc">Elige qué ocurre al mantener presionada una tarea.</string>
+    <string name="settings_lp_edit">Editar tarea</string>
+    <string name="settings_lp_edit_desc">Abrir el editor flotante para modificar el contenido de la tarea de inmediato.</string>
+    <string name="settings_lp_select">Selección múltiple</string>
+    <string name="settings_lp_select_desc">Entrar en modo de selección múltiple para eliminar, mover o marcar varias tareas.</string>
+    <string name="settings_move_completed_desc">Manda las tareas que termines al final de la lista de forma automática.</string>
+    <string name="settings_move_completed_title">Mover tareas completadas</string>
+    <string name="settings_no_results">No se encontraron ajustes</string>
+    <string name="settings_no_results_tips">Prueba con términos como \\"tema\\", \\"alertas\\", \\"IA\\" o \\"idioma\\"</string>
+    <string name="settings_notifications_auto_desc">Activar recordatorios automáticos</string>
+    <string name="settings_notifications_desc_detailed">Controla cuándo y cómo deseas recibir alertas de tus actividades importantes.</string>
+    <string name="settings_notifications_offset_10080">7 días antes</string>
+    <string name="settings_notifications_offset_1440">1 día antes</string>
+    <string name="settings_notifications_offset_15">15 minutos antes</string>
+    <string name="settings_notifications_offset_2880">2 días antes</string>
+    <string name="settings_notifications_offset_30">30 minutos antes</string>
+    <string name="settings_notifications_offset_4320">3 días antes</string>
+    <string name="settings_notifications_offset_5">5 minutos antes</string>
+    <string name="settings_notifications_offset_5760">4 días antes</string>
+    <string name="settings_notifications_offset_60">1 hora antes</string>
+    <string name="settings_notifications_offset_720">12 horas antes</string>
+    <string name="settings_notifications_offset_7200">5 días antes</string>
+    <string name="settings_notifications_offset_8640">6 días antes</string>
+    <string name="settings_notifications_offset_desc">Con cuántos minutos de anticipación recibirás la notificación.</string>
+    <string name="settings_notifications_offset_exact">A la hora exacta de la tarea</string>
+    <string name="settings_notifications_offset_title">Anticipación Predeterminada</string>
+    <string name="settings_notifications_sound_desc">Reproducir sonido cuando suenen las alarmas.</string>
+    <string name="settings_notifications_sound_title">Sonido de Alerta</string>
+    <string name="settings_notifications_title">Ajustes de Alertas</string>
+    <string name="settings_notifications_vibrate_desc">Activar patrón de vibración del teléfono.</string>
+    <string name="settings_notifications_vibrate_title">Vibración de Recordatorios</string>
+    <string name="settings_privacy_desc">Lee cómo cuidamos tus datos.</string>
+    <string name="settings_privacy_title">Política de Privacidad</string>
+    <string name="settings_quick_add_desc">Mantén una notificación fija para crear tareas sin abrir la aplicación.</string>
+    <string name="settings_quick_add_title">Notificación para añadir rápido</string>
+    <string name="settings_restore_local_desc">Restauración local</string>
+    <string name="settings_search_placeholder">Buscar ajustes…</string>
+    <string name="settings_search_results">Resultados de búsqueda</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_section_account_backup">Cuenta y Respaldo</string>
+    <string name="settings_section_ai">Funciones Inteligentes</string>
+    <string name="settings_section_organization">Organización</string>
+    <string name="settings_section_personalization">Personalización</string>
+    <string name="settings_section_security">Seguridad</string>
+    <string name="settings_sign_out">Cerrar Sesión</string>
+    <string name="settings_snooze_10">Posponer cada 10 minutos</string>
+    <string name="settings_snooze_15">Posponer cada 15 minutos</string>
+    <string name="settings_snooze_30">Posponer cada 30 minutos</string>
+    <string name="settings_snooze_5">Posponer cada 5 minutos</string>
+    <string name="settings_snooze_desc">Tiempo de espera predeterminado al presionar \\'Posponer\\'.</string>
+    <string name="settings_snooze_title">Tiempo de Posposición</string>
+    <string name="settings_summary_time_desc">¿A qué hora quieres recibir tu resumen?</string>
+    <string name="settings_summary_time_title">Hora del resumen diario</string>
+    <string name="settings_swipe_action_desc">Elige qué pasa al deslizar una tarea hacia un lado.</string>
+    <string name="settings_swipe_action_title">Acción al deslizar</string>
+    <string name="settings_sync_auto">Sincronización Automática</string>
+    <string name="settings_sync_button">Conectar y Sincronizar</string>
+    <string name="settings_sync_desc">Guarda y sincroniza tus tareas de forma segura usando tu cuenta de Google.</string>
+    <string name="settings_sync_desc_detailed">Mantén tus tareas y archivos .fabiantodo sincronizados. Activa la sincronización automática.</string>
+    <string name="settings_sync_title">Sincronización en la nube</string>
+    <string name="settings_terms_desc">Condiciones y reglas de uso.</string>
+    <string name="settings_terms_title">Términos de Servicio</string>
+    <string name="settings_theme_desc">Personaliza los colores de FabiToDo a tu gusto.</string>
+    <string name="settings_theme_title">Tema visual</string>
+    <string name="settings_time_format_12h">12 horas - AM/PM (Ej: 02:30 PM)</string>
+    <string name="settings_time_format_24h">24 horas (Ej: 14:30)</string>
+    <string name="settings_time_format_desc">Usa un reloj de 12 horas o de 24 horas.</string>
+    <string name="settings_time_format_title">Formato de hora</string>
+    <string name="settings_trash_1_day">1 día</string>
+    <string name="settings_trash_days_format">%d días</string>
+    <string name="settings_trash_keep_forever">Conservar para siempre</string>
+    <string name="settings_trash_retention_desc">Tiempo que permanecen las tareas en la papelera antes de eliminarse.</string>
+    <string name="settings_trash_retention_title">Retención en papelera</string>
+    <string name="settings_version_title">Versión de la App</string>
+    <string name="settings_vibrate_complete_desc">Produce una respuesta háptica suave al marcar tareas como completadas.</string>
+    <string name="settings_vibrate_complete_title">Vibrar al completar</string>
     <string name="storage_cache_size">Caché temporal</string>
-    <string name="storage_clear_cache">Limpiar caché</string>
-    <string name="storage_optimize_db">Optimizar BD</string>
     <string name="storage_calculating">Calculando…</string>
+    <string name="storage_clear_cache">Limpiar caché</string>
+    <string name="storage_db_size">Base de datos</string>
+    <string name="storage_management_desc">Consulta el tamaño de la base de datos, limpia archivos temporales y optimiza el almacenamiento.</string>
+    <string name="storage_management_title">Gestión de Almacenamiento y Caché</string>
+    <string name="storage_optimize_db">Optimizar BD</string>
+    <string name="swipe_complete">Completar tarea</string>
+    <string name="swipe_delete">Eliminar tarea</string>
+    <string name="swipe_none">No hacer nada</string>
+    <string name="sync_last">Última sincronización: %s</string>
+    <string name="sync_never">Última sincronización: Nunca</string>
+    <string name="sync_now">Sincronizar ahora</string>
+    <string name="sync_status_disabled">La sincronización con la nube está desactivada (Inicia sesión para activarla).</string>
+    <string name="sync_status_error">No se pudo sincronizar hace poco. ¿Tienes internet?</string>
+    <string name="sync_status_idle">Tus tareas están sincronizadas y seguras.</string>
+    <string name="sync_status_offline">Tus cambios se guardarán cuando te conectes a internet.</string>
+    <string name="sync_status_syncing">Sincronizando tareas…</string>
+    <string name="syncing">Sincronizando…</string>
+    <string name="synonyms_account">cuenta usuario invitado perfil avatar cerrar sesión registrarse login nube google</string>
+    <string name="synonyms_ai">ia inteligencia artificial gemini modelo apikey clave inteligente smart</string>
+    <string name="synonyms_appearance">apariencia tema color oscuro claro personalizar diseño estilo acento</string>
+    <string name="synonyms_behavior">comportamiento vibrar toque mantener pulsado clic retroalimentacion papelera gestos</string>
+    <string name="synonyms_categories">categorias listas colores iconos espacio etiquetas personalizadas</string>
+    <string name="synonyms_datetime">fecha hora formato reloj calendario agenda horario</string>
+    <string name="synonyms_language">idioma sistema traduccion espanol ingles lenguajes</string>
+    <string name="synonyms_notifications">notificaciones alertas alarmas sonido efectos opciones recordatorios</string>
+    <string name="synonyms_sync">respaldo copia sincronizacion local drive nube restaurar archivo</string>
+    <string name="theme_amber">Ámbar</string>
+    <string name="theme_default">Por defecto</string>
+    <string name="theme_dynamic">Dinámico</string>
+    <string name="theme_forest">Bosque</string>
+    <string name="theme_lavender">Lavanda</string>
+    <string name="theme_mode_desc">Elige entre claro, oscuro o el ajuste automático del sistema.</string>
+    <string name="theme_monochrome">Monocromático</string>
+    <string name="theme_ocean">Océano</string>
+    <string name="theme_rose">Rosa</string>
+    <string name="theme_sunset">Atardecer</string>
+    <string name="time_format_12">12 Horas (AM/PM)</string>
+    <string name="time_format_24">24 Horas</string>
     <string name="toast_cache_cleared">¡Caché temporal eliminada correctamente!</string>
     <string name="toast_db_optimized">¡Base de datos compactada y optimizada con éxito!</string>
-
-    <string name="settings_datetime_title">Fecha y Hora</string>
-    <string name="settings_datetime_desc">Personaliza los formatos de fecha y hora</string>
-    <string name="settings_behavior_title">Comportamiento</string>
-    <string name="settings_behavior_desc">Configura las respuestas táctiles y acciones de la lista.</string>
-    <string name="settings_confirm_delete_title">Confirmar al eliminar</string>
-    <string name="settings_confirm_delete_desc">Solicitar confirmación antes de eliminar una tarea definitivamente.</string>
-    <string name="settings_vibrate_complete_title">Vibrar al completar</string>
-    <string name="settings_vibrate_complete_desc">Produce una respuesta háptica suave al marcar tareas como completadas.</string>
-    <string name="settings_trash_retention_title">Retención en papelera</string>
-    <string name="settings_trash_retention_desc">Tiempo que permanecen las tareas en la papelera antes de eliminarse.</string>
-    <string name="settings_trash_keep_forever">Conservar para siempre</string>
-    <string name="settings_trash_days_format">%d días</string>
-    <string name="settings_trash_1_day">1 día</string>
+    <string name="toast_manual_sync_success">¡Tareas sincronizadas correctamente!</string>
+    <string name="understood">Entendido</string>
 </resources>

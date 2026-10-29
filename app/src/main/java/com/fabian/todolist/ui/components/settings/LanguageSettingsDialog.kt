@@ -72,6 +72,7 @@ fun LanguageSettingsDialog(
                         "system" to (R.string.lang_system to "🌐"),
                         "es" to (null to "🇪🇸"),
                         "en" to (null to "🇺🇸"),
+                        "pt" to (null to "🇧🇷"),
                         "fr" to (null to "🇫🇷"),
                         "de" to (null to "🇩🇪"),
                         "it" to (null to "🇮🇹")
@@ -82,6 +83,7 @@ fun LanguageSettingsDialog(
                         val localeLabel = when (code) {
                             "es" -> "Español"
                             "en" -> "English"
+                            "pt" -> "Português"
                             "fr" -> "Français"
                             "de" -> "Deutsch"
                             "it" -> "Italiano"
@@ -91,6 +93,7 @@ fun LanguageSettingsDialog(
                         val localizedSubtitle = when (code) {
                             "es" -> stringResource(R.string.lang_es_sub)
                             "en" -> stringResource(R.string.lang_en_sub)
+                            "pt" -> stringResource(R.string.lang_pt_sub)
                             "fr" -> stringResource(R.string.lang_fr_sub)
                             "de" -> stringResource(R.string.lang_de_sub)
                             "it" -> stringResource(R.string.lang_it_sub)

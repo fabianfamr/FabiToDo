@@ -1,166 +1,259 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="settings_info">Impostazioni</string>
-    <string name="settings_category_appearance">Aspetto</string>
-    <string name="settings_category_general">Generale</string>
-    <string name="settings_category_notifications">Notifiche</string>
-    <string name="settings_section_ai">Funzioni Intelligenti</string>
-    <string name="settings_section_organization">Organizzazione</string>
-    <string name="settings_section_account_backup">Account e Backup</string>
-
-    <string name="settings_theme_title">Tema colori</string>
-    <string name="settings_theme_desc">Personalizza i colori di FabiToDo.</string>
-    
-    <!-- Theme Names -->
-    <string name="theme_default">Predefinito</string>
-    <string name="theme_dynamic">Dinamico</string>
-    <string name="theme_monochrome">Monocromatico</string>
-    <string name="theme_ocean">Oceano</string>
-    <string name="theme_forest">Foresta</string>
-    <string name="theme_sunset">Tramonto</string>
-    <string name="theme_lavender">Lavanda</string>
-    <string name="theme_rose">Rosa</string>
-    <string name="theme_amber">Ambra</string>
-
-    <string name="settings_dark_mode_title">Modalità Scura</string>
-    <string name="settings_dark_mode_desc">Cambia l\'aspetto generale dell\'app.</string>
-    <string name="dark_mode_system">Predefinito di sistema</string>
-    <string name="dark_mode_on">Attiva</string>
-    <string name="dark_mode_off">Disattiva</string>
-
-    <string name="settings_font_scale_title">Dimensione testo</string>
-    <string name="settings_font_scale_desc">Regola la dimensione per leggere meglio.</string>
-
-    <!-- General Settings -->
-    <string name="settings_date_format_title">Formato data</string>
-    <string name="settings_date_format_desc">Scegli come visualizzare le date.</string>
-    
-    <string name="settings_time_format_title">Formato ora</string>
-    <string name="settings_time_format_desc">Usa un orologio a 12 o 24 ore.</string>
-    <string name="time_format_12">12 Ore (AM/PM)</string>
-    <string name="time_format_24">24 Ore</string>
-
-    <string name="settings_language_title">Lingua</string>
-    <string name="settings_language_desc">Cambia la lingua di FabiToDo.</string>
-
-    <!-- Organization -->
-    <string name="settings_categories_title">Gestisci categorie</string>
-    <string name="settings_categories_desc">Aggiungi o rimuovi categorie per le tue attività.</string>
-    
-    <string name="settings_default_prio_title">Priorità predefinita</string>
-    <string name="settings_default_prio_desc">Livello di priorità per le nuove attività.</string>
-    
-    <string name="settings_default_sort_title">Ordinamento predefinito</string>
-    <string name="settings_default_sort_desc">Scegli come vuoi ordinare le tue attività.</string>
-
-    <!-- Notification Settings -->
-    <string name="settings_enable_notif_title">Attiva le notifiche</string>
-    <string name="settings_enable_notif_desc">Ricevi promemoria per non dimenticare nulla.</string>
-    
-    <string name="settings_daily_summary_title">Riepilogo giornaliero</string>
-    <string name="settings_daily_summary_desc">Ricevi un riepilogo con le cose da fare oggi.</string>
-    
-    <string name="settings_summary_time_title">Ora del riepilogo</string>
-    <string name="settings_summary_time_desc">A che ora vuoi riceverlo?</string>
-
-    <string name="settings_badge_title">Puntini di notifica</string>
-    <string name="settings_badge_desc">Mostra un piccolo punto sull\'icona dell\'app.</string>
-
-    <!-- Behavior -->
-    <string name="settings_delete_confirm_title">Conferma l\'eliminazione</string>
-    <string name="settings_delete_confirm_desc">Chiedi conferma prima di eliminare definitivamente un\'attività.</string>
-    
-    <string name="settings_swipe_action_title">Azione scorrimento</string>
-    <string name="settings_swipe_action_desc">Scegli cosa succede scorrendo un\'attività di lato.</string>
-    <string name="swipe_complete">Completa attività</string>
-    <string name="swipe_delete">Elimina attività</string>
-    <string name="swipe_none">Nessuna azione</string>
-
-    <string name="settings_move_completed_title">Sposta attività completate</string>
-    <string name="settings_move_completed_desc">Manda automaticamente le attività finite in fondo alla lista.</string>
-    
-    <string name="settings_quick_add_title">Aggiunta rapida</string>
-    <string name="settings_quick_add_desc">Mantieni una notifica fissa per creare attività rapidamente.</string>
-    
-    <!-- Account & Backup Settings -->
-    <string name="settings_account_title">Il tuo account</string>
-    <string name="settings_account_desc">Gestisci l\'accesso all\'app.</string>
-
-    <string name="settings_sync_title">Sincronizzazione Cloud</string>
-    <string name="settings_sync_desc">Salva e sincronizza le tue attività con Google.</string>
-    
-    <string name="settings_backup_title">Backup locale</string>
-    <string name="settings_backup_desc">Crea o ripristina una copia sul tuo dispositivo.</string>
-
-    <!-- Dialog / UI Strings -->
-    <string name="dialog_cancel">Annulla</string>
-    <string name="dialog_ok">OK</string>
-    <string name="dialog_save">Salva</string>
-    
-    <string name="category_manage_add">Aggiungi categoria</string>
-    <string name="category_manage_empty">Nessuna categoria personalizzata.</string>
-    
-    <string name="category_edit_title">Modifica Categoria</string>
-    <string name="category_edit_name">Nome della categoria</string>
-    
-    <string name="backup_create_title">Crea backup</string>
-    <string name="backup_create_desc">Le tue attività verranno salvate in un file sul telefono.</string>
-    <string name="backup_restore_title">Ripristina attività</string>
-    <string name="backup_restore_desc">Recupera le attività da un file salvato. (Attenzione, le attività attuali verranno sovrascritte).</string>
+    <string name="account_guest">Sei un Ospite</string>
+    <string name="account_guest_desc">Non hai effettuato l\\\'accesso con nessun account.</string>
+    <string name="accounts_active">Attivo</string>
+    <string name="accounts_available">Disponibile</string>
+    <string name="accounts_connected_desc">Gestisci i provider collegati e mantieni il controllo di ogni integrazione.</string>
+    <string name="accounts_connected_header">Account Collegati</string>
+    <string name="accounts_no_linked">Nessun account ancora collegato</string>
+    <string name="accounts_no_linked_desc">Collega un provider per gestirlo da questa schermata.</string>
+    <string name="accounts_title">Account</string>
     <string name="backup_btn_create">Crea backup</string>
     <string name="backup_btn_restore">Ripristina</string>
-
-    <!-- App Info -->
-    <string name="settings_section_about">Informazioni</string>
-    <string name="settings_version_title">Versione dell\'App</string>
-    <string name="settings_privacy_title">Informativa sulla privacy</string>
-    <string name="settings_privacy_desc">Leggi come proteggiamo i tuoi dati.</string>
-    <string name="settings_terms_title">Termini di Servizio</string>
-    <string name="settings_terms_desc">Regole di utilizzo.</string>
-    
-    <!-- Biometrics Settings -->
-    <string name="settings_section_security">Sicurezza</string>
-    <string name="settings_biometrics_title">Sblocco con impronta</string>
-    <string name="settings_biometrics_desc">Richiede impronta o volto per aprire FabiToDo.</string>
-    
-    <!-- Language Settings -->
-    <string name="lang_sys">Predefinito di sistema</string>
-    <string name="lang_en">English</string>
-    <string name="lang_es">Español</string>
-    <string name="lang_fr">Français</string>
-    <string name="lang_de">Deutsch</string>
-    <string name="lang_it">Italiano</string>
-    <string name="lang_pt">Português</string>
-    <string name="lang_ru">Русский</string>
-    <string name="lang_ja">日本語</string>
-    <string name="lang_ar">العربية</string>
-    <string name="lang_zh">中文</string>
-    
-    <!-- Cloud & Account settings additions -->
-    <string name="account_guest">Sei un Ospite</string>
-    <string name="account_guest_desc">Non hai effettuato l\'accesso con nessun account.</string>
-    <string name="btn_login_google">Collega a Google</string>
-    <string name="btn_logout">Esci</string>
-    <string name="logout_confirmation_title">Vuoi uscire?</string>
-    <string name="logout_confirmation_desc">Se esci, non salveremo più le tue modifiche nel cloud. Le attività che creerai rimarranno solo su questo dispositivo.</string>
-    
-    <string name="sync_status_idle">Le tue attività sono sincronizzate e al sicuro.</string>
-    <string name="sync_status_syncing">Sincronizzazione in corso…</string>
-    <string name="sync_status_error">Impossibile sincronizzare. Hai internet?</string>
-    <string name="sync_status_offline">Le tue modifiche verranno salvate appena sarai online.</string>
-    <string name="sync_status_disabled">La sincronizzazione è disattivata (Accedi per attivarla).</string>
-    <string name="sync_never">Ultima sincro: Mai</string>
-    <string name="sync_last">Ultima sincro: %s</string>
-    
-    <string name="toast_manual_sync_success">Attività sincronizzate con successo!</string>
-    <string name="syncing">Sincronizzazione…</string>
-    <string name="sync_now">Sincronizza ora</string>
+    <string name="backup_create_desc">Le tue attività verranno salvate in un file sul telefono.</string>
+    <string name="backup_create_title">Crea backup</string>
+    <string name="backup_export_desc">Tutte le sezioni selezionate. Crea un file di backup .fabiantodo.</string>
+    <string name="backup_export_title">Esporta Backup</string>
+    <string name="backup_how_works_desc">Scegli le sezioni, esporta un file .fabiantodo e importalo in seguito.</string>
+    <string name="backup_how_works_title">Come funziona il backup</string>
+    <string name="backup_import_desc">Seleziona tra i backup recenti per ripristinare i tuoi dati.</string>
+    <string name="backup_import_title">Importa Backup</string>
+    <string name="backup_restore_desc">Recupera le attività da un file salvato. (Attenzione, le attività attuali verranno sovrascritte).</string>
+    <string name="backup_restore_header">Ripristina Backup</string>
+    <string name="backup_restore_title">Ripristina attività</string>
+    <string name="backup_select_export">Seleziona ed Esporta</string>
+    <string name="benefit_bg_backup">Backup automatico</string>
+    <string name="benefit_bg_backup_desc">Penseremo noi a fare il backup delle tue attività.</string>
     <string name="benefit_cloud_access">Mantieni le attività al sicuro</string>
     <string name="benefit_cloud_access_desc">Non perdere mai le tue attività, neanche se perdi il telefono.</string>
     <string name="benefit_multidevice">Sincronizzati ovunque</string>
     <string name="benefit_multidevice_desc">Accedi alle tue attività da qualsiasi luogo.</string>
-    <string name="benefit_bg_backup">Backup automatico</string>
-    <string name="benefit_bg_backup_desc">Penseremo noi a fare il backup delle tue attività.</string>
+    <string name="btn_login_google">Collega a Google</string>
+    <string name="btn_logout">Esci</string>
+    <string name="category_default">Predefinita</string>
+    <string name="category_edit_name">Nome della categoria</string>
+    <string name="category_edit_title">Modifica Categoria</string>
+    <string name="category_manage_add">Aggiungi categoria</string>
+    <string name="category_manage_empty">Nessuna categoria personalizzata.</string>
+    <string name="category_status_custom">Personalizzata</string>
+    <string name="category_status_system">Sistema (Fissa)</string>
+    <string name="color_system_desc">Colori dinamici Material You basati sullo sfondo.</string>
+    <string name="connect_netease">Collega Netease</string>
+    <string name="connect_qq_music">Collega QQ Music</string>
+    <string name="connect_telegram">Collega Telegram</string>
+    <string name="content_desc_drag_reorder">Trascina per riordinare</string>
+    <string name="content_desc_user_avatar">Avatar utente</string>
     <string name="danger_zone">Zona Pericolosa</string>
+    <string name="dark_mode_off">Disattiva</string>
+    <string name="dark_mode_on">Attiva</string>
+    <string name="dark_mode_system">Predefinito di sistema</string>
+    <string name="dialog_cancel">Annulla</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_save">Salva</string>
+    <string name="google_drive_coming">Google Drive (Prossimamente)</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_de_sub">Tedesco (Germania)</string>
+    <string name="lang_en">Inglese</string>
+    <string name="lang_en_sub">Inglese (USA)</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_es_sub">Spagnolo (America Latina / Spagna)</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_fr_sub">Francese (Francia)</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_it_sub">Italiano (Italia)</string>
+    <string name="lang_ja">日本語</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pt_sub">Portoghese (Brasile)</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_sys">Predefinito di sistema</string>
+    <string name="lang_system_sub">Usa lingua del sistema operativo</string>
+    <string name="lang_zh">中文</string>
+    <string name="logout_confirmation_desc">Se esci, non salveremo più le tue modifiche nel cloud. Le attività che creerai rimarranno solo su questo dispositivo.</string>
+    <string name="logout_confirmation_title">Vuoi uscire?</string>
     <string name="notifications_permission_denied">Autorizzazione notifiche negata. I promemoria potrebbero non essere consegnati.</string>
+    <string name="notifications_permission_granted">Autorizzazione per le notifiche concessa con successo.</string>
+    <string name="quiet_hours_desc">Do not suggest from 10 PM to 8 AM</string>
+    <string name="quiet_hours_title">Quiet Hours</string>
+    <string name="settings_accent_color_desc">Scegli un colore di accento per personalizzare notifiche, pulsanti ed elementi in risalto.</string>
+    <string name="settings_account_backed_up_desc">Le tue informazioni sono salvate in modo sicuro nel cloud.</string>
+    <string name="settings_account_data_protected">Dati Protetti</string>
+    <string name="settings_account_desc">Gestisci l\\\'accesso all\\\'app.</string>
+    <string name="settings_account_register">Registra Account</string>
+    <string name="settings_account_register_desc">Associa il tuo account per la sincronizzazione in tempo reale e backup automatici.</string>
+    <string name="settings_account_sync_active">Backup Continuo Attivo</string>
+    <string name="settings_account_sync_active_desc">Le tue attività sono sincronizzate nel cloud</string>
+    <string name="settings_account_title">Il tuo account</string>
+    <string name="settings_app_subtitle">Agenda &amp; Attività • v4.9</string>
+    <string name="settings_app_title">FabiToDo</string>
+    <string name="settings_appearance_desc">Temi, layout e personalizzazioni visive</string>
+    <string name="settings_appearance_preview_desc">Anteprima dell\\'aspetto delle tue attività.</string>
+    <string name="settings_backup_desc">Crea o ripristina una copia sul tuo dispositivo.</string>
+    <string name="settings_backup_desc_detailed">Proteggi le tue attività localmente o nel cloud.</string>
+    <string name="settings_backup_local_desc">Backup locale offline</string>
+    <string name="settings_backup_title">Backup locale</string>
+    <string name="settings_backup_title_main">Backup &amp; Ripristino</string>
+    <string name="settings_badge_desc">Mostra un piccolo punto sull\\\'icona dell\\\'app.</string>
+    <string name="settings_badge_title">Puntini di notifica</string>
+    <string name="settings_behavior_desc">Configure the touch response of the task list.</string>
+    <string name="settings_behavior_title">Behavior</string>
+    <string name="settings_biometrics_desc">Richiede impronta o volto per aprire FabiToDo.</string>
+    <string name="settings_biometrics_title">Sblocco con impronta</string>
+    <string name="settings_categories_desc">Aggiungi o rimuovi categorie per le tue attività.</string>
+    <string name="settings_categories_desc_detailed">Organizza le attività in modo gerarchico.</string>
+    <string name="settings_categories_title">Gestisci categorie</string>
+    <string name="settings_category_account">ACCOUNT</string>
+    <string name="settings_category_appearance">Aspetto</string>
+    <string name="settings_category_general">Generale</string>
+    <string name="settings_category_notifications">Notifiche</string>
+    <string name="settings_category_sync">SINCRONIZZAZIONE GOOGLE DRIVE</string>
+    <string name="settings_confirm_delete_desc">Request confirmation before permanently deleting a task.</string>
+    <string name="settings_confirm_delete_title">Confirm deletion</string>
+    <string name="settings_daily_summary_desc">Ricevi un riepilogo con le cose da fare oggi.</string>
+    <string name="settings_daily_summary_title">Riepilogo giornaliero</string>
+    <string name="settings_dark_mode_desc">Cambia l\\\'aspetto generale dell\\\'app.</string>
+    <string name="settings_dark_mode_title">Modalità Scura</string>
+    <string name="settings_date_format_desc">Scegli come visualizzare le date.</string>
+    <string name="settings_date_format_dmy">Giorno / Mese / Anno (Es: 30/05/26)</string>
+    <string name="settings_date_format_mdy">Mese / Giorno / Anno (Es: 05/30/26)</string>
+    <string name="settings_date_format_title">Formato data</string>
+    <string name="settings_date_format_ymd">Anno / Mese / Giorno (Es: 26/05/30)</string>
+    <string name="settings_datetime_desc">Customize date and time formats</string>
+    <string name="settings_datetime_title">Date &amp; Time</string>
+    <string name="settings_default_prio_desc">Livello di priorità per le nuove attività.</string>
+    <string name="settings_default_prio_title">Priorità predefinita</string>
+    <string name="settings_default_sort_desc">Scegli come vuoi ordinare le tue attività.</string>
+    <string name="settings_default_sort_title">Ordinamento predefinito</string>
+    <string name="settings_delete_confirm_desc">Chiedi conferma prima di eliminare definitivamente un\\\'attività.</string>
+    <string name="settings_delete_confirm_title">Conferma l\\\'eliminazione</string>
+    <string name="settings_enable_notif_desc">Ricevi promemoria per non dimenticare nulla.</string>
+    <string name="settings_enable_notif_title">Attiva le notifiche</string>
+    <string name="settings_font_scale_desc">Regola la dimensione per leggere meglio.</string>
+    <string name="settings_font_scale_title">Dimensione testo</string>
+    <string name="settings_info">Impostazioni</string>
+    <string name="settings_language_desc">Cambia la lingua di FabiToDo.</string>
+    <string name="settings_language_desc_detailed">Scegli la lingua preferita per l\\'interfaccia, i formati data e le notifiche.</string>
+    <string name="settings_language_title">Lingua</string>
+    <string name="settings_long_press_action">Azione Pressione Prolungata</string>
+    <string name="settings_long_press_desc">Scegli cosa accade tenendo premuta un\\'attività.</string>
+    <string name="settings_lp_edit">Modifica attività</string>
+    <string name="settings_lp_edit_desc">Apri l\\'editor per modificare subito il contenuto dell\\'attività.</string>
+    <string name="settings_lp_select">Selezione multipla</string>
+    <string name="settings_lp_select_desc">Attiva la selezione multipla per eliminare o spostare più attività.</string>
+    <string name="settings_move_completed_desc">Manda automaticamente le attività finite in fondo alla lista.</string>
+    <string name="settings_move_completed_title">Sposta attività completate</string>
+    <string name="settings_no_results">Nessuna impostazione trovata</string>
+    <string name="settings_no_results_tips">Prova termini come \\"tema\\", \\"allarmi\\", \\"IA\\" o \\"lingua\\"</string>
+    <string name="settings_notifications_auto_desc">Attiva promemoria automatici</string>
+    <string name="settings_notifications_desc_detailed">Controlla quando e come ricevere promemoria per le attività importanti.</string>
+    <string name="settings_notifications_offset_10080">7 giorni prima</string>
+    <string name="settings_notifications_offset_1440">1 giorno prima</string>
+    <string name="settings_notifications_offset_15">15 minuti prima</string>
+    <string name="settings_notifications_offset_2880">2 giorni prima</string>
+    <string name="settings_notifications_offset_30">30 minuti prima</string>
+    <string name="settings_notifications_offset_4320">3 giorni prima</string>
+    <string name="settings_notifications_offset_5">5 minuti prima</string>
+    <string name="settings_notifications_offset_5760">4 giorni prima</string>
+    <string name="settings_notifications_offset_60">1 ora prima</string>
+    <string name="settings_notifications_offset_720">12 ore prima</string>
+    <string name="settings_notifications_offset_7200">5 giorni prima</string>
+    <string name="settings_notifications_offset_8640">6 giorni prima</string>
+    <string name="settings_notifications_offset_desc">Con quanti minuti di anticipo ricevere la notifica.</string>
+    <string name="settings_notifications_offset_exact">All\\'ora esatta dell\\'attività</string>
+    <string name="settings_notifications_offset_title">Anticipo Predefinito</string>
+    <string name="settings_notifications_sound_desc">Riproduci suono per gli avvisi.</string>
+    <string name="settings_notifications_sound_title">Suono Avviso</string>
+    <string name="settings_notifications_title">Impostazioni Avvisi</string>
+    <string name="settings_notifications_vibrate_desc">Attiva la vibrazione per i promemoria.</string>
+    <string name="settings_notifications_vibrate_title">Vibrazione</string>
+    <string name="settings_privacy_desc">Leggi come proteggiamo i tuoi dati.</string>
+    <string name="settings_privacy_title">Informativa sulla privacy</string>
+    <string name="settings_quick_add_desc">Mantieni una notifica fissa per creare attività rapidamente.</string>
+    <string name="settings_quick_add_title">Aggiunta rapida</string>
+    <string name="settings_restore_local_desc">Ripristino locale</string>
+    <string name="settings_search_placeholder">Cerca impostazioni…</string>
+    <string name="settings_search_results">Risultati della ricerca</string>
+    <string name="settings_section_about">Informazioni</string>
+    <string name="settings_section_account_backup">Account e Backup</string>
+    <string name="settings_section_ai">Funzioni Intelligenti</string>
+    <string name="settings_section_organization">Organizzazione</string>
+    <string name="settings_section_personalization">Personalizzazione</string>
+    <string name="settings_section_security">Sicurezza</string>
+    <string name="settings_sign_out">Esci</string>
+    <string name="settings_snooze_10">Posponi ogni 10 minuti</string>
+    <string name="settings_snooze_15">Posponi ogni 15 minuti</string>
+    <string name="settings_snooze_30">Posponi ogni 30 minuti</string>
+    <string name="settings_snooze_5">Posponi ogni 5 minuti</string>
+    <string name="settings_snooze_desc">Tempo di attesa predefinito quando premi \\'Posponi\\'.</string>
+    <string name="settings_snooze_title">Intervallo Posponi</string>
+    <string name="settings_summary_time_desc">A che ora vuoi riceverlo?</string>
+    <string name="settings_summary_time_title">Ora del riepilogo</string>
+    <string name="settings_swipe_action_desc">Scegli cosa succede scorrendo un\\\'attività di lato.</string>
+    <string name="settings_swipe_action_title">Azione scorrimento</string>
+    <string name="settings_sync_auto">Sincronizzazione Automatica</string>
+    <string name="settings_sync_button">Connetti e Sincronizza</string>
+    <string name="settings_sync_desc">Salva e sincronizza le tue attività con Google.</string>
+    <string name="settings_sync_desc_detailed">Mantieni sincronizzate le tue attività.</string>
+    <string name="settings_sync_title">Sincronizzazione Cloud</string>
+    <string name="settings_terms_desc">Regole di utilizzo.</string>
+    <string name="settings_terms_title">Termini di Servizio</string>
+    <string name="settings_theme_desc">Personalizza i colori di FabiToDo.</string>
+    <string name="settings_theme_title">Tema colori</string>
+    <string name="settings_time_format_12h">12 ore - AM/PM (Es: 02:30 PM)</string>
+    <string name="settings_time_format_24h">24 ore (Es: 14:30)</string>
+    <string name="settings_time_format_desc">Usa un orologio a 12 o 24 ore.</string>
+    <string name="settings_time_format_title">Formato ora</string>
+    <string name="settings_trash_1_day">1 day</string>
+    <string name="settings_trash_days_format">%d days</string>
+    <string name="settings_trash_keep_forever">Keep forever</string>
+    <string name="settings_trash_retention_desc">How long tasks stay in the Trash before being deleted permanently.</string>
+    <string name="settings_trash_retention_title">Trash retention period</string>
+    <string name="settings_version_title">Versione dell\\\'App</string>
+    <string name="settings_vibrate_complete_desc">Produce a subtle haptic feedback when marking tasks as completed.</string>
+    <string name="settings_vibrate_complete_title">Vibrate on complete</string>
+    <string name="storage_cache_size">Temporary cache</string>
+    <string name="storage_calculating">Calculating…</string>
+    <string name="storage_clear_cache">Clear cache</string>
+    <string name="storage_db_size">Database size</string>
+    <string name="storage_management_desc">Manage database size, clear temporary cache and optimize storage.</string>
+    <string name="storage_management_title">Storage &amp; Cache</string>
+    <string name="storage_optimize_db">Optimize DB</string>
+    <string name="swipe_complete">Completa attività</string>
+    <string name="swipe_delete">Elimina attività</string>
+    <string name="swipe_none">Nessuna azione</string>
+    <string name="sync_last">Ultima sincro: %s</string>
+    <string name="sync_never">Ultima sincro: Mai</string>
+    <string name="sync_now">Sincronizza ora</string>
+    <string name="sync_status_disabled">La sincronizzazione è disattivata (Accedi per attivarla).</string>
+    <string name="sync_status_error">Impossibile sincronizzare. Hai internet?</string>
+    <string name="sync_status_idle">Le tue attività sono sincronizzate e al sicuro.</string>
+    <string name="sync_status_offline">Le tue modifiche verranno salvate appena sarai online.</string>
+    <string name="sync_status_syncing">Sincronizzazione in corso…</string>
+    <string name="syncing">Sincronizzazione…</string>
+    <string name="synonyms_account">account utente ospite profilo avatar disconnetti registra login cloud google</string>
+    <string name="synonyms_ai">ia intelligenza artificiale gemini modello chiave smart</string>
+    <string name="synonyms_appearance">aspetto tema colore scuro chiaro personalizza stile accento</string>
+    <string name="synonyms_behavior">comportamento vibrazione tocco pressione clic feedback cestino gesti</string>
+    <string name="synonyms_categories">categorie elenchi colori icone personalizzate</string>
+    <string name="synonyms_datetime">data ora formato orologio calendario orario</string>
+    <string name="synonyms_language">lingua sistema traduzione italiano inglese lingue</string>
+    <string name="synonyms_notifications">notifiche avvisi allarmi suono promemoria</string>
+    <string name="synonyms_sync">backup sincronizzazione locale drive cloud ripristino</string>
+    <string name="theme_amber">Ambra</string>
+    <string name="theme_default">Predefinito</string>
+    <string name="theme_dynamic">Dinamico</string>
+    <string name="theme_forest">Foresta</string>
+    <string name="theme_lavender">Lavanda</string>
+    <string name="theme_mode_desc">Scegli tra chiaro, scuro o impostazione di sistema.</string>
+    <string name="theme_monochrome">Monocromatico</string>
+    <string name="theme_ocean">Oceano</string>
+    <string name="theme_rose">Rosa</string>
+    <string name="theme_sunset">Tramonto</string>
+    <string name="time_format_12">12 Ore (AM/PM)</string>
+    <string name="time_format_24">24 Ore</string>
+    <string name="toast_cache_cleared">Temporary cache cleared successfully!</string>
+    <string name="toast_db_optimized">Database compacted and optimized successfully!</string>
+    <string name="toast_manual_sync_success">Attività sincronizzate con successo!</string>
+    <string name="understood">Ho capito</string>
 </resources>

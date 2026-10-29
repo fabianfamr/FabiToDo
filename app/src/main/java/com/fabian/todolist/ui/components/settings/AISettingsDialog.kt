@@ -623,7 +623,7 @@ fun AISettingsDialog(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Check,
-                                                    contentDescription = "Success",
+                                                    contentDescription = stringResource(R.string.desc_success),
                                                     tint = Color.White,
                                                     modifier = Modifier.size(16.dp)
                                                 )
@@ -736,7 +736,7 @@ fun AISettingsDialog(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Error,
-                                                    contentDescription = "Error",
+                                                    contentDescription = stringResource(R.string.desc_error),
                                                     tint = MaterialTheme.colorScheme.onErrorContainer,
                                                     modifier = Modifier.padding(top = 2.dp)
                                                 )

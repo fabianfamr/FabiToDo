@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Verificando sua conta…</string>
+    <string name="auth_state_error">Problema de autenticação: %s</string>
+    <string name="auth_state_success">Bem-vindo de volta!</string>
+    <string name="desc_error">Erro</string>
+    <string name="desc_priority">Prioridade</string>
+    <string name="desc_safe_storage">Armazenamento seguro</string>
+    <string name="desc_success">Sucesso</string>
+    <string name="desc_task_done">Tarefa concluída</string>
+    <string name="error_empty_credentials">Por favor, insira o e-mail e a senha.</string>
+    <string name="error_google_login">Não foi possível carregar as contas Google</string>
+    <string name="error_login_canceled">Login cancelado</string>
+    <string name="error_no_accounts">Nenhuma credencial Google detectada. Você pode continuar como Visitante ou acessar via Web.</string>
+    <string name="error_password_too_short">A senha deve ter pelo menos 6 caracteres.</string>
+    <string name="google_btn_loading">Conectando…</string>
+    <string name="google_feat_backup">Backups automáticos na nuvem</string>
+    <string name="google_feat_secure">Armazenamento seguro na nuvem</string>
+    <string name="google_feat_sync">Suas tarefas em todos os seus dispositivos</string>
+    <string name="google_login_button">Entrar com Google ID</string>
+    <string name="google_login_desc">Sincronize suas tarefas instantaneamente e com segurança em todos os seus dispositivos com backups automáticos na nuvem.</string>
+    <string name="google_login_footer">Autenticação segura via Google Play Services</string>
+    <string name="google_login_guest_fallback_button">Continuar como Visitante (Modo Local)</string>
+    <string name="google_login_guest_fallback_desc">Nenhuma conta ativa foi encontrada. Você pode continuar como Visitante para salvar suas tarefas localmente.</string>
+    <string name="google_login_guest_fallback_title">Conta Google não detectada</string>
+    <string name="google_login_title">Acesso Seguro</string>
+    <string name="google_login_web_desc">Abra o navegador seguro para entrar com o Google sem necessidade de certificados SHA registrados.</string>
+    <string name="google_login_web_option">Acesso Web (Sem necessidade de SHA)</string>
+    <string name="guest_user">Visitante</string>
+    <string name="login_button_google">Continuar com Google</string>
+    <string name="login_button_guest">Continuar como visitante</string>
+    <string name="login_desc_main">Organize suas tarefas diárias, configure lembretes inteligentes e mantenha tudo sob controle sem estresse.</string>
+    <string name="login_description">Entre com sua conta Google para sincronizar suas tarefas com segurança em todos os seus dispositivos.</string>
+    <string name="login_footer_text">Suas tarefas são armazenadas de forma privada e segura no seu dispositivo.</string>
+    <string name="login_google_btn">Continuar com Google</string>
+    <string name="login_guest_btn">Começar!</string>
+    <string name="login_perks_title">Por que usar uma conta?</string>
+    <string name="login_start_btn">Começar!</string>
+    <string name="login_subtitle">Vamos fazer acontecer.</string>
+    <string name="login_tagline">Organize sua vida ✨</string>
+    <string name="login_title">Boas-vindas ao FabiToDo</string>
+    <string name="login_welcome">Boas-vindas à sua Lista</string>
+</resources>
