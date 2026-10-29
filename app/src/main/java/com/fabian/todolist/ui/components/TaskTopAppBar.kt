@@ -4,9 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,10 @@ fun TaskTopAppBar(
     onSortClick: () -> Unit,
     onToggleSearch: () -> Unit,
     onStatsClick: () -> Unit,
+    onCalendarClick: () -> Unit = {},
+    isCalendarActive: Boolean = false,
+    isDualPane: Boolean = false,
+    showCalendarPane: Boolean = true,
     showNavigationIcon: Boolean = true
 ) {
     CenterAlignedTopAppBar(
@@ -73,6 +78,13 @@ fun TaskTopAppBar(
             }
         },
         actions = {
+            IconButton(onClick = onCalendarClick) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = stringResource(R.string.calendar_nav_title),
+                    tint = if (isCalendarActive || (isDualPane && showCalendarPane)) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                )
+            }
             IconButton(onClick = onStatsClick) {
                 Icon(
                     imageVector = Icons.Default.Insights,
@@ -88,7 +100,7 @@ fun TaskTopAppBar(
                 )
             }
             if (pendingTasksCount > 0) {
-                IconButton(onClick = onToggleSearch, modifier = Modifier.padding(end = 8.dp)) {
+                IconButton(onClick = onToggleSearch, modifier = Modifier.padding(end = 4.dp)) {
                     Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search_title), tint = MaterialTheme.colorScheme.onSurface)
                 }
             }

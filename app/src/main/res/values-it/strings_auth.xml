@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auth_state_checking">Verifica dell\\'account in corso…</string>
+    <string name="auth_state_checking">Verifica dell\'account in corso…</string>
     <string name="auth_state_error">Problema di accesso: %s</string>
     <string name="auth_state_success">Bentornato!</string>
     <string name="desc_error">Errore</string>
@@ -8,7 +8,7 @@
     <string name="desc_safe_storage">Archiviazione sicura</string>
     <string name="desc_success">Successo</string>
     <string name="desc_task_done">Attività completata</string>
-    <string name="error_empty_credentials">Inserisci sia l\\'e-mail che la password.</string>
+    <string name="error_empty_credentials">Inserisci sia l\'e-mail che la password.</string>
     <string name="error_google_login">Impossibile caricare gli account Google</string>
     <string name="error_login_canceled">Accesso annullato</string>
     <string name="error_no_accounts">Nessuna credenziale Google rilevata. Puoi continuare come Ospite o accedere via Web.</string>
@@ -18,7 +18,7 @@
     <string name="google_feat_secure">Archiviazione cloud sicura</string>
     <string name="google_feat_sync">Le tue attività su tutti i dispositivi</string>
     <string name="google_login_button">Accedi con Google ID</string>
-    <string name="google_login_desc">Sincronizza le tue attività all\\'istante e in modo sicuro su tutti i tuoi dispositivi.</string>
+    <string name="google_login_desc">Sincronizza le tue attività all\'istante e in modo sicuro su tutti i tuoi dispositivi.</string>
     <string name="google_login_footer">Autenticazione sicura tramite Google Play Services</string>
     <string name="google_login_guest_fallback_button">Continua come Ospite (Modalità locale)</string>
     <string name="google_login_guest_fallback_desc">Nessun account attivo trovato. Puoi continuare come Ospite per salvare le attività localmente.</string>

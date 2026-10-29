@@ -193,6 +193,27 @@ fun TaskDrawerContent(
                 },
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp)
             )
+
+            // 6. Calendario y Agenda
+            NavigationDrawerItem(
+                icon = { Icon(Icons.Default.CalendarToday, contentDescription = null) },
+                label = { Text(text = stringResource(R.string.calendar_nav_title)) },
+                selected = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR,
+                shape = RoundedCornerShape(16.dp),
+                colors = NavigationDrawerItemDefaults.colors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface
+                ),
+                onClick = {
+                    onCategorySelected(com.fabian.todolist.data.SystemCategory.CALENDAR)
+                    scope.launch { drawerState.close() }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp)
+            )
             
             Spacer(modifier = Modifier.height(12.dp))
         }

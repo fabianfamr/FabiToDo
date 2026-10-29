@@ -144,7 +144,7 @@
     <string name="settings_move_completed_desc">Manda las tareas que termines al final de la lista de forma automática.</string>
     <string name="settings_move_completed_title">Mover tareas completadas</string>
     <string name="settings_no_results">No se encontraron ajustes</string>
-    <string name="settings_no_results_tips">Prueba con términos como \\"tema\\", \\"alertas\\", \\"IA\\" o \\"idioma\\"</string>
+    <string name="settings_no_results_tips">Prueba con términos como \"tema\", \"alertas\", \"IA\" o \"idioma\"</string>
     <string name="settings_notifications_auto_desc">Activar recordatorios automáticos</string>
     <string name="settings_notifications_desc_detailed">Controla cuándo y cómo deseas recibir alertas de tus actividades importantes.</string>
     <string name="settings_notifications_offset_10080">7 días antes</string>
@@ -185,7 +185,7 @@
     <string name="settings_snooze_15">Posponer cada 15 minutos</string>
     <string name="settings_snooze_30">Posponer cada 30 minutos</string>
     <string name="settings_snooze_5">Posponer cada 5 minutos</string>
-    <string name="settings_snooze_desc">Tiempo de espera predeterminado al presionar \\'Posponer\\'.</string>
+    <string name="settings_snooze_desc">Tiempo de espera predeterminado al presionar \'Posponer\'.</string>
     <string name="settings_snooze_title">Tiempo de Posposición</string>
     <string name="settings_summary_time_desc">¿A qué hora quieres recibir tu resumen?</string>
     <string name="settings_summary_time_title">Hora del resumen diario</string>

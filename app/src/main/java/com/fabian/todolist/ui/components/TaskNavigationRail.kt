@@ -121,7 +121,26 @@ fun TaskNavigationRail(
                 )
             )
 
-            // 2. Matriz Eisenhower
+            // 2. Calendario y Agenda
+            val isCalendarSelected = selectedCategory == SystemCategory.CALENDAR
+            NavigationRailItem(
+                selected = isCalendarSelected,
+                onClick = { onCategorySelected(SystemCategory.CALENDAR) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = stringResource(R.string.calendar_nav_title)
+                    )
+                },
+                label = { Text(stringResource(R.string.calendar_nav_title), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1) },
+                colors = NavigationRailItemDefaults.colors(
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedTextColor = MaterialTheme.colorScheme.primary
+                )
+            )
+
+            // 3. Matriz Eisenhower
             val isEisenSelected = selectedCategory == SystemCategory.EISENHOWER
             NavigationRailItem(
                 selected = isEisenSelected,
@@ -140,8 +159,9 @@ fun TaskNavigationRail(
                 )
             )
 
-            // 3. Categorías Custom (Abre selector/drawer)
+            // 4. Categorías Custom (Abre selector/drawer)
             val isCustomCategory = selectedCategory != SystemCategory.ALL_TASKS &&
+                    selectedCategory != SystemCategory.CALENDAR &&
                     selectedCategory != SystemCategory.EISENHOWER &&
                     selectedCategory != SystemCategory.COMPLETED &&
                     selectedCategory != SystemCategory.TRASH

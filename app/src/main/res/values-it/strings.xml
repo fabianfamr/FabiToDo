@@ -24,7 +24,7 @@
     <string name="action_edit">Modifica</string>
     <string name="action_expand">Espandi</string>
     <string name="action_filter">Filtra</string>
-    <string name="action_generate_subtasks">Genera passaggi con l\\'IA</string>
+    <string name="action_generate_subtasks">Genera passaggi con l\'IA</string>
     <string name="action_help">Aiuto</string>
     <string name="action_info">Informazioni</string>
     <string name="action_manage">Gestisci</string>
@@ -88,7 +88,7 @@
     <string name="all_done">Tutto fatto!</string>
     <string name="all_tasks">Tutte le Attività</string>
     <string name="app_description">Gestione intelligente delle attività con IA, categorie e Material 3.</string>
-    <string name="app_language">Lingua dell\\'App</string>
+    <string name="app_language">Lingua dell\'App</string>
     <string name="app_locked_desc">Toca para desbloquear usando huella o rostro</string>
     <string name="app_locked_title">App Bloqueada</string>
     <string name="app_name">FabiToDo</string>
@@ -145,7 +145,7 @@
     <string name="completed_tasks">Attività Completate</string>
     <string name="completed_tasks_label">Completadas</string>
     <string name="confirm">Conferma</string>
-    <string name="confirm_delete_category">Eliminare la categoria \\"%s\\" e tutte le sue attività?</string>
+    <string name="confirm_delete_category">Eliminare la categoria \"%s\" e tutte le sue attività?</string>
     <string name="confirm_delete_task">Vuoi davvero eliminare questa attività?</string>
     <string name="content_desc_add_tasks">Añadir tareas</string>
     <string name="content_desc_alarm_trigger">Estado de la alarma</string>
@@ -185,7 +185,6 @@
     <string name="desc_delete_forever">Eliminar para siempre</string>
     <string name="desc_drag_handle">Arrastrar para reordenar</string>
     <string name="desc_edit">Modifica</string>
-    <string name="desc_error">Errore</string>
     <string name="desc_expand">Espandi</string>
     <string name="desc_filter">Filtra</string>
     <string name="desc_help">Aiuto</string>
@@ -197,21 +196,17 @@
     <string name="desc_move_down">Mover abajo</string>
     <string name="desc_move_up">Mover arriba</string>
     <string name="desc_notifications">Notifiche</string>
-    <string name="desc_priority">Priorità</string>
     <string name="desc_quick_add">Aggiunta Rapida</string>
     <string name="desc_refresh">Aggiorna</string>
     <string name="desc_reminder">Promemoria</string>
     <string name="desc_repeat">Repetir</string>
     <string name="desc_restore">Ripristina</string>
-    <string name="desc_safe_storage">Archiviazione Sicura</string>
     <string name="desc_search">Cerca</string>
     <string name="desc_selected">Selezionato</string>
     <string name="desc_settings">Impostazioni</string>
     <string name="desc_share">Condividi</string>
     <string name="desc_sort">Ordina</string>
     <string name="desc_subtasks">Sotto-attività</string>
-    <string name="desc_success">Successo</string>
-    <string name="desc_task_done">Attività completata</string>
     <string name="desc_theme">Tema</string>
     <string name="desc_time_picker">Selector de hora</string>
     <string name="desc_toggle_subtask">Alternar Subtarea</string>
@@ -254,7 +249,7 @@
     <string name="empty_state_completed">Nessuna attività completata</string>
     <string name="empty_state_completed_tip">Le attività completate verranno archiviate qui.</string>
     <string name="empty_state_no_tasks">Nessuna attività trovata</string>
-    <string name="empty_state_search_tip">Prova a cercare qualcos\\'altro o cancella i filtri.</string>
+    <string name="empty_state_search_tip">Prova a cercare qualcos\'altro o cancella i filtri.</string>
     <string name="empty_state_title">Tutto pronto!</string>
     <string name="empty_state_trash">Il cestino è vuoto</string>
     <string name="empty_state_trash_tip">Le attività eliminate appariranno qui.</string>
@@ -290,12 +285,6 @@
     <string name="importance">Importanza</string>
     <string name="invalid_input">Input non valido</string>
     <string name="label_today">Hoy</string>
-    <string name="lang_de">Deutsch</string>
-    <string name="lang_en">English</string>
-    <string name="lang_es">Español</string>
-    <string name="lang_fr">Français</string>
-    <string name="lang_it">Italiano</string>
-    <string name="lang_pt">Português</string>
     <string name="lang_system">Predefinito di Sistema</string>
     <string name="light_theme">Tema Chiaro</string>
     <string name="list_name">Nome Categoria</string>
@@ -391,7 +380,7 @@
     <string name="progress_status_some_done">¡Buen trabajo! Sigue así paso a paso 🚀</string>
     <string name="progress_title_all">Tu progreso</string>
     <string name="progress_title_category">Progreso en %s</string>
-    <string name="quick_add_hint">Aggiungi rapidamente un\\'attività…</string>
+    <string name="quick_add_hint">Aggiungi rapidamente un\'attività…</string>
     <string name="quick_add_notification_button">➕ Nueva Tarea</string>
     <string name="quick_add_notification_channel_name">Sugerencias de Añadido Rápido</string>
     <string name="quick_add_notification_text">Toca aquí para anotar rápidamente una tarea antes de que lo olvides.</string>
@@ -406,7 +395,7 @@
     <string name="reminder_offset_days">%d días antes</string>
     <string name="reminder_offset_exact">A la hora exacta</string>
     <string name="reminder_offset_mins">%d minutos antes</string>
-    <string name="reminder_on">Ti avviseremo all\\'orario selezionato</string>
+    <string name="reminder_on">Ti avviseremo all\'orario selezionato</string>
     <string name="reminder_set">Promemoria impostato per %s</string>
     <string name="remove">Rimuovi</string>
     <string name="reorder">Riordina</string>
@@ -472,10 +461,8 @@
     <string name="settings_appearance_preview_title">VISTA PREVIA EN TIEMPO REAL</string>
     <string name="settings_appearance_subtitle">Elige tu color distintivo y nivel de contraste favorito para adaptar la app a tu estilo.</string>
     <string name="settings_appearance_title">Ajustes de Apariencia</string>
-    <string name="settings_backup_desc">Exporta o importa tus tareas a un archivo de respaldo para mantenerlas seguras o transferirlas entre dispositivos.</string>
     <string name="settings_backup_header">Copias de Seguridad (Archivos)</string>
     <string name="settings_backup_local">Local</string>
-    <string name="settings_backup_title">Tus archivos y libretas .fabiantodo</string>
     <string name="settings_brand_footer">FabiToDo — Fatto con cura per una giornata organizzata</string>
     <string name="settings_export_backup">Exportar copia de seguridad</string>
     <string name="settings_import_backup">Seleccionar archivo de respaldo</string>
@@ -567,7 +554,7 @@
     <string name="theme_dark_desc">Fondo oscuro ideal para descansar la vista</string>
     <string name="theme_light">Chiaro</string>
     <string name="theme_light_desc">Colores claros y brillantes para el día</string>
-    <string name="theme_mode">Tema dell\\'App</string>
+    <string name="theme_mode">Tema dell\'App</string>
     <string name="theme_system">Predefinito di Sistema</string>
     <string name="theme_system_desc">Sigue la configuración de tu teléfono</string>
     <string name="title_empty_err">Il titolo non può essere vuoto</string>

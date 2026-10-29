@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="about_title">À propos</string>
-    <string name="accent_color">Couleur d\\'accent</string>
+    <string name="accent_color">Couleur d\'accent</string>
     <string name="accept">Aceptar</string>
     <string name="account_subtitle">Synchronisation Cloud</string>
     <string name="action_add">Ajouter</string>
@@ -24,7 +24,7 @@
     <string name="action_edit">Modifier</string>
     <string name="action_expand">Développer</string>
     <string name="action_filter">Filtrer</string>
-    <string name="action_generate_subtasks">Générer étapes avec l\\'IA</string>
+    <string name="action_generate_subtasks">Générer étapes avec l\'IA</string>
     <string name="action_help">Aide</string>
     <string name="action_info">Information</string>
     <string name="action_manage">Gérer</string>
@@ -66,7 +66,7 @@
     <string name="action_stop">Arrêter</string>
     <string name="action_subtasks">Sous-tâches</string>
     <string name="action_time">Heure</string>
-    <string name="action_today">Aujourd\\'hui</string>
+    <string name="action_today">Aujourd\'hui</string>
     <string name="action_tomorrow">Demain</string>
     <string name="action_undo">Annuler</string>
     <string name="action_vibrate">Vibrer</string>
@@ -78,17 +78,17 @@
     <string name="add_subtask">Ajouter une sous-tâche</string>
     <string name="add_subtask_desc">Bouton ajouter une sous-tâche</string>
     <string name="add_task">Ajouter une tâche</string>
-    <string name="ai_completed_toast">Complété par l\\'IA !</string>
+    <string name="ai_completed_toast">Complété par l\'IA !</string>
     <string name="ai_features_title">Fonctions intelligentes</string>
     <string name="ai_generate_subtasks">Générer les étapes</string>
-    <string name="ai_icon_content_desc">Compléter avec l\\'IA</string>
+    <string name="ai_icon_content_desc">Compléter avec l\'IA</string>
     <string name="ai_suggest_category">Suggérer une catégorie</string>
     <string name="ai_title_required_error">Ingresa un título primero para usar IA.</string>
     <string name="all_categories">Toutes les catégories</string>
     <string name="all_done">Tout est terminé !</string>
     <string name="all_tasks">Toutes les tâches</string>
     <string name="app_description">Gestion intelligente des tâches avec IA, catégories et Material 3.</string>
-    <string name="app_language">Langue de l\\'application</string>
+    <string name="app_language">Langue de l\'application</string>
     <string name="app_locked_desc">Toca para desbloquear usando huella o rostro</string>
     <string name="app_locked_title">App Bloqueada</string>
     <string name="app_name">FabiToDo</string>
@@ -145,7 +145,7 @@
     <string name="completed_tasks">Tâches terminées</string>
     <string name="completed_tasks_label">Completadas</string>
     <string name="confirm">Confirmer</string>
-    <string name="confirm_delete_category">Supprimer la catégorie \\"%s\\" et toutes ses tâches ?</string>
+    <string name="confirm_delete_category">Supprimer la catégorie \"%s\" et toutes ses tâches ?</string>
     <string name="confirm_delete_task">Voulez-vous vraiment supprimer cette tâche ?</string>
     <string name="content_desc_add_tasks">Añadir tareas</string>
     <string name="content_desc_alarm_trigger">Estado de la alarma</string>
@@ -185,7 +185,6 @@
     <string name="desc_delete_forever">Eliminar para siempre</string>
     <string name="desc_drag_handle">Arrastrar para reordenar</string>
     <string name="desc_edit">Modifier</string>
-    <string name="desc_error">Erreur</string>
     <string name="desc_expand">Développer</string>
     <string name="desc_filter">Filtrer</string>
     <string name="desc_help">Aide</string>
@@ -193,25 +192,21 @@
     <string name="desc_info">Information</string>
     <string name="desc_menu">Menu</string>
     <string name="desc_mic">Micrófono</string>
-    <string name="desc_more">Plus d\\'options</string>
+    <string name="desc_more">Plus d\'options</string>
     <string name="desc_move_down">Mover abajo</string>
     <string name="desc_move_up">Mover arriba</string>
     <string name="desc_notifications">Notifications</string>
-    <string name="desc_priority">Priorité</string>
     <string name="desc_quick_add">Ajout rapide</string>
     <string name="desc_refresh">Actualiser</string>
     <string name="desc_reminder">Rappel</string>
     <string name="desc_repeat">Repetir</string>
     <string name="desc_restore">Restaurer</string>
-    <string name="desc_safe_storage">Stockage sécurisé</string>
     <string name="desc_search">Rechercher</string>
     <string name="desc_selected">Sélectionné</string>
     <string name="desc_settings">Paramètres</string>
     <string name="desc_share">Partager</string>
     <string name="desc_sort">Trier</string>
     <string name="desc_subtasks">Sous-tâches</string>
-    <string name="desc_success">Succès</string>
-    <string name="desc_task_done">Tâche terminée</string>
     <string name="desc_theme">Thème</string>
     <string name="desc_time_picker">Selector de hora</string>
     <string name="desc_toggle_subtask">Alternar Subtarea</string>
@@ -233,23 +228,23 @@
     <string name="drawer_all_lists">Toutes les tâches</string>
     <string name="drawer_categories">Catégories</string>
     <string name="drawer_completed">Terminées</string>
-    <string name="drawer_eisenhower">Matrice d\\'Eisenhower</string>
+    <string name="drawer_eisenhower">Matrice d\'Eisenhower</string>
     <string name="drawer_settings">Paramètres</string>
     <string name="drawer_stats">Statistiques</string>
     <string name="drawer_title">FabiToDo</string>
     <string name="drawer_trash">Corbeille</string>
-    <string name="due_date">Date d\\'échéance</string>
+    <string name="due_date">Date d\'échéance</string>
     <string name="due_date_prefix">Vence: </string>
     <string name="due_date_time">Date et heure</string>
-    <string name="due_time">Heure d\\'échéance</string>
-    <string name="due_today">Échéance aujourd\\'hui</string>
+    <string name="due_time">Heure d\'échéance</string>
+    <string name="due_today">Échéance aujourd\'hui</string>
     <string name="due_tomorrow">Échéance demain</string>
     <string name="duplicate">Dupliquer</string>
     <string name="edit">Modifier</string>
     <string name="edit_category">Modifier la catégorie</string>
     <string name="edit_task">Modifier la tâche</string>
     <string name="efficiency_label">Eficiencia</string>
-    <string name="eisenhower_matrix">Matrice d\\'Eisenhower</string>
+    <string name="eisenhower_matrix">Matrice d\'Eisenhower</string>
     <string name="empty_state_add_tip">Touchez le bouton + pour ajouter une nouvelle tâche.</string>
     <string name="empty_state_completed">Aucune tâche terminée pour le moment</string>
     <string name="empty_state_completed_tip">Vos tâches terminées seront archivées ici.</string>
@@ -290,26 +285,20 @@
     <string name="importance">Importance</string>
     <string name="invalid_input">Entrée non valide</string>
     <string name="label_today">Hoy</string>
-    <string name="lang_de">Deutsch</string>
-    <string name="lang_en">English</string>
-    <string name="lang_es">Español</string>
-    <string name="lang_fr">Français</string>
-    <string name="lang_it">Italiano</string>
-    <string name="lang_pt">Português</string>
     <string name="lang_system">Par défaut du système</string>
     <string name="light_theme">Thème clair</string>
     <string name="list_name">Nom de la catégorie</string>
     <string name="low_priority">Basse priorité</string>
     <string name="mark_as_completed">Marcar como completada</string>
     <string name="matrix_empty_quadrant">Aucune tâche active dans ce quadrant</string>
-    <string name="matrix_info_desc">Organisez vos tâches en 4 quadrants selon l\\'Importance et l\\'Urgence :
+    <string name="matrix_info_desc">Organisez vos tâches en 4 quadrants selon l\'Importance et l\'Urgence :
 
-• 🔴 Faire d\\'abord : Important &amp; Urgent (Haute priorité, pour aujourd\\'hui ou demain).
+• 🔴 Faire d\'abord : Important &amp; Urgent (Haute priorité, pour aujourd\'hui ou demain).
 • 🔵 Planifier : Important mais Non Urgent (Haute priorité sans urgence immédiate).
 • 🟡 Déléguer : Urgent mais Non Important (Échéance proche, priorité moyenne/basse).
 • ⚪ Éliminer : Ni Urgent ni Important (Basse priorité).</string>
-    <string name="matrix_info_title">Comment fonctionne la Matrice d\\'Eisenhower ?</string>
-    <string name="matrix_q1">1. Faire d\\'abord (Urgent &amp; Important)</string>
+    <string name="matrix_info_title">Comment fonctionne la Matrice d\'Eisenhower ?</string>
+    <string name="matrix_q1">1. Faire d\'abord (Urgent &amp; Important)</string>
     <string name="matrix_q1_desc">À traiter immédiatement. Priorité Haute/Critique + Échéance proche.</string>
     <string name="matrix_q1_short">1. Faire</string>
     <string name="matrix_q2">2. Planifier (Important, Non Urgent)</string>
@@ -326,7 +315,7 @@
     <string name="menu_action_unselect_all">Deseleccionar todo</string>
     <string name="menu_label">Menú</string>
     <string name="menu_settings">Ajustes</string>
-    <string name="more_options">Plus d\\'options</string>
+    <string name="more_options">Plus d\'options</string>
     <string name="move_to_trash">Déplacer dans la corbeille</string>
     <string name="nav_back">Atrás</string>
     <string name="nav_categories">Catégories</string>
@@ -400,13 +389,13 @@
     <string name="reminder">Rappel</string>
     <string name="reminder_disabled">Rappel désactivé</string>
     <string name="reminder_enabled">Rappel activé</string>
-    <string name="reminder_off">Sélectionnez d\\'abord une date et une heure futures</string>
+    <string name="reminder_off">Sélectionnez d\'abord une date et une heure futures</string>
     <string name="reminder_offset_1_day">1 día antes</string>
     <string name="reminder_offset_1_hour">1 hora antes</string>
     <string name="reminder_offset_days">%d días antes</string>
     <string name="reminder_offset_exact">A la hora exacta</string>
     <string name="reminder_offset_mins">%d minutos antes</string>
-    <string name="reminder_on">Nous vous rappellerons à l\\'heure sélectionnée</string>
+    <string name="reminder_on">Nous vous rappellerons à l\'heure sélectionnée</string>
     <string name="reminder_set">Rappel défini pour %s</string>
     <string name="remove">Supprimer</string>
     <string name="reorder">Réorganiser</string>
@@ -435,7 +424,7 @@
     <string name="security_desc">Privacidad y acceso</string>
     <string name="security_title">Seguridad</string>
     <string name="select">Sélectionner</string>
-    <string name="select_accent_color">Couleur d\\'accent</string>
+    <string name="select_accent_color">Couleur d\'accent</string>
     <string name="select_all">Tout sélectionner</string>
     <string name="select_category">Sélectionner une catégorie</string>
     <string name="select_date">Sélectionner une date</string>
@@ -472,10 +461,8 @@
     <string name="settings_appearance_preview_title">VISTA PREVIA EN TIEMPO REAL</string>
     <string name="settings_appearance_subtitle">Elige tu color distintivo y nivel de contraste favorito para adaptar la app a tu estilo.</string>
     <string name="settings_appearance_title">Ajustes de Apariencia</string>
-    <string name="settings_backup_desc">Exporta o importa tus tareas a un archivo de respaldo para mantenerlas seguras o transferirlas entre dispositivos.</string>
     <string name="settings_backup_header">Copias de Seguridad (Archivos)</string>
     <string name="settings_backup_local">Local</string>
-    <string name="settings_backup_title">Tus archivos y libretas .fabiantodo</string>
     <string name="settings_brand_footer">FabiToDo — Créé avec soin pour votre journée organisée</string>
     <string name="settings_export_backup">Exportar copia de seguridad</string>
     <string name="settings_import_backup">Seleccionar archivo de respaldo</string>
@@ -502,12 +489,12 @@
     <string name="sort_alphabetical_short">A-Z</string>
     <string name="sort_by">Trier par</string>
     <string name="sort_by_category">Catégorie</string>
-    <string name="sort_by_date">Date d\\'échéance</string>
+    <string name="sort_by_date">Date d\'échéance</string>
     <string name="sort_by_name">Titre</string>
     <string name="sort_by_priority">Priorité</string>
     <string name="sort_created_date">Date de création</string>
     <string name="sort_custom">Ordre personnalisé</string>
-    <string name="sort_due_date">Date d\\'échéance</string>
+    <string name="sort_due_date">Date d\'échéance</string>
     <string name="sort_due_date_desc">Mostrar próximas a vencer primero</string>
     <string name="sort_manual">Como tú prefieras (Manual)</string>
     <string name="sort_manual_desc">Arrastra y suelta para organizar como quieras</string>
@@ -567,7 +554,7 @@
     <string name="theme_dark_desc">Fondo oscuro ideal para descansar la vista</string>
     <string name="theme_light">Clair</string>
     <string name="theme_light_desc">Colores claros y brillantes para el día</string>
-    <string name="theme_mode">Thème de l\\'application</string>
+    <string name="theme_mode">Thème de l\'application</string>
     <string name="theme_system">Par défaut du système</string>
     <string name="theme_system_desc">Sigue la configuración de tu teléfono</string>
     <string name="title_empty_err">Le titre ne peut pas être vide</string>
@@ -581,7 +568,7 @@
     <string name="toast_syncing_cloud">Sincronizando con la nube...</string>
     <string name="toast_test_notification_req">Por favor, activa las Alertas Globales primero.</string>
     <string name="toast_test_notification_sent">¡Notificación de prueba enviada!</string>
-    <string name="today">Aujourd\\'hui</string>
+    <string name="today">Aujourd\'hui</string>
     <string name="tomorrow">Demain</string>
     <string name="trash">Corbeille</string>
     <string name="trash_banner_desc">Las tareas eliminadas se conservan aquí antes de ser eliminadas permanentemente.</string>

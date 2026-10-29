@@ -5,6 +5,7 @@ object SystemCategory {
     const val COMPLETED = "Finalizadas"
     const val TRASH = "Papelera"
     const val EISENHOWER = "Matriz de Eisenhower"
+    const val CALENDAR = "Calendario"
     const val GENERAL = "General"
 }
 

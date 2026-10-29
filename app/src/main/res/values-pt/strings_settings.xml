@@ -144,7 +144,7 @@
     <string name="settings_move_completed_desc">Manda las tareas que termines al final de la lista de forma automática.</string>
     <string name="settings_move_completed_title">Mover tareas completadas</string>
     <string name="settings_no_results">Nenhuma configuração encontrada</string>
-    <string name="settings_no_results_tips">Tente termos como \\"tema\\", \\"alertas\\", \\"IA\\" ou \\"idioma\\"</string>
+    <string name="settings_no_results_tips">Tente termos como \"tema\", \"alertas\", \"IA\" ou \"idioma\"</string>
     <string name="settings_notifications_auto_desc">Ativar lembretes automáticos</string>
     <string name="settings_notifications_desc_detailed">Controle quando e como deseja ser lembrado de suas atividades importantes.</string>
     <string name="settings_notifications_offset_10080">7 dias antes</string>
@@ -185,7 +185,7 @@
     <string name="settings_snooze_15">Adiar a cada 15 minutos</string>
     <string name="settings_snooze_30">Adiar a cada 30 minutos</string>
     <string name="settings_snooze_5">Adiar a cada 5 minutos</string>
-    <string name="settings_snooze_desc">Tempo padrão de espera ao pressionar \\'Adiar\\'.</string>
+    <string name="settings_snooze_desc">Tempo padrão de espera ao pressionar \'Adiar\'.</string>
     <string name="settings_snooze_title">Intervalo de Adiamento</string>
     <string name="settings_summary_time_desc">¿A qué hora quieres recibir tu resumen?</string>
     <string name="settings_summary_time_title">Hora del resumen diario</string>

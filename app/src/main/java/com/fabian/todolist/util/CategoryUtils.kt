@@ -22,6 +22,7 @@ fun getLocalizedCategoryName(category: String): String {
         "Hogar", "Home", "Maison", "Casa", "Zuhause" -> stringResource(R.string.category_home)
         "Salud", "Health", "Santé", "Saúde", "Gesundheit" -> stringResource(R.string.category_health)
         "Matriz de Eisenhower", "Matriz de Prioridades" -> stringResource(R.string.priority_matrix)
+        "Calendario", "Calendar", "Agenda" -> stringResource(R.string.calendar_nav_title)
         else -> category
     }
 }

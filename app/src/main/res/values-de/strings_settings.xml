@@ -144,7 +144,7 @@
     <string name="settings_move_completed_desc">Verschiebt erledigte Aufgaben automatisch ans Ende der Liste.</string>
     <string name="settings_move_completed_title">Erledigte Aufgaben verschieben</string>
     <string name="settings_no_results">Keine Einstellungen gefunden</string>
-    <string name="settings_no_results_tips">Versuche Begriffe wie \\"Design\\", \\"Alarm\\", \\"KI\\" oder \\"Sprache\\"</string>
+    <string name="settings_no_results_tips">Versuche Begriffe wie \"Design\", \"Alarm\", \"KI\" oder \"Sprache\"</string>
     <string name="settings_notifications_auto_desc">Automatische Erinnerungen aktivieren</string>
     <string name="settings_notifications_desc_detailed">Lege fest, wann und wie du an wichtige Aufgaben erinnert werden möchtest.</string>
     <string name="settings_notifications_offset_10080">7 Tage vorher</string>
@@ -185,7 +185,7 @@
     <string name="settings_snooze_15">Alle 15 Minuten erinnern</string>
     <string name="settings_snooze_30">Alle 30 Minuten erinnern</string>
     <string name="settings_snooze_5">Alle 5 Minuten erinnern</string>
-    <string name="settings_snooze_desc">Standard-Wartezeit bei \\'Schlummern\\'.</string>
+    <string name="settings_snooze_desc">Standard-Wartezeit bei \'Schlummern\'.</string>
     <string name="settings_snooze_title">Schlummerintervall</string>
     <string name="settings_summary_time_desc">Wann möchtest du sie erhalten?</string>
     <string name="settings_summary_time_title">Zeit für Zusammenfassung</string>

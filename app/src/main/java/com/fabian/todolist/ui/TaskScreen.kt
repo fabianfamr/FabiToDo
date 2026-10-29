@@ -102,7 +102,15 @@ fun TaskScreen(
     val searchQuery = uiState.searchQuery
     
     val pendingTasksCount by viewModel.pendingTasksCount.collectAsStateWithLifecycle()
+    val groupedTasks by viewModel.groupedTasks.collectAsStateWithLifecycle()
     var isSearchExpanded by remember { mutableStateOf(false) }
+
+    if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR ||
+        selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
+        androidx.activity.compose.BackHandler {
+            viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+        }
+    }
 
     // Preferences states
     val themeAccent by settingsViewModel.themeAccent.collectAsStateWithLifecycle()
@@ -238,6 +246,8 @@ fun TaskScreen(
         val screenWidth = maxWidth
         val isTablet = screenWidth >= 600.dp
         val isExpandedScreen = screenWidth >= 840.dp
+        val isDualPane = screenWidth >= 780.dp
+        var showCalendarPaneOnDual by rememberSaveable { mutableStateOf(true) }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -259,7 +269,18 @@ fun TaskScreen(
                 if (isTablet) {
                     com.fabian.todolist.ui.components.TaskNavigationRail(
                         selectedCategory = selectedCategory,
-                        onCategorySelected = { viewModel.setSelectedCategory(it) },
+                        onCategorySelected = { cat ->
+                            if (cat == com.fabian.todolist.data.SystemCategory.CALENDAR && isDualPane) {
+                                showCalendarPaneOnDual = true
+                                if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {
+                                    viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+                                } else {
+                                    viewModel.setSelectedCategory(cat)
+                                }
+                            } else {
+                                viewModel.setSelectedCategory(cat)
+                            }
+                        },
                         onOpenCategoriesDrawer = { scope.launch { drawerState.open() } },
                         onAddClick = {
                             taskToEdit = null
@@ -346,13 +367,27 @@ fun TaskScreen(
                                     onSortClick = { showFocusDrawer = true },
                                     onToggleSearch = { isSearchExpanded = !isSearchExpanded },
                                     onStatsClick = { showStatsDialog = true },
+                                    onCalendarClick = {
+                                        if (isDualPane) {
+                                            showCalendarPaneOnDual = !showCalendarPaneOnDual
+                                        } else {
+                                            if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {
+                                                viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+                                            } else {
+                                                viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.CALENDAR)
+                                            }
+                                        }
+                                    },
+                                    isCalendarActive = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR,
+                                    isDualPane = isDualPane,
+                                    showCalendarPane = showCalendarPaneOnDual,
                                     showNavigationIcon = !isTablet
                                 )
                             }
                         }
                     },
                     floatingActionButton = {
-                        if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                        if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH && selectedCategory != com.fabian.todolist.data.SystemCategory.CALENDAR) {
                             val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
                             ExtendedFloatingActionButton(
                                 text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
@@ -377,72 +412,59 @@ fun TaskScreen(
                             .padding(paddingValues),
                         contentAlignment = Alignment.TopCenter
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .then(
-                                    if (selectedCategory != com.fabian.todolist.data.SystemCategory.EISENHOWER && isTablet) {
-                                        Modifier.widthIn(max = if (isExpandedScreen) 920.dp else 740.dp)
+                        // Task statistics details
+                        val totalCount = tasks.size
+                        val completedCount = tasks.count { it.isCompleted }
+
+                        val eisenhowerContent: @Composable () -> Unit = {
+                            com.fabian.todolist.ui.components.EisenhowerMatrixView(
+                                tasks = tasks,
+                                categoryColors = categoryColors,
+                                onToggleComplete = { viewModel.toggleTaskCompletion(it) },
+                                onRestore = { viewModel.restoreTask(it) },
+                                onEdit = {
+                                    taskToEdit = it
+                                    showAddEditDialog = true
+                                },
+                                onDelete = { task ->
+                                    if (confirmOnDelete) {
+                                        taskToDelete = task
                                     } else {
-                                        Modifier
+                                        viewModel.deleteTask(task)
+                                        showUndoSnackbar(task)
                                     }
-                                )
-                        ) {
-                // Task statistics details
-            val totalCount = tasks.size
-            val completedCount = tasks.count { it.isCompleted }
-
-            if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
-                com.fabian.todolist.ui.components.EisenhowerMatrixView(
-                    tasks = tasks,
-                    categoryColors = categoryColors,
-                    onToggleComplete = { viewModel.toggleTaskCompletion(it) },
-                    onRestore = { viewModel.restoreTask(it) },
-                    onEdit = {
-                        taskToEdit = it
-                        showAddEditDialog = true
-                    },
-                    onDelete = { task ->
-                        if (confirmOnDelete) {
-                            taskToDelete = task
-                        } else {
-                            viewModel.deleteTask(task)
-                            showUndoSnackbar(task)
+                                },
+                                onUpdateSubtasks = { task, updatedSubtasks ->
+                                    viewModel.updateTask(task.withSubtasks(updatedSubtasks))
+                                },
+                                selectedTaskIds = selectedTaskIds,
+                                onToggleSelect = { task ->
+                                    if (selectedTaskIds.contains(task.id)) {
+                                        selectedTaskIds.remove(task.id)
+                                    } else {
+                                        selectedTaskIds.add(task.id)
+                                    }
+                                },
+                                longPressAction = longPressAction,
+                                hapticFeedbackOnComplete = hapticFeedbackOnComplete,
+                                confirmOnDelete = confirmOnDelete
+                            )
                         }
-                    },
-                    onUpdateSubtasks = { task, updatedSubtasks ->
-                        viewModel.updateTask(task.withSubtasks(updatedSubtasks))
-                    },
-                    selectedTaskIds = selectedTaskIds,
-                    onToggleSelect = { task ->
-                        if (selectedTaskIds.contains(task.id)) {
-                            selectedTaskIds.remove(task.id)
-                        } else {
-                            selectedTaskIds.add(task.id)
-                        }
-                    },
-                    longPressAction = longPressAction,
-                    hapticFeedbackOnComplete = hapticFeedbackOnComplete,
-                    confirmOnDelete = confirmOnDelete
-                )
-            } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                TaskEmptyState()
-            } else {
-                val groupedTasks by viewModel.groupedTasks.collectAsStateWithLifecycle()
 
-                val groupOrder = listOf(
-                    "group_vencidos", "group_hoy",
-                    "group_manana", "group_pasado_manana", "group_esta_semana", "group_este_mes", "group_futuro", "group_not_set"
-                )
+                        val groupOrder = listOf(
+                            "group_vencidos", "group_hoy",
+                            "group_manana", "group_pasado_manana", "group_esta_semana", "group_este_mes", "group_futuro", "group_not_set"
+                        )
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .nestedScroll(nestedScrollConnection)
-                ) {
-                    TaskSearchBar(
-                        isSearchExpanded = isSearchExpanded,
-                        searchQuery = searchQuery,
+                        val taskListContent: @Composable () -> Unit = {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .nestedScroll(nestedScrollConnection)
+                            ) {
+                                TaskSearchBar(
+                                    isSearchExpanded = isSearchExpanded,
+                                    searchQuery = searchQuery,
                         onSearchQueryChange = { viewModel.setSearchQuery(it) }
                     )
 
@@ -774,9 +796,99 @@ fun TaskScreen(
                     }
                 }
             }
+
+        val calendarPaneContent: @Composable (Boolean) -> Unit = { dual ->
+            com.fabian.todolist.ui.components.TaskCalendarPane(
+                tasks = tasks,
+                categoryColors = categoryColors,
+                onToggleComplete = { viewModel.toggleTaskCompletion(it) },
+                onEditTask = {
+                    taskToEdit = it
+                    showAddEditDialog = true
+                },
+                onDeleteTask = { task ->
+                    if (confirmOnDelete) {
+                        taskToDelete = task
+                    } else {
+                        viewModel.deleteTask(task)
+                        showUndoSnackbar(task)
+                    }
+                },
+                onAddTaskForDate = { dateMillis ->
+                    taskToEdit = Task(
+                        title = "",
+                        description = "",
+                        category = if (selectedCategory in listOf(
+                                com.fabian.todolist.data.SystemCategory.ALL_TASKS,
+                                com.fabian.todolist.data.SystemCategory.COMPLETED,
+                                com.fabian.todolist.data.SystemCategory.TRASH,
+                                com.fabian.todolist.data.SystemCategory.EISENHOWER,
+                                com.fabian.todolist.data.SystemCategory.CALENDAR
+                            )) "General" else selectedCategory,
+                        dueDate = dateMillis
+                    )
+                    showAddEditDialog = true
+                },
+                isDualPane = dual
+            )
         }
-    }
-    }
+
+        if (isDualPane && showCalendarPaneOnDual && selectedCategory != com.fabian.todolist.data.SystemCategory.CALENDAR) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1.05f)
+                        .fillMaxHeight()
+                ) {
+                    if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
+                        eisenhowerContent()
+                    } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                        TaskEmptyState()
+                    } else {
+                        taskListContent()
+                    }
+                }
+
+                VerticalDivider(
+                    modifier = Modifier.fillMaxHeight(),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(0.95f)
+                        .fillMaxHeight()
+                ) {
+                    calendarPaneContent(true)
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (selectedCategory != com.fabian.todolist.data.SystemCategory.EISENHOWER &&
+                            selectedCategory != com.fabian.todolist.data.SystemCategory.CALENDAR &&
+                            isTablet
+                        ) {
+                            Modifier.widthIn(max = if (isExpandedScreen) 920.dp else 740.dp)
+                        } else {
+                            Modifier
+                        }
+                    )
+            ) {
+                if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {
+                    calendarPaneContent(false)
+                } else if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
+                    eisenhowerContent()
+                } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                    TaskEmptyState()
+                } else {
+                    taskListContent()
+                }
+            }
+        }
     }
 
     if (showSettingsDialog) {
@@ -907,6 +1019,8 @@ fun TaskScreen(
             onDismiss = { showFocusDrawer = false }
         )
     }
+}
+}
 }
 }
 }

@@ -24,7 +24,7 @@
     <string name="backup_restore_title">Backup &amp; Restore</string>
     <string name="backup_select_export">Select &amp; Export</string>
     <string name="benefit_bg_backup">Auto-Backup</string>
-    <string name="benefit_bg_backup_desc">We\\\'ll back up your tasks automatically.</string>
+    <string name="benefit_bg_backup_desc">We\'ll back up your tasks automatically.</string>
     <string name="benefit_cloud_access">Keep your tasks safe</string>
     <string name="benefit_cloud_access_desc">Never lose your tasks, even if you lose your phone.</string>
     <string name="benefit_multidevice">Sync across devices</string>
@@ -144,7 +144,7 @@
     <string name="settings_move_completed_desc">Move completed tasks to the bottom of the list.</string>
     <string name="settings_move_completed_title">Move completed to bottom</string>
     <string name="settings_no_results">No matching settings found</string>
-    <string name="settings_no_results_tips">Try terms like \\"theme\\", \\"alerts\\", \\"AI\\" or \\"language\\"</string>
+    <string name="settings_no_results_tips">Try terms like \"theme\", \"alerts\", \"AI\" or \"language\"</string>
     <string name="settings_notifications_auto_desc">Enable automatic reminders</string>
     <string name="settings_notifications_desc_detailed">Control when and how you want to be reminded of your important activities.</string>
     <string name="settings_notifications_offset_10080">7 days before</string>
@@ -185,7 +185,7 @@
     <string name="settings_snooze_15">Snooze every 15 minutes</string>
     <string name="settings_snooze_30">Snooze every 30 minutes</string>
     <string name="settings_snooze_5">Snooze every 5 minutes</string>
-    <string name="settings_snooze_desc">Default wait time when pressing \\'Snooze\\'.</string>
+    <string name="settings_snooze_desc">Default wait time when pressing \'Snooze\'.</string>
     <string name="settings_snooze_title">Snooze Interval</string>
     <string name="settings_summary_time_desc">Show task summary at a specific time.</string>
     <string name="settings_summary_time_title">Summary time</string>

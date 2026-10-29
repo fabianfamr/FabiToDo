@@ -11,7 +11,7 @@
     <string name="error_empty_credentials">Veuillez saisir votre e-mail et votre mot de passe.</string>
     <string name="error_google_login">Impossible de charger les comptes Google</string>
     <string name="error_login_canceled">Connexion annulée</string>
-    <string name="error_no_accounts">Aucun compte Google détecté. Vous pouvez continuer en tant qu\\'invité ou vous connecter via le Web.</string>
+    <string name="error_no_accounts">Aucun compte Google détecté. Vous pouvez continuer en tant qu\'invité ou vous connecter via le Web.</string>
     <string name="error_password_too_short">Le mot de passe doit comporter au moins 6 caractères.</string>
     <string name="google_btn_loading">Connexion en cours…</string>
     <string name="google_feat_backup">Sauvegardes automatiques sur le Cloud</string>
@@ -28,7 +28,7 @@
     <string name="google_login_web_option">Accès Web (Sans SHA requis)</string>
     <string name="guest_user">Invité</string>
     <string name="login_button_google">Continuer avec Google</string>
-    <string name="login_button_guest">Continuer en tant qu\\'invité</string>
+    <string name="login_button_guest">Continuer en tant qu\'invité</string>
     <string name="login_desc_main">Organisez vos tâches quotidiennes, configurez des rappels intelligents et gardez le contrôle.</string>
     <string name="login_description">Connectez-vous avec votre compte Google pour synchroniser vos tâches en toute sécurité.</string>
     <string name="login_footer_text">Vos tâches sont stockées de façon privée et sécurisée sur votre appareil.</string>
@@ -36,7 +36,7 @@
     <string name="login_guest_btn">Commencer !</string>
     <string name="login_perks_title">Pourquoi utiliser un compte ?</string>
     <string name="login_start_btn">Commencer !</string>
-    <string name="login_subtitle">Passons à l\\'action.</string>
+    <string name="login_subtitle">Passons à l\'action.</string>
     <string name="login_tagline">Organisez votre quotidien ✨</string>
     <string name="login_title">Bienvenue sur FabiToDo</string>
     <string name="login_welcome">Bienvenue dans votre liste</string>
