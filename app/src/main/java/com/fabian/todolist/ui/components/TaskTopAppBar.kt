@@ -93,7 +93,49 @@ fun TaskTopAppBar(
             }
         },
         actions = {
-            // Sort Button
+            // Adaptive 2-in-1 behavior:
+            // Mobile Phones (!showNavigationIcon means isTablet; when on phone, show quick access Calendar & Stats in top bar)
+            if (showNavigationIcon && !isDualPane) {
+                val isCalSelected = isCalendarActive
+                Surface(
+                    onClick = onCalendarClick,
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (isCalSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(
+                        width = if (isCalSelected) 1.5.dp else 1.dp,
+                        color = if (isCalSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    ),
+                    modifier = Modifier.padding(end = 6.dp).size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarToday,
+                            contentDescription = stringResource(R.string.calendar_nav_title),
+                            tint = if (isCalSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Surface(
+                    onClick = onStatsClick,
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    modifier = Modifier.padding(end = 6.dp).size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(
+                            imageVector = Icons.Default.Insights,
+                            contentDescription = stringResource(R.string.stats_label),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+
+            // Sort Button (Mobile & Tablet)
             Surface(
                 onClick = onSortClick,
                 shape = RoundedCornerShape(12.dp),
@@ -111,7 +153,7 @@ fun TaskTopAppBar(
                 }
             }
 
-            // Search Button
+            // Search Button (Mobile & Tablet)
             Surface(
                 onClick = onToggleSearch,
                 shape = RoundedCornerShape(12.dp),
