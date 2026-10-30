@@ -36,7 +36,9 @@ fun TaskDrawerContent(
     categoryIcons: Map<String, String>,
     languageCode: String,
     onCategorySelected: (String) -> Unit,
-    onSettingsSelected: () -> Unit
+    onSettingsSelected: () -> Unit,
+    showOnlyCategories: Boolean = false,
+    onAddCategoryClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -46,54 +48,8 @@ fun TaskDrawerContent(
         drawerContainerColor = MaterialTheme.colorScheme.surface,
         drawerShape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp)
     ) {
-        // Delineated header box
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 12.dp),
-            shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp)
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
-                    modifier = Modifier.size(42.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(14.dp))
-                Column {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = (-0.5).sp
-                    )
-                    Text(
-                        text = stringResource(R.string.drawer_all_lists),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-        }
+        // Top padding space replacing redundant app header
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Scrollable categorized sections with delineated boxes
         Column(
@@ -103,76 +59,78 @@ fun TaskDrawerContent(
                 .verticalScroll(scrollState)
                 .padding(vertical = 4.dp)
         ) {
-            // Section 1: Main views
-            Text(
-                text = stringResource(R.string.drawer_section_views),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                letterSpacing = 1.sp,
-                modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 6.dp)
-            )
+            if (!showOnlyCategories) {
+                // Section 1: Main views
+                Text(
+                    text = stringResource(R.string.drawer_section_views),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 6.dp)
+                )
 
-            // 1. All tasks
-            DrawerCardItem(
-                icon = {
-                    Icon(
-                        Icons.Default.Home,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.ALL_TASKS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                label = stringResource(R.string.drawer_all_lists),
-                selected = selectedCategory == com.fabian.todolist.data.SystemCategory.ALL_TASKS,
-                onClick = {
-                    onCategorySelected(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
-                    scope.launch { drawerState.close() }
-                }
-            )
+                // 1. All tasks
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Default.Home,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.ALL_TASKS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    label = stringResource(R.string.drawer_all_lists),
+                    selected = selectedCategory == com.fabian.todolist.data.SystemCategory.ALL_TASKS,
+                    onClick = {
+                        onCategorySelected(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
+                        scope.launch { drawerState.close() }
+                    }
+                )
 
-            // 2. Calendar view
-            DrawerCardItem(
-                icon = {
-                    Icon(
-                        Icons.Default.CalendarToday,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
-                    )
-                },
-                label = stringResource(R.string.calendar_nav_title),
-                badgeText = stringResource(R.string.calendar_switch_calendar),
-                selected = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR,
-                onClick = {
-                    onCategorySelected(com.fabian.todolist.data.SystemCategory.CALENDAR)
-                    scope.launch { drawerState.close() }
-                }
-            )
+                // 2. Calendar view
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Default.CalendarToday,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    label = stringResource(R.string.calendar_nav_title),
+                    badgeText = stringResource(R.string.calendar_switch_calendar),
+                    selected = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR,
+                    onClick = {
+                        onCategorySelected(com.fabian.todolist.data.SystemCategory.CALENDAR)
+                        scope.launch { drawerState.close() }
+                    }
+                )
 
-            // 3. Priority Matrix (Eisenhower)
-            DrawerCardItem(
-                icon = {
-                    Icon(
-                        Icons.Rounded.GridView,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                label = stringResource(R.string.priority_matrix),
-                selected = selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER,
-                onClick = {
-                    onCategorySelected(com.fabian.todolist.data.SystemCategory.EISENHOWER)
-                    scope.launch { drawerState.close() }
-                }
-            )
+                // 3. Priority Matrix (Eisenhower)
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Rounded.GridView,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    label = stringResource(R.string.priority_matrix),
+                    selected = selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER,
+                    onClick = {
+                        onCategorySelected(com.fabian.todolist.data.SystemCategory.EISENHOWER)
+                        scope.launch { drawerState.close() }
+                    }
+                )
+            }
 
             // Section 2: Categories
             val userCategories = categories.filter {
                 it != com.fabian.todolist.data.SystemCategory.ALL_TASKS && it != com.fabian.todolist.data.SystemCategory.COMPLETED
             }
-            if (userCategories.isNotEmpty()) {
+            if (userCategories.isNotEmpty() || showOnlyCategories) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = stringResource(R.string.drawer_section_categories),
@@ -204,101 +162,123 @@ fun TaskDrawerContent(
                         }
                     )
                 }
+
+                // Add Category Button Item
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    label = stringResource(R.string.add_category_title),
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onAddCategoryClick()
+                    }
+                )
             }
 
-            // Section 3: System & Status
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = stringResource(R.string.drawer_section_system),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                letterSpacing = 1.sp,
-                modifier = Modifier.padding(start = 22.dp, top = 6.dp, bottom = 6.dp)
-            )
+            if (!showOnlyCategories) {
+                // Section 3: System & Status
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(R.string.drawer_section_system),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.padding(start = 22.dp, top = 6.dp, bottom = 6.dp)
+                )
 
-            // Completed
-            DrawerCardItem(
-                icon = {
-                    Icon(
-                        Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.COMPLETED) MaterialTheme.colorScheme.primary else Color(0xFF4CAF50)
-                    )
-                },
-                label = stringResource(R.string.status_completed),
-                selected = selectedCategory == com.fabian.todolist.data.SystemCategory.COMPLETED,
-                onClick = {
-                    onCategorySelected(com.fabian.todolist.data.SystemCategory.COMPLETED)
-                    scope.launch { drawerState.close() }
-                }
-            )
+                // Completed
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.COMPLETED) MaterialTheme.colorScheme.primary else Color(0xFF4CAF50)
+                        )
+                    },
+                    label = stringResource(R.string.status_completed),
+                    selected = selectedCategory == com.fabian.todolist.data.SystemCategory.COMPLETED,
+                    onClick = {
+                        onCategorySelected(com.fabian.todolist.data.SystemCategory.COMPLETED)
+                        scope.launch { drawerState.close() }
+                    }
+                )
 
-            // Trash
-            DrawerCardItem(
-                icon = {
-                    Icon(
-                        Icons.Outlined.Delete,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                label = stringResource(R.string.trash_title),
-                selected = selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH,
-                onClick = {
-                    onCategorySelected(com.fabian.todolist.data.SystemCategory.TRASH)
-                    scope.launch { drawerState.close() }
-                }
-            )
+                // Trash
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Outlined.Delete,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    label = stringResource(R.string.trash_title),
+                    selected = selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH,
+                    onClick = {
+                        onCategorySelected(com.fabian.todolist.data.SystemCategory.TRASH)
+                        scope.launch { drawerState.close() }
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Settings box at bottom
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 14.dp)
-        ) {
-            Surface(
-                onClick = {
-                    onSettingsSelected()
-                    scope.launch { drawerState.close() }
-                },
-                shape = RoundedCornerShape(14.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
-                modifier = Modifier.fillMaxWidth()
+        if (!showOnlyCategories) {
+            // Settings box at bottom
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 14.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Surface(
+                    onClick = {
+                        onSettingsSelected()
+                        scope.launch { drawerState.close() }
+                    },
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .size(34.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Settings,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(18.dp)
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Settings,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = stringResource(R.string.settings),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.settings),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
                 }
             }
         }

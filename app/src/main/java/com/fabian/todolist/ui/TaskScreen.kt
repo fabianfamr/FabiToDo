@@ -245,9 +245,11 @@ fun TaskScreen(
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val screenWidth = maxWidth
-        val isTablet = screenWidth >= 600.dp
+        val screenHeight = maxHeight
+        val isLandscape = screenWidth > screenHeight
+        val isTablet = screenWidth >= 600.dp || (isLandscape && screenHeight >= 600.dp)
         val isExpandedScreen = screenWidth >= 840.dp
-        val isDualPane = screenWidth >= 780.dp
+        val isDualPane = isLandscape && screenWidth >= 780.dp
         var showCalendarPaneOnDual by rememberSaveable { mutableStateOf(true) }
 
         BackHandler(enabled = drawerState.isOpen) {
@@ -997,7 +999,9 @@ fun TaskScreen(
                     categoryIcons = categoryIcons,
                     languageCode = languageCode,
                     onCategorySelected = { viewModel.setSelectedCategory(it) },
-                    onSettingsSelected = { showSettingsDialog = true }
+                    onSettingsSelected = { showSettingsDialog = true },
+                    showOnlyCategories = isTablet,
+                    onAddCategoryClick = { showAddCategoryDialog = true }
                 )
 
                 // Translucent backdrop covering remaining space on right
