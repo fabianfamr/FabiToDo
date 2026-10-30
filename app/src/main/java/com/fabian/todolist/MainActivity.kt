@@ -179,6 +179,17 @@ class MainActivity : AppCompatActivity() {
               .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
           ) {
             val requireBiometrics by settingsViewModel.requireBiometrics.collectAsStateWithLifecycle()
+            val secureScreenMode by settingsViewModel.secureScreenMode.collectAsStateWithLifecycle()
+            LaunchedEffect(secureScreenMode) {
+              if (secureScreenMode) {
+                window.setFlags(
+                  android.view.WindowManager.LayoutParams.FLAG_SECURE,
+                  android.view.WindowManager.LayoutParams.FLAG_SECURE
+                )
+              } else {
+                window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+              }
+            }
             com.fabian.todolist.ui.components.BiometricAuthOverlay(requireBiometrics = requireBiometrics) {
               appContent()
             }

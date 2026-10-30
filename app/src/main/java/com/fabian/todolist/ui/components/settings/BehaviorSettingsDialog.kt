@@ -51,7 +51,6 @@ fun BehaviorSettingsDialog(
     val confirmOnDelete by viewModel.confirmOnDelete.collectAsStateWithLifecycle()
     val hapticFeedbackOnComplete by viewModel.hapticFeedbackOnComplete.collectAsStateWithLifecycle()
     val currentTrashRetention by viewModel.trashRetentionDays.collectAsStateWithLifecycle()
-    val requireBiometrics by viewModel.requireBiometrics.collectAsStateWithLifecycle()
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -345,98 +344,6 @@ fun BehaviorSettingsDialog(
                                     )
                                 }
 
-                            }
-                        }
-                    }
-
-                    // Security Options Card
-                    item {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
-                            ),
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
-                            )
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(20.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Lock,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Column {
-                                        Text(
-                                            text = stringResource(R.string.security_title),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Text(
-                                            text = stringResource(R.string.security_desc),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-
-                                // Biometric Security Switch Row
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .clickable { viewModel.setRequireBiometrics(!requireBiometrics) }
-                                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Column {
-                                            Text(
-                                                text = stringResource(R.string.biometric_lock_title),
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                            Text(
-                                                text = stringResource(R.string.biometric_lock_desc),
-                                                style = MaterialTheme.typography.labelMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                                            )
-                                        }
-                                    }
-                                    Switch(
-                                        checked = requireBiometrics,
-                                        onCheckedChange = { viewModel.setRequireBiometrics(it) },
-                                        colors = SwitchDefaults.colors(
-                                            checkedThumbColor = MaterialTheme.colorScheme.primary,
-                                            checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
-                                        )
-                                    )
-                                }
                             }
                         }
                     }

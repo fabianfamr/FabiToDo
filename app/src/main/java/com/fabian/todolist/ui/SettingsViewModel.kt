@@ -54,6 +54,12 @@ class SettingsViewModel @Inject constructor(
     private val _requireBiometrics = MutableStateFlow(prefs.getBoolean("require_biometrics", false))
     val requireBiometrics: StateFlow<Boolean> = _requireBiometrics.asStateFlow()
 
+    private val _secureScreenMode = MutableStateFlow(prefs.getBoolean("secure_screen_mode", false))
+    val secureScreenMode: StateFlow<Boolean> = _secureScreenMode.asStateFlow()
+
+    private val _encryptBackups = MutableStateFlow(prefs.getBoolean("encrypt_backups", false))
+    val encryptBackups: StateFlow<Boolean> = _encryptBackups.asStateFlow()
+
     private val _notificationsEnabled = MutableStateFlow(prefs.getBoolean("global_notifications_enabled", true))
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled.asStateFlow()
 
@@ -206,6 +212,16 @@ class SettingsViewModel @Inject constructor(
     fun setRequireBiometrics(require: Boolean) {
         _requireBiometrics.value = require
         prefs.edit().putBoolean("require_biometrics", require).apply()
+    }
+
+    fun setSecureScreenMode(enabled: Boolean) {
+        _secureScreenMode.value = enabled
+        prefs.edit().putBoolean("secure_screen_mode", enabled).apply()
+    }
+
+    fun setEncryptBackups(enabled: Boolean) {
+        _encryptBackups.value = enabled
+        prefs.edit().putBoolean("encrypt_backups", enabled).apply()
     }
 
     fun setNotificationsEnabled(enabled: Boolean) {

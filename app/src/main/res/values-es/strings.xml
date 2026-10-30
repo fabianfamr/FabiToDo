@@ -592,6 +592,18 @@
     <string name="drawer_section_views">Vistas principales</string>
     <string name="drawer_section_categories">Mis categorías</string>
     <string name="drawer_section_system">Sistema</string>
-    <string name="calendar_overdue_tasks">Tareas Vencidas</string>
+    <string name="settings_category_security">Seguridad y Privacidad</string>
+    <string name="settings_security_desc">Bloqueo biométrico, protección de capturas y privacidad de datos</string>
+    <string name="security_biometric_title">Bloqueo con Biometría o PIN</string>
+    <string name="security_biometric_desc">Solicitar huella dactilar, rostro o PIN del dispositivo al abrir FabiToDo</string>
+    <string name="security_secure_screen_title">Ocultar vista previa y capturas</string>
+    <string name="security_secure_screen_desc">Bloquear capturas de pantalla y ocultar contenido al cambiar de app</string>
+    <string name="security_encrypt_backups_title">Protección de Copias de Seguridad</string>
+    <string name="security_encrypt_backups_desc">Activar verificación adicional al exportar respaldos de tareas</string>
+    <string name="security_wipe_title">Borrado Seguro de Datos</string>
+    <string name="security_wipe_desc">Eliminar permanentemente todas las tareas y limpiar datos locales</string>
+    <string name="security_wipe_confirm_title">¿Eliminar todos los datos de forma segura?</string>
+    <string name="security_wipe_confirm_msg">Esta acción es permanente e irreversible. Se eliminarán todas las tareas almacenadas.</string>
     <string name="calendar_toggle_pane">Alternar panel de calendario</string>
+    <string name="calendar_overdue_tasks">Tareas Vencidas</string>
 </resources>

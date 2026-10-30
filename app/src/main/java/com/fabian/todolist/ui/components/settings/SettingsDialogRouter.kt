@@ -96,6 +96,14 @@ fun SettingsDialogRouter(
         )
     }
     
+    if (currentDestination == SettingsDestinations.SECURITY) {
+        SecuritySettingsDialog(
+            settingsViewModel = settingsViewModel,
+            taskViewModel = viewModel,
+            onDismiss = { onDestinationChanged(SettingsDestinations.NONE) }
+        )
+    }
+
     if (currentDestination == SettingsDestinations.AI) {
         AISettingsDialog(
             viewModel = settingsViewModel,

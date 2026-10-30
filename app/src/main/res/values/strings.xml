@@ -597,6 +597,18 @@
     <string name="drawer_section_views">Views</string>
     <string name="drawer_section_categories">Categories</string>
     <string name="drawer_section_system">System</string>
-    <string name="calendar_overdue_tasks">Overdue Tasks</string>
+    <string name="settings_category_security">Security &amp; Privacy</string>
+    <string name="settings_security_desc">Biometric lock, screenshot protection and data privacy</string>
+    <string name="security_biometric_title">Biometric or PIN Lock</string>
+    <string name="security_biometric_desc">Require fingerprint, face or device PIN when opening FabiToDo</string>
+    <string name="security_secure_screen_title">Protect Screen &amp; Recent Apps</string>
+    <string name="security_secure_screen_desc">Block screenshots and blur app preview in multitasking list</string>
+    <string name="security_encrypt_backups_title">Protected Backup Export</string>
+    <string name="security_encrypt_backups_desc">Enable extra verification when exporting task backups</string>
+    <string name="security_wipe_title">Secure Data Wipe</string>
+    <string name="security_wipe_desc">Permanently erase all task records and reset local data</string>
+    <string name="security_wipe_confirm_title">Securely Erase All Data?</string>
+    <string name="security_wipe_confirm_msg">This action is permanent and cannot be undone. All local tasks will be deleted.</string>
     <string name="calendar_toggle_pane">Toggle Calendar</string>
+    <string name="calendar_overdue_tasks">Overdue Tasks</string>
 </resources>

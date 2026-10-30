@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.res.painterResource
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -108,6 +109,7 @@ object SettingsDestinations {
     const val NOTIFICATIONS = "notifications"
     const val DATETIME_FORMAT = "datetime"
     const val BEHAVIOR = "behavior"
+    const val SECURITY = "security"
     const val AI = "ai"
 }
 
@@ -168,6 +170,9 @@ fun SettingsPreferencesDialog(
     
     val titleSync = stringResource(R.string.backup_restore_title)
     val descSync = stringResource(R.string.settings_sync_desc)
+
+    val titleSecurity = stringResource(R.string.settings_category_security)
+    val descSecurity = stringResource(R.string.settings_security_desc)
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -416,6 +421,38 @@ fun SettingsPreferencesDialog(
                                 icon = Icons.Filled.CloudSync,
                                 iconContainerColor = Color(0xFF455A64),
                                 onClick = { currentDestination = SettingsDestinations.BACKUP }
+                            )
+                        }
+                    }
+
+                    // --- Grupo 5: Seguridad y Privacidad ---
+                    item {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp, 6.dp)
+                                    .background(Color(0xFFE53935), RoundedCornerShape(3.dp))
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = titleSecurity,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary,
+                                letterSpacing = 1.sp
+                            )
+                        }
+                        SettingsSectionCard {
+                            SettingsPreferenceItem(
+                                title = titleSecurity,
+                                subtitle = descSecurity,
+                                icon = Icons.Default.Lock,
+                                iconContainerColor = Color(0xFFE53935),
+                                onClick = { currentDestination = SettingsDestinations.SECURITY }
                             )
                         }
                     }
