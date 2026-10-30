@@ -173,15 +173,23 @@ fun SettingsPreferencesDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
     ) {
+        val backdropInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.45f)),
+                .background(Color.Black.copy(alpha = 0.45f))
+                .clickable(
+                    indication = null,
+                    interactionSource = backdropInteractionSource
+                ) {
+                    onDismiss()
+                },
             contentAlignment = Alignment.Center
         ) {
             val isTablet = maxWidth >= 600.dp
+            val surfaceInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
             Surface(
-                modifier = if (isTablet) {
+                modifier = (if (isTablet) {
                     Modifier
                         .widthIn(min = 400.dp, max = 640.dp)
                         .fillMaxHeight(0.92f)
@@ -189,6 +197,11 @@ fun SettingsPreferencesDialog(
                         .shadow(16.dp, RoundedCornerShape(32.dp))
                 } else {
                     Modifier.fillMaxSize()
+                }).clickable(
+                    indication = null,
+                    interactionSource = surfaceInteractionSource
+                ) {
+                    // Consume click inside settings card
                 },
                 color = MaterialTheme.colorScheme.background,
                 shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)

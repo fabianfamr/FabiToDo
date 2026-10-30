@@ -1,6 +1,7 @@
 package com.fabian.todolist.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,51 +38,74 @@ fun ProductivityStatsDialog(
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
     ) {
-        Card(
-            shape = RoundedCornerShape(24.dp),
+        val backdropInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+        Box(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable(
+                    indication = null,
+                    interactionSource = backdropInteractionSource
+                ) {
+                    onDismiss()
+                },
+            contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            val cardInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+            Card(
+                shape = RoundedCornerShape(28.dp),
+                modifier = Modifier
+                    .widthIn(max = 480.dp)
+                    .fillMaxWidth(0.92f)
+                    .padding(16.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = cardInteractionSource
+                    ) {
+                        // Consume click inside card
+                    },
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.TrendingUp,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.productivity_stats_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    StatBadge(icon = Icons.Default.CheckCircle, value = completedTasks.toString(), label = stringResource(R.string.completed_tasks_label), color = Color(0xFF4CAF50))
-                    StatBadge(icon = Icons.Default.Timer, value = pendingTasks.toString(), label = stringResource(R.string.pending_tasks_label), color = Color(0xFFFF9800))
-                    StatBadge(icon = Icons.Default.Info, value = "$completionRate%", label = stringResource(R.string.efficiency_label), color = MaterialTheme.colorScheme.primary)
-                }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.productivity_stats_title),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        StatBadge(icon = Icons.Default.CheckCircle, value = completedTasks.toString(), label = stringResource(R.string.completed_tasks_label), color = Color(0xFF4CAF50))
+                        StatBadge(icon = Icons.Default.Timer, value = pendingTasks.toString(), label = stringResource(R.string.pending_tasks_label), color = Color(0xFFFF9800))
+                        StatBadge(icon = Icons.Default.Info, value = "$completionRate%", label = stringResource(R.string.efficiency_label), color = MaterialTheme.colorScheme.primary)
+                    }
 
-                Spacer(modifier = Modifier.height(32.dp))
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.close_button))
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text(stringResource(R.string.close_button), fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }

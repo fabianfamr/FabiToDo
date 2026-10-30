@@ -111,6 +111,12 @@ fun TaskCalendarPane(
         }.sortedBy { it.dueDate }
     }
 
+    // Filter upcoming tasks to exclude selected day tasks to prevent duplication
+    val upcomingNotSelectedDay = remember(upcomingTasks, tasksForSelectedDay) {
+        val selectedIds = tasksForSelectedDay.map { it.id }.toSet()
+        upcomingTasks.filter { it.id !in selectedIds }
+    }
+
     Surface(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.surface
@@ -482,8 +488,8 @@ fun TaskCalendarPane(
                 }
             }
 
-            // 4. UPCOMING DEADLINES IN THE NEXT 7 DAYS
-            if (upcomingTasks.isNotEmpty()) {
+            // 4. UPCOMING DEADLINES IN THE NEXT 7 DAYS (excluding selected day tasks to avoid duplicates)
+            if (upcomingNotSelectedDay.isNotEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -494,7 +500,7 @@ fun TaskCalendarPane(
                     )
                 }
 
-                items(upcomingTasks.take(5), key = { "upcoming_${it.id}" }) { task ->
+                items(upcomingNotSelectedDay.take(5), key = { "upcoming_${it.id}" }) { task ->
                     CalendarTaskItemCard(
                         task = task,
                         categoryColor = getCategoryColor(task.category, categoryColors[task.category]),
