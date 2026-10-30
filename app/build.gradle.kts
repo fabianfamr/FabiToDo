@@ -18,8 +18,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 53
-    versionName = "1.25.0"
+    versionCode = 54
+    versionName = "1.25.1"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }

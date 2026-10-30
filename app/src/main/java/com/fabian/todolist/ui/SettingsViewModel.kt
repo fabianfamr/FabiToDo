@@ -506,9 +506,34 @@ class SettingsViewModel @Inject constructor(
             var success = true
             try {
                 val db = com.fabian.todolist.data.AppDatabase.getDatabase(context)
-                db.openHelper.writableDatabase.execSQL("VACUUM")
-                db.openHelper.writableDatabase.execSQL("PRAGMA wal_checkpoint(FULL)")
+                val writableDb = db.openHelper.writableDatabase
+
+                // 1. Flush and truncate Write-Ahead Log (WAL) journal file
+                try {
+                    writableDb.execSQL("PRAGMA wal_checkpoint(TRUNCATE)")
+                } catch (e: Exception) {
+                    try {
+                        writableDb.execSQL("PRAGMA wal_checkpoint(FULL)")
+                    } catch (e2: Exception) {
+                        android.util.Log.w("SettingsViewModel", "WAL checkpoint warning: ${e2.message}")
+                    }
+                }
+
+                // 2. Attempt VACUUM to reclaim unused pages if active read cursors allow
+                try {
+                    writableDb.execSQL("VACUUM")
+                } catch (e: Exception) {
+                    android.util.Log.w("SettingsViewModel", "VACUUM skipped due to active readers: ${e.message}")
+                }
+
+                // 3. Re-analyze statistics and optimize query planning
+                try {
+                    writableDb.execSQL("PRAGMA optimize")
+                } catch (e: Exception) {
+                    android.util.Log.w("SettingsViewModel", "PRAGMA optimize warning: ${e.message}")
+                }
             } catch (e: Exception) {
+                android.util.Log.e("SettingsViewModel", "Error optimizing database", e)
                 success = false
             }
             refreshStorageStats()
