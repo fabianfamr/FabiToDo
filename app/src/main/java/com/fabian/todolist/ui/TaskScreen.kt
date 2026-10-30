@@ -277,7 +277,11 @@ fun TaskScreen(
                                 viewModel.setSelectedCategory(cat)
                             }
                         },
-                        onOpenCategoriesDrawer = { scope.launch { drawerState.open() } },
+                        onOpenCategoriesDrawer = {
+                            scope.launch {
+                                if (drawerState.isOpen) drawerState.close() else drawerState.open()
+                            }
+                        },
                         onAddClick = {
                             taskToEdit = null
                             showAddEditDialog = true
@@ -359,7 +363,11 @@ fun TaskScreen(
                                     selectedCategory = selectedCategory,
                                     categoryColors = categoryColors,
                                     pendingTasksCount = pendingTasksCount,
-                                    onMenuClick = { scope.launch { drawerState.open() } },
+                                    onMenuClick = {
+                                        scope.launch {
+                                            if (drawerState.isOpen) drawerState.close() else drawerState.open()
+                                        }
+                                    },
                                     onSortClick = { showFocusDrawer = true },
                                     onToggleSearch = { isSearchExpanded = !isSearchExpanded },
                                     onStatsClick = { showStatsDialog = true },
@@ -1014,7 +1022,7 @@ fun TaskScreen(
                             indication = null,
                             interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                         ) {
-                            // Empty action: DOES NOT CLOSE THE MENU
+                            scope.launch { drawerState.close() }
                         }
                 )
             }
