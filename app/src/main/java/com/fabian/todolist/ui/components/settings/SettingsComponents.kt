@@ -22,6 +22,10 @@ import com.fabian.todolist.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.shadow
 
 @Composable
 fun SettingsSubmenuBackground() {
@@ -71,44 +75,80 @@ fun SettingsSubmenuScaffold(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        SettingsSubmenuBackground()
-        
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .systemBarsPadding()
+    val backdropInteractionSource = remember { MutableInteractionSource() }
+    val surfaceInteractionSource = remember { MutableInteractionSource() }
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.45f))
+            .clickable(
+                indication = null,
+                interactionSource = backdropInteractionSource
+            ) {
+                onBack()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        val isTablet = maxWidth >= 600.dp
+        Surface(
+            modifier = (if (isTablet) {
+                Modifier
+                    .widthIn(min = 400.dp, max = 640.dp)
+                    .fillMaxHeight(0.92f)
+                    .clip(RoundedCornerShape(32.dp))
+                    .shadow(16.dp, RoundedCornerShape(32.dp))
+            } else {
+                Modifier.fillMaxSize()
+            }).clickable(
+                indication = null,
+                interactionSource = surfaceInteractionSource
+            ) {
+                // Consume click inside card
+            },
+            color = MaterialTheme.colorScheme.background,
+            shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)
         ) {
-            // High-end elegant header back row
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 12.dp)
-            ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.nav_back),
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
+            Box(modifier = Modifier.fillMaxSize()) {
+                SettingsSubmenuBackground()
+                
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .then(if (!isTablet) Modifier.systemBarsPadding() else Modifier.padding(top = 16.dp))
+                ) {
+                    // High-end elegant header back row
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 12.dp)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.nav_back),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            letterSpacing = (-0.5).sp
+                        )
+                    }
+                    
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        content()
+                    }
                 }
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    letterSpacing = (-0.5).sp
-                )
-            }
-            
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                content()
             }
         }
     }
