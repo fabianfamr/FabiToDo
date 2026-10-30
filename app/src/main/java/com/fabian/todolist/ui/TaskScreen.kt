@@ -1091,7 +1091,7 @@ fun TaskScreen(
                 )
             },
             onSave = { finishedTask ->
-                if (taskToEdit == null) {
+                if (taskToEdit == null || taskToEdit?.id == 0) {
                     viewModel.insertTask(finishedTask)
                 } else {
                     viewModel.updateTask(finishedTask)

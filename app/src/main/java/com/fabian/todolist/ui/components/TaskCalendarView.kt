@@ -97,24 +97,26 @@ fun TaskCalendarPane(
     }
     val tasksForSelectedDay = tasksByDay[selectedDayKey] ?: emptyList()
 
-    // Tasks due in the next 7 days (upcoming horizon)
-    val upcomingTasks = remember(tasks) {
-        val now = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-        val inSevenDays = now + (7L * 24 * 60 * 60 * 1000)
+    // Overdue tasks: pending tasks with due date strictly before today
+    val overdueTasks = remember(tasks, todayMidnight) {
         tasks.filter { task ->
-            task.dueDate != null && !task.isCompleted && task.dueDate!! in now..inSevenDays
+            task.dueDate != null && !task.isCompleted && task.dueDate!! < todayMidnight
         }.sortedBy { it.dueDate }
     }
 
-    // Filter upcoming tasks to exclude selected day tasks to prevent duplication
-    val upcomingNotSelectedDay = remember(upcomingTasks, tasksForSelectedDay) {
+    // Tasks due in the next 7 days (upcoming horizon)
+    val upcomingTasks = remember(tasks, todayMidnight) {
+        val inSevenDays = todayMidnight + (7L * 24 * 60 * 60 * 1000)
+        tasks.filter { task ->
+            task.dueDate != null && !task.isCompleted && task.dueDate!! in todayMidnight..inSevenDays
+        }.sortedBy { it.dueDate }
+    }
+
+    // Filter upcoming tasks to exclude selected day tasks and overdue tasks to prevent duplication
+    val upcomingNotSelectedDay = remember(upcomingTasks, tasksForSelectedDay, overdueTasks) {
         val selectedIds = tasksForSelectedDay.map { it.id }.toSet()
-        upcomingTasks.filter { it.id !in selectedIds }
+        val overdueIds = overdueTasks.map { it.id }.toSet()
+        upcomingTasks.filter { it.id !in selectedIds && it.id !in overdueIds }
     }
 
     Surface(
@@ -362,6 +364,8 @@ fun TaskCalendarPane(
 
                                             CalendarDayCell(
                                                 dayNumber = dayNumber,
+                                                cellTimeMillis = cellTimeMillis,
+                                                todayMidnight = todayMidnight,
                                                 isSelected = isSelected,
                                                 isToday = isToday,
                                                 tasks = dayTasks,
@@ -381,7 +385,68 @@ fun TaskCalendarPane(
                 }
             }
 
-            // 2. SELECTED DAY SCHEDULE / AGENDA HEADER
+            // 2. OVERDUE TASKS SECTION (if any exist)
+            if (overdueTasks.isNotEmpty()) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f)
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.calendar_overdue_tasks),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                            Surface(
+                                color = MaterialTheme.colorScheme.error,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = "${overdueTasks.size}",
+                                    color = MaterialTheme.colorScheme.onError,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                items(overdueTasks, key = { "overdue_${it.id}" }) { task ->
+                    CalendarTaskItemCard(
+                        task = task,
+                        categoryColor = getCategoryColor(task.category, categoryColors[task.category]),
+                        onToggleComplete = { onToggleComplete(task) },
+                        onEdit = { onEditTask(task) },
+                        onDelete = { onDeleteTask(task) },
+                        isOverdue = true
+                    )
+                }
+            }
+
+            // 3. SELECTED DAY SCHEDULE / AGENDA HEADER
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -422,7 +487,7 @@ fun TaskCalendarPane(
                 }
             }
 
-            // 3. TASKS FOR SELECTED DAY LIST
+            // 4. TASKS FOR SELECTED DAY LIST
             if (tasksForSelectedDay.isEmpty()) {
                 item {
                     Card(
@@ -478,17 +543,19 @@ fun TaskCalendarPane(
                 }
             } else {
                 items(tasksForSelectedDay, key = { it.id }) { task ->
+                    val isTaskOverdue = !task.isCompleted && task.dueDate != null && task.dueDate!! < todayMidnight
                     CalendarTaskItemCard(
                         task = task,
                         categoryColor = getCategoryColor(task.category, categoryColors[task.category]),
                         onToggleComplete = { onToggleComplete(task) },
                         onEdit = { onEditTask(task) },
-                        onDelete = { onDeleteTask(task) }
+                        onDelete = { onDeleteTask(task) },
+                        isOverdue = isTaskOverdue
                     )
                 }
             }
 
-            // 4. UPCOMING DEADLINES IN THE NEXT 7 DAYS (excluding selected day tasks to avoid duplicates)
+            // 5. UPCOMING DEADLINES IN THE NEXT 7 DAYS (excluding selected day tasks to avoid duplicates)
             if (upcomingNotSelectedDay.isNotEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -524,6 +591,8 @@ fun TaskCalendarPane(
 @Composable
 private fun CalendarDayCell(
     dayNumber: Int,
+    cellTimeMillis: Long,
+    todayMidnight: Long,
     isSelected: Boolean,
     isToday: Boolean,
     tasks: List<Task>,
@@ -532,6 +601,7 @@ private fun CalendarDayCell(
 ) {
     val pendingTasks = tasks.filter { !it.isCompleted }
     val hasTasks = tasks.isNotEmpty()
+    val hasOverdue = !isToday && cellTimeMillis < todayMidnight && pendingTasks.isNotEmpty()
 
     val containerColor = when {
         isSelected -> MaterialTheme.colorScheme.primary
@@ -542,6 +612,7 @@ private fun CalendarDayCell(
     val textColor = when {
         isSelected -> MaterialTheme.colorScheme.onPrimary
         isToday -> MaterialTheme.colorScheme.primary
+        hasOverdue -> MaterialTheme.colorScheme.error
         else -> MaterialTheme.colorScheme.onSurface
     }
 
@@ -556,6 +627,8 @@ private fun CalendarDayCell(
                     Modifier.border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                 } else if (isToday) {
                     Modifier.border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+                } else if (hasOverdue) {
+                    Modifier.border(1.2.dp, Color(0xFFE53935).copy(alpha = 0.8f), RoundedCornerShape(12.dp))
                 } else if (hasTasks) {
                     Modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f), RoundedCornerShape(12.dp))
                 } else Modifier
@@ -570,7 +643,7 @@ private fun CalendarDayCell(
             Text(
                 text = dayNumber.toString(),
                 fontSize = 13.sp,
-                fontWeight = if (isSelected || isToday) FontWeight.Black else FontWeight.Normal,
+                fontWeight = if (isSelected || isToday || hasOverdue) FontWeight.Black else FontWeight.Normal,
                 color = textColor
             )
 
@@ -583,6 +656,7 @@ private fun CalendarDayCell(
                 ) {
                     val dotColor = when {
                         isSelected -> MaterialTheme.colorScheme.onPrimary
+                        hasOverdue -> Color(0xFFE53935)
                         pendingTasks.any { it.priority == TaskPriority.CRITICAL || it.priority == TaskPriority.HIGH } -> Color(0xFFE53935)
                         pendingTasks.any { it.priority == TaskPriority.MEDIUM } -> Color(0xFFFB8C00)
                         pendingTasks.isNotEmpty() -> MaterialTheme.colorScheme.primary
@@ -623,7 +697,8 @@ private fun CalendarTaskItemCard(
     onToggleComplete: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOverdue: Boolean = false
 ) {
     Card(
         modifier = modifier
@@ -633,6 +708,8 @@ private fun CalendarTaskItemCard(
         colors = CardDefaults.cardColors(
             containerColor = if (task.isCompleted) {
                 MaterialTheme.colorScheme.surfaceContainerLowest
+            } else if (isOverdue) {
+                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f)
             } else {
                 MaterialTheme.colorScheme.surfaceContainer
             }
@@ -640,6 +717,7 @@ private fun CalendarTaskItemCard(
         border = BorderStroke(
             1.2.dp,
             if (task.isCompleted) MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+            else if (isOverdue) MaterialTheme.colorScheme.error.copy(alpha = 0.6f)
             else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.75f)
         )
     ) {
@@ -656,11 +734,12 @@ private fun CalendarTaskItemCard(
                     .height(36.dp)
                     .clip(RoundedCornerShape(2.dp))
                     .background(
-                        when (task.priority) {
-                            TaskPriority.CRITICAL -> Color(0xFFE53935)
-                            TaskPriority.HIGH -> Color(0xFFFF5722)
-                            TaskPriority.MEDIUM -> Color(0xFFFF9800)
-                            TaskPriority.LOW -> Color(0xFF4CAF50)
+                        when {
+                            isOverdue -> Color(0xFFE53935)
+                            task.priority == TaskPriority.CRITICAL -> Color(0xFFE53935)
+                            task.priority == TaskPriority.HIGH -> Color(0xFFFF5722)
+                            task.priority == TaskPriority.MEDIUM -> Color(0xFFFF9800)
+                            task.priority == TaskPriority.LOW -> Color(0xFF4CAF50)
                             else -> MaterialTheme.colorScheme.outlineVariant
                         }
                     )
@@ -674,7 +753,7 @@ private fun CalendarTaskItemCard(
                 onCheckedChange = { onToggleComplete() },
                 colors = CheckboxDefaults.colors(
                     checkedColor = MaterialTheme.colorScheme.primary,
-                    uncheckedColor = MaterialTheme.colorScheme.outline
+                    uncheckedColor = if (isOverdue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
                 )
             )
 
@@ -697,6 +776,32 @@ private fun CalendarTaskItemCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(top = 4.dp)
                 ) {
+                    if (isOverdue && !task.isCompleted) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.errorContainer,
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(11.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = "Vencida",
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+
                     // Category chip
                     Surface(
                         color = categoryColor.copy(alpha = 0.15f),
@@ -711,8 +816,15 @@ private fun CalendarTaskItemCard(
                         )
                     }
 
-                    // Due Time (if set)
-                    if (!task.dueTime.isNullOrBlank()) {
+                    // Due Date / Time (if set)
+                    if (task.dueDate != null && isOverdue) {
+                        Text(
+                            text = DateTimeUtils.formatDateSimpleSlash(task.dueDate!!),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    } else if (!task.dueTime.isNullOrBlank()) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.Schedule,

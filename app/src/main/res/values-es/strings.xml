@@ -592,5 +592,6 @@
     <string name="drawer_section_views">Vistas principales</string>
     <string name="drawer_section_categories">Mis categorías</string>
     <string name="drawer_section_system">Sistema</string>
+    <string name="calendar_overdue_tasks">Tareas Vencidas</string>
     <string name="calendar_toggle_pane">Alternar panel de calendario</string>
 </resources>

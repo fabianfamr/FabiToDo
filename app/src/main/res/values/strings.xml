@@ -597,5 +597,6 @@
     <string name="drawer_section_views">Views</string>
     <string name="drawer_section_categories">Categories</string>
     <string name="drawer_section_system">System</string>
+    <string name="calendar_overdue_tasks">Overdue Tasks</string>
     <string name="calendar_toggle_pane">Toggle Calendar</string>
 </resources>
