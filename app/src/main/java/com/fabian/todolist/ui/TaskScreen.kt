@@ -729,7 +729,7 @@ fun TaskScreen(
                                                                 if (hapticFeedbackOnComplete && !task.isCompleted) {
                                                                     com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
                                                                 }
-                                                                if (selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED) {
+                                                                if (selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
                                                                     isVisible = false
                                                                     // Wait for animation before updating DB
                                                                     scope.launch {
@@ -814,7 +814,7 @@ fun TaskScreen(
                                                 if (hapticFeedbackOnComplete && !task.isCompleted) {
                                                     com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
                                                 }
-                                                if (selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED) {
+                                                if (selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
                                                     isVisible = false
                                                     scope.launch {
                                                         kotlinx.coroutines.delay(300)
