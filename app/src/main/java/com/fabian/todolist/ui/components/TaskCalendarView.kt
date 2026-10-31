@@ -446,102 +446,44 @@ fun TaskCalendarPane(
                 }
             }
 
-            // 3. SELECTED DAY SCHEDULE / AGENDA HEADER
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        val headerText = remember(selectedDateMillis) {
-                            dayHeaderFormat.format(Date(selectedDateMillis)).replaceFirstChar { it.uppercase() }
-                        }
-                        Text(
-                            text = headerText,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = if (tasksForSelectedDay.isEmpty()) {
-                                stringResource(R.string.calendar_no_tasks_day)
-                            } else {
-                                "${tasksForSelectedDay.size} ${if (tasksForSelectedDay.size == 1) "tarea" else "tareas"} programadas"
-                            },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    // Quick Add Task Button for this specific day
-                    FilledTonalButton(
-                        onClick = { onAddTaskForDate(selectedDateMillis) },
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.add_task), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-
-            // 4. TASKS FOR SELECTED DAY LIST
-            if (tasksForSelectedDay.isEmpty()) {
+            // 3. SELECTED DAY SCHEDULE / AGENDA HEADER & TASKS (Only shown when tasks exist for selected day)
+            if (tasksForSelectedDay.isNotEmpty()) {
                 item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onAddTaskForDate(selectedDateMillis) },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                        ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(44.dp)
-                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.EventAvailable,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                        Column(modifier = Modifier.weight(1f)) {
+                            val headerText = remember(selectedDateMillis) {
+                                dayHeaderFormat.format(Date(selectedDateMillis)).replaceFirstChar { it.uppercase() }
                             }
-                            Spacer(modifier = Modifier.width(14.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = stringResource(R.string.calendar_no_tasks_day),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = stringResource(R.string.calendar_add_task_day),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Icon(
-                                imageVector = Icons.Default.AddCircleOutline,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                            Text(
+                                text = headerText,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "${tasksForSelectedDay.size} ${if (tasksForSelectedDay.size == 1) "tarea" else "tareas"} programadas",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+
+                        // Quick Add Task Button for this specific day
+                        FilledTonalButton(
+                            onClick = { onAddTaskForDate(selectedDateMillis) },
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(stringResource(R.string.add_task), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
-            } else {
+
                 items(tasksForSelectedDay, key = { it.id }) { task ->
                     val isTaskOverdue = !task.isCompleted && task.dueDate != null && task.dueDate!! < todayMidnight
                     CalendarTaskItemCard(

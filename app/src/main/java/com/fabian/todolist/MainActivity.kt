@@ -50,16 +50,7 @@ class MainActivity : AppCompatActivity() {
 
   private var initialAppliedLanguage: String = "system"
 
-  private fun Context.findActivity(): androidx.appcompat.app.AppCompatActivity? {
-    var currentContext = this
-    while (currentContext is ContextWrapper) {
-      if (currentContext is androidx.appcompat.app.AppCompatActivity) {
-        return currentContext
-      }
-      currentContext = currentContext.baseContext
-    }
-    return null
-  }
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()

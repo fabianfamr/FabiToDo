@@ -222,7 +222,7 @@ class ReminderReceiver : BroadcastReceiver() {
         }
         val completePendingIntent = PendingIntent.getBroadcast(
             context,
-            taskId,
+            taskId * 100 + 1,
             completeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -233,7 +233,7 @@ class ReminderReceiver : BroadcastReceiver() {
         }
         val snoozePendingIntent = PendingIntent.getBroadcast(
             context,
-            taskId,
+            taskId * 100 + 2,
             snoozeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

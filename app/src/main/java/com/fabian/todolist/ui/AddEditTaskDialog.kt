@@ -89,7 +89,19 @@ fun AddEditTaskDialog(
     var newSubtaskText by remember { mutableStateOf("") }
     
     var selectedPriority by remember { mutableStateOf(task?.priority ?: com.fabian.todolist.data.TaskPriority.MEDIUM) }
-    val attachedImageUri: String? = null
+    var attachedImageUri by remember { mutableStateOf(task?.attachedImageUri) }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            try {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(uri, flags)
+            } catch (_: Exception) {}
+            attachedImageUri = uri.toString()
+        }
+    }
 
     var showAddCategoryDialog by remember { mutableStateOf(false) }
     var newCategoryText by remember { mutableStateOf("") }
@@ -556,6 +568,27 @@ fun AddEditTaskDialog(
                                             modifier = Modifier.size(20.dp)
                                         )
                                     }
+
+                                    Spacer(modifier = Modifier.width(6.dp))
+
+                                    IconButton(
+                                        onClick = {
+                                            photoPickerLauncher.launch(
+                                                androidx.activity.result.PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f))
+                                            .size(46.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.AddPhotoAlternate,
+                                            contentDescription = stringResource(R.string.action_attach_image),
+                                            tint = MaterialTheme.colorScheme.secondary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
 
                                 Spacer(modifier = Modifier.height(12.dp))
@@ -589,6 +622,39 @@ fun AddEditTaskDialog(
                                         keyboardType = KeyboardType.Text
                                     )
                                 )
+
+                                if (!attachedImageUri.isNullOrBlank()) {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(140.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                    ) {
+                                        AsyncImage(
+                                            model = attachedImageUri,
+                                            contentDescription = stringResource(R.string.desc_task_image_attached),
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                        IconButton(
+                                            onClick = { attachedImageUri = null },
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(6.dp)
+                                                .size(32.dp)
+                                                .background(Color.Black.copy(alpha = 0.6f), CircleShape)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Close,
+                                                contentDescription = stringResource(R.string.action_remove_image),
+                                                tint = Color.White,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
 

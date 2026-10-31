@@ -161,6 +161,18 @@ fun TaskScreen(
         }
     }
 
+    val allTasksListState by viewModel.allTasksListState.collectAsStateWithLifecycle()
+    val pendingTaskIdFromNotification by viewModel.pendingTaskIdFromNotification.collectAsStateWithLifecycle()
+    LaunchedEffect(pendingTaskIdFromNotification, allTasksListState) {
+        val targetId = pendingTaskIdFromNotification ?: return@LaunchedEffect
+        val targetTask = allTasksListState.find { it.id == targetId }
+        if (targetTask != null) {
+            taskToEdit = targetTask
+            showAddEditDialog = true
+            viewModel.consumePendingTaskIdFromNotification()
+        }
+    }
+
     // Request notification permission if SDK >= 33 on arriving at main screen
     var hasPostNotificationPermission by remember {
         mutableStateOf(
@@ -254,6 +266,15 @@ fun TaskScreen(
 
         BackHandler(enabled = drawerState.isOpen) {
             scope.launch { drawerState.close() }
+        }
+
+        BackHandler(enabled = selectedTaskIds.isNotEmpty()) {
+            selectedTaskIds.clear()
+        }
+
+        BackHandler(enabled = isSearchExpanded || searchQuery.isNotEmpty()) {
+            isSearchExpanded = false
+            viewModel.setSearchQuery("")
         }
 
         BackHandler(enabled = !isDualPane && selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {

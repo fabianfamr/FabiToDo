@@ -95,9 +95,17 @@ class TaskWidget : GlanceAppWidget() {
         val repository = entryPoint.taskRepository()
 
         val allTasks = repository.getAllTasksSync()
-        // Sort by priority then by dueDate mostly
+        val priorityWeight = mapOf(
+            TaskPriority.CRITICAL to 4,
+            TaskPriority.HIGH to 3,
+            TaskPriority.MEDIUM to 2,
+            TaskPriority.LOW to 1
+        )
         val pendingTasks = allTasks.filter { !it.isCompleted && it.category != SystemCategory.TRASH }
-            .sortedByDescending { it.priority }
+            .sortedWith(
+                compareByDescending<Task> { priorityWeight[it.priority] ?: 0 }
+                    .thenBy { it.dueDate ?: Long.MAX_VALUE }
+            )
 
         provideContent {
             TaskWidgetContent(pendingTasks)
@@ -180,13 +188,6 @@ class TaskWidget : GlanceAppWidget() {
                         modifier = GlanceModifier.fillMaxSize().clickable(actionStartActivity(mainIntent))
                     ) {
                         items(tasks.take(10)) { task ->
-                            val priorityColor = when (task.priority) {
-                                TaskPriority.HIGH -> ColorProvider(day = Color(0xFFB3261E), night = Color(0xFFF2B8B5))
-                                TaskPriority.MEDIUM -> ColorProvider(day = Color(0xFFF29900), night = Color(0xFFFFCC80))
-                                TaskPriority.LOW -> ColorProvider(day = Color(0xFF1E88E5), night = Color(0xFF90CAF9))
-                                else -> ColorProvider(day = Color.Transparent, night = Color.Transparent)
-                            }
-                            
                             Box(
                                 modifier = GlanceModifier
                                     .fillMaxWidth()
@@ -232,6 +233,7 @@ class TaskWidget : GlanceAppWidget() {
 
                                     if (task.priority != TaskPriority.NONE) {
                                         val priorityColor = when (task.priority) {
+                                            TaskPriority.CRITICAL -> ColorProvider(day = Color(0xFFD32F2F), night = Color(0xFFFF8A80))
                                             TaskPriority.HIGH -> ColorProvider(day = Color(0xFFB3261E), night = Color(0xFFF2B8B5))
                                             TaskPriority.MEDIUM -> ColorProvider(day = Color(0xFFF29900), night = Color(0xFFFFCC80))
                                             TaskPriority.LOW -> ColorProvider(day = Color(0xFF1E88E5), night = Color(0xFF90CAF9))

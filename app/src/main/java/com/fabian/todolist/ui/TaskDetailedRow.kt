@@ -256,6 +256,20 @@ fun TaskDetailedRow(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
+
+                            if (isExpanded && !task.attachedImageUri.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                coil.compose.AsyncImage(
+                                    model = task.attachedImageUri,
+                                    contentDescription = stringResource(R.string.desc_task_image_attached),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(12.dp)),
+                                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
                         }
                         
                         if (isManualOrderEnabled) {

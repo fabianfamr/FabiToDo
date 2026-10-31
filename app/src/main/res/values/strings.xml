@@ -28,6 +28,9 @@
     <string name="action_help">Help</string>
     <string name="action_info">Information</string>
     <string name="action_manage">Manage</string>
+    <string name="desc_task_image_attached">Attached image</string>
+    <string name="action_attach_image">Attach image</string>
+    <string name="action_remove_image">Remove image</string>
     <string name="action_more">More</string>
     <string name="action_move">Move</string>
     <string name="action_next">Next</string>
