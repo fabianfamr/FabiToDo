@@ -69,17 +69,17 @@ fun LanguageSettingsDialog(
                     }
 
                     val languagesList = listOf(
-                        "system" to (R.string.lang_system to "🌐"),
-                        "es" to (null to "🇪🇸"),
-                        "en" to (null to "🇺🇸"),
-                        "pt" to (null to "🇧🇷"),
-                        "fr" to (null to "🇫🇷"),
-                        "de" to (null to "🇩🇪"),
-                        "it" to (null to "🇮🇹")
+                        "system" to (R.string.lang_system to "AUTO"),
+                        "es" to (null to "ES"),
+                        "en" to (null to "EN"),
+                        "pt" to (null to "PT"),
+                        "fr" to (null to "FR"),
+                        "de" to (null to "DE"),
+                        "it" to (null to "IT")
                     )
 
                     items(languagesList, key = { it.first }) { (code, pair) ->
-                        val (rawResString, flagEmoji) = pair
+                        val (rawResString, langBadge) = pair
                         val localeLabel = when (code) {
                             "es" -> "Español"
                             "en" -> "English"
@@ -130,7 +130,7 @@ fun LanguageSettingsDialog(
                                 modifier = Modifier.padding(20.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Flag icon circle badge
+                                // Language code badge
                                 Box(
                                     modifier = Modifier
                                         .size(46.dp)
@@ -145,8 +145,10 @@ fun LanguageSettingsDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = flagEmoji,
-                                        fontSize = 22.sp
+                                        text = langBadge,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
 

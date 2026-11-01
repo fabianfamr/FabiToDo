@@ -96,7 +96,7 @@
     <string name="app_locked_title">App Bloqueada</string>
     <string name="app_name">FabiToDo</string>
     <string name="app_version">Version %s</string>
-    <string name="auto_dark_theme">Follow System Theme</string>
+    <string name="auto_dark_theme">Follow Device Theme</string>
     <string name="back">Back</string>
     <string name="backup_desc">Local and cloud backup</string>
     <string name="biometric_lock_desc">Requerir huella o rostro para abrir</string>
@@ -143,7 +143,7 @@
     <string name="color_orange">Coral Atardecer</string>
     <string name="color_pink">Rosa Lavanda</string>
     <string name="color_purple">Púrpura Orquídea</string>
-    <string name="color_system">Dinámico (Sistema)</string>
+    <string name="color_system">Dynamic (Material You)</string>
     <string name="completed">Completed</string>
     <string name="completed_tasks">Completed Tasks</string>
     <string name="completed_tasks_label">Completadas</string>
@@ -288,7 +288,7 @@
     <string name="importance">Importance</string>
     <string name="invalid_input">Invalid input</string>
     <string name="label_today">Hoy</string>
-    <string name="lang_system">System Default</string>
+    <string name="lang_system">Device Default</string>
     <string name="light_theme">Light Theme</string>
     <string name="list_name">Category Name</string>
     <string name="low_priority">Low Priority</string>
@@ -342,7 +342,7 @@
     <string name="notification_default_desc">You have a scheduled task pending now.</string>
     <string name="notification_priority_high">High priority:</string>
     <string name="notification_priority_medium">Medium priority:</string>
-    <string name="notification_test_content">Notification system is functioning properly.</string>
+    <string name="notification_test_content">Notifications are functioning properly.</string>
     <string name="notification_test_content_de">Alles funktioniert perfekt.</string>
     <string name="notification_test_content_fr">Tout fonctionne parfaitement.</string>
     <string name="notification_test_content_jp">すべてが完璧に機能しています。</string>
@@ -557,8 +557,8 @@
     <string name="theme_light">Light</string>
     <string name="theme_light_desc">Colores claros y brillantes para el día</string>
     <string name="theme_mode">App Theme</string>
-    <string name="theme_system">System Default</string>
-    <string name="theme_system_desc">Sigue la configuración de tu teléfono</string>
+    <string name="theme_system">Device Default</string>
+    <string name="theme_system_desc">Follows your device settings</string>
     <string name="title_empty_err">Title cannot be empty</string>
     <string name="toast_backup_export_error">Error al guardar el archivo: %s</string>
     <string name="toast_backup_export_success">Copia de seguridad exportada con éxito</string>
@@ -598,7 +598,7 @@
     <string name="back_to_tasks">Back to task list</string>
     <string name="drawer_section_views">Views</string>
     <string name="drawer_section_categories">Categories</string>
-    <string name="drawer_section_system">System</string>
+    <string name="drawer_section_system">Archive and Trash</string>
     <string name="settings_category_security">Security &amp; Privacy</string>
     <string name="settings_security_desc">Biometric lock, screenshot protection and data privacy</string>
     <string name="security_biometric_title">Biometric or PIN Lock</string>

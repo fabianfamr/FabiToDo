@@ -179,7 +179,7 @@ class TaskWidget : GlanceAppWidget() {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "${context.getString(R.string.empty_state_title)} 🎉",
+                            text = context.getString(R.string.empty_state_title),
                             style = TextStyle(color = textSecondaryProvider, fontSize = 15.sp)
                         )
                     }

@@ -667,7 +667,7 @@ fun AISettingsDialog(
                                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                                             )
                                                             Text(
-                                                                text = "📁 $testResultCat",
+                                                                text = testResultCat,
                                                                 style = MaterialTheme.typography.bodySmall
                                                             )
                                                         }
@@ -681,7 +681,7 @@ fun AISettingsDialog(
                                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                                             )
                                                             Text(
-                                                                text = "🚩 $testResultPriority",
+                                                                text = testResultPriority,
                                                                 style = MaterialTheme.typography.bodySmall
                                                             )
                                                         }

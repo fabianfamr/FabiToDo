@@ -140,7 +140,7 @@
     <string name="color_orange">Coral Atardecer</string>
     <string name="color_pink">Rosa Lavanda</string>
     <string name="color_purple">Púrpura Orquídea</string>
-    <string name="color_system">Dinámico (Sistema)</string>
+    <string name="color_system">Dynamique (Material You)</string>
     <string name="completed">Terminée</string>
     <string name="completed_tasks">Tâches terminées</string>
     <string name="completed_tasks_label">Completadas</string>
@@ -285,7 +285,7 @@
     <string name="importance">Importance</string>
     <string name="invalid_input">Entrée non valide</string>
     <string name="label_today">Hoy</string>
-    <string name="lang_system">Par défaut du système</string>
+    <string name="lang_system">Par défaut de l\'appareil</string>
     <string name="light_theme">Thème clair</string>
     <string name="list_name">Nom de la catégorie</string>
     <string name="low_priority">Basse priorité</string>
@@ -554,8 +554,8 @@
     <string name="theme_light">Clair</string>
     <string name="theme_light_desc">Colores claros y brillantes para el día</string>
     <string name="theme_mode">Thème de l\'application</string>
-    <string name="theme_system">Par défaut du système</string>
-    <string name="theme_system_desc">Sigue la configuración de tu teléfono</string>
+    <string name="theme_system">Par défaut de l\'appareil</string>
+    <string name="theme_system_desc">Suit la configuration de votre appareil</string>
     <string name="title_empty_err">Le titre ne peut pas être vide</string>
     <string name="toast_backup_export_error">Error al guardar el archivo: %s</string>
     <string name="toast_backup_export_success">Copia de seguridad exportada con éxito</string>
@@ -584,4 +584,5 @@
     <string name="widget_loading">Cargando...</string>
     <string name="work">Travail</string>
     <string name="yesterday">Hier</string>
+    <string name="drawer_section_system">Archives et corbeille</string>
 </resources>

@@ -30,7 +30,7 @@
     <string name="ai_center_sec_config_desc">Gib deinen Google AI Studio API-Schlüssel ein, um KI-Funktionen freizuschalten.</string>
     <string name="ai_center_sec_features">Aktive KI-Funktionen</string>
     <string name="ai_center_sec_features_desc">Funktionen, die von der KI-Engine betrieben werden.</string>
-    <string name="ai_center_sec_status">Systemstatus</string>
+    <string name="ai_center_sec_status">Dienststatus</string>
     <string name="ai_center_sec_status_desc">Aktueller Betriebsstatus der KI-Engine.</string>
     <string name="ai_center_title">Smarte Funktionen</string>
     <string name="ai_desc_breakdown">Unterteilt Ziele automatisch in handlungsorientierte Einzelschritte.</string>

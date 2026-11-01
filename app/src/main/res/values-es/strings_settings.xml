@@ -37,7 +37,7 @@
     <string name="category_manage_add">Añadir nueva categoría</string>
     <string name="category_manage_empty">No hay categorías personalizadas aún.</string>
     <string name="category_status_custom">Personalizada</string>
-    <string name="category_status_system">Sistema (Fija)</string>
+    <string name="category_status_system">Predeterminada (Fija)</string>
     <string name="color_system_desc">Tonos dinámicos de Material You basados en el fondo de pantalla.</string>
     <string name="connect_netease">Conectar Netease</string>
     <string name="connect_qq_music">Conectar QQ Music</string>
@@ -47,7 +47,7 @@
     <string name="danger_zone">Zona de Peligro</string>
     <string name="dark_mode_off">Desactivado</string>
     <string name="dark_mode_on">Activado</string>
-    <string name="dark_mode_system">Por defecto del sistema</string>
+    <string name="dark_mode_system">Predeterminado del dispositivo</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_ok">Aceptar</string>
     <string name="dialog_save">Guardar</string>
@@ -67,8 +67,8 @@
     <string name="lang_pt">Português</string>
     <string name="lang_pt_sub">Portugués (Brasil)</string>
     <string name="lang_ru">Русский</string>
-    <string name="lang_sys">Por defecto del sistema</string>
-    <string name="lang_system_sub">Usar idioma del sistema operativo</string>
+    <string name="lang_sys">Predeterminado del dispositivo</string>
+    <string name="lang_system_sub">Usar idioma del dispositivo</string>
     <string name="lang_zh">中文</string>
     <string name="logout_confirmation_desc">Si cierras sesión, ya no podremos guardar tus cambios en la nube hasta que vuelvas a entrar. Las tareas que crees ahora se quedarán solo en este dispositivo.</string>
     <string name="logout_confirmation_title">¿Quieres cerrar sesión?</string>
@@ -245,7 +245,7 @@
     <string name="theme_dynamic">Dinámico</string>
     <string name="theme_forest">Bosque</string>
     <string name="theme_lavender">Lavanda</string>
-    <string name="theme_mode_desc">Elige entre claro, oscuro o el ajuste automático del sistema.</string>
+    <string name="theme_mode_desc">Elige entre claro, oscuro o el ajuste automático del dispositivo.</string>
     <string name="theme_monochrome">Monocromático</string>
     <string name="theme_ocean">Océano</string>
     <string name="theme_rose">Rosa</string>

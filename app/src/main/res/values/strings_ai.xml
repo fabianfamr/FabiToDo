@@ -39,7 +39,7 @@
     <string name="ai_diag_cloud_ok">Google Cloud &amp; Firebase services reachable</string>
     <string name="ai_diag_key_valid">Connection validated and operational</string>
     <string name="ai_diag_model_ready">Gemini model is ready for inference</string>
-    <string name="ai_diag_title">System Diagnostics</string>
+    <string name="ai_diag_title">Service Diagnostics</string>
     <string name="ai_error_generic">Gemini service is temporarily unavailable. Please check your internet connection.</string>
     <string name="ai_error_key_invalid">Unable to validate credentials. Please check your details in Google AI Studio.</string>
     <string name="ai_error_quota">Temporary request limit reached. Please wait a moment before trying again.</string>

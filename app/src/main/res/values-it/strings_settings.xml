@@ -37,7 +37,7 @@
     <string name="category_manage_add">Aggiungi categoria</string>
     <string name="category_manage_empty">Nessuna categoria personalizzata.</string>
     <string name="category_status_custom">Personalizzata</string>
-    <string name="category_status_system">Sistema (Fissa)</string>
+    <string name="category_status_system">Predefinita (Fissa)</string>
     <string name="color_system_desc">Colori dinamici Material You basati sullo sfondo.</string>
     <string name="connect_netease">Collega Netease</string>
     <string name="connect_qq_music">Collega QQ Music</string>
@@ -47,7 +47,7 @@
     <string name="danger_zone">Zona Pericolosa</string>
     <string name="dark_mode_off">Disattiva</string>
     <string name="dark_mode_on">Attiva</string>
-    <string name="dark_mode_system">Predefinito di sistema</string>
+    <string name="dark_mode_system">Predefinito del dispositivo</string>
     <string name="dialog_cancel">Annulla</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_save">Salva</string>
@@ -67,8 +67,8 @@
     <string name="lang_pt">Português</string>
     <string name="lang_pt_sub">Portoghese (Brasile)</string>
     <string name="lang_ru">Русский</string>
-    <string name="lang_sys">Predefinito di sistema</string>
-    <string name="lang_system_sub">Usa lingua del sistema operativo</string>
+    <string name="lang_sys">Predefinito del dispositivo</string>
+    <string name="lang_system_sub">Usa lingua del dispositivo</string>
     <string name="lang_zh">中文</string>
     <string name="logout_confirmation_desc">Se esci, non salveremo più le tue modifiche nel cloud. Le attività che creerai rimarranno solo su questo dispositivo.</string>
     <string name="logout_confirmation_title">Vuoi uscire?</string>

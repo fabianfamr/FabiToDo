@@ -37,7 +37,7 @@
     <string name="category_manage_add">Kategorie hinzufügen</string>
     <string name="category_manage_empty">Noch keine eigenen Kategorien vorhanden.</string>
     <string name="category_status_custom">Benutzerdefiniert</string>
-    <string name="category_status_system">System (Fest)</string>
+    <string name="category_status_system">Standard (Fest)</string>
     <string name="color_system_desc">Material You dynamische Farben basierend auf dem Hintergrundbild.</string>
     <string name="connect_netease">Netease verbinden</string>
     <string name="connect_qq_music">QQ Music verbinden</string>
@@ -47,7 +47,7 @@
     <string name="danger_zone">Gefahrenzone</string>
     <string name="dark_mode_off">Aus</string>
     <string name="dark_mode_on">An</string>
-    <string name="dark_mode_system">Systemstandard</string>
+    <string name="dark_mode_system">Gerätestandard</string>
     <string name="dialog_cancel">Abbrechen</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_save">Speichern</string>
@@ -67,12 +67,12 @@
     <string name="lang_pt">Português</string>
     <string name="lang_pt_sub">Portugiesisch (Brasilien)</string>
     <string name="lang_ru">Русский</string>
-    <string name="lang_sys">Systemstandard</string>
-    <string name="lang_system_sub">Betriebssystem-Sprache verwenden</string>
+    <string name="lang_sys">Gerätestandard</string>
+    <string name="lang_system_sub">Gerätesprache verwenden</string>
     <string name="lang_zh">中文</string>
     <string name="logout_confirmation_desc">Wenn du dich abmeldest, werden deine Aufgaben nicht mehr in der Cloud gespeichert. Zukünftige Aufgaben bleiben auf diesem Gerät.</string>
     <string name="logout_confirmation_title">Abmelden?</string>
-    <string name="notifications_permission_denied">System-Benachrichtigungsberechtigung verweigert. Erinnerungen werden möglicherweise nicht zugestellt.</string>
+    <string name="notifications_permission_denied">Benachrichtigungsberechtigung verweigert. Erinnerungen werden möglicherweise nicht zugestellt.</string>
     <string name="notifications_permission_granted">Benachrichtigungsberechtigung erfolgreich erteilt.</string>
     <string name="quiet_hours_desc">Do not suggest from 10 PM to 8 AM</string>
     <string name="quiet_hours_title">Quiet Hours</string>
@@ -245,7 +245,7 @@
     <string name="theme_dynamic">Dynamisch</string>
     <string name="theme_forest">Wald</string>
     <string name="theme_lavender">Lavendel</string>
-    <string name="theme_mode_desc">Wähle zwischen Hell, Dunkel oder Systemeinstellung.</string>
+    <string name="theme_mode_desc">Wähle zwischen Hell, Dunkel oder automatischer Geräteeinstellung.</string>
     <string name="theme_monochrome">Einfarbig</string>
     <string name="theme_ocean">Ozean</string>
     <string name="theme_rose">Rose</string>

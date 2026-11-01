@@ -14,7 +14,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 fun getLocalizedCategoryName(category: String): String {
     return when (category) {
         "Todas", "All", "Toutes", "Todos", "Alle", "Todas las tareas", "All tasks" -> stringResource(R.string.drawer_all_lists)
-        "Finalizadas", "Finished", "Completadas", "Done" -> stringResource(R.string.status_completed)
+        "Finalizadas", "Finished", "Completadas", "Done", "Completed" -> stringResource(R.string.status_completed)
+        "Papelera", "Trash", "Corbeille", "Papierkorb", "Cestino", "Lixeira" -> stringResource(R.string.trash_title)
         "General", "Général", "Allgemein" -> stringResource(R.string.settings_category_general)
         "Personal", "Personnel" -> stringResource(R.string.category_personal)
         "Trabajo", "Work", "Travail", "Arbeit" -> stringResource(R.string.category_work)

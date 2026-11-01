@@ -143,7 +143,7 @@
     <string name="color_orange">Coral Atardecer</string>
     <string name="color_pink">Rosa Lavanda</string>
     <string name="color_purple">Púrpura Orquídea</string>
-    <string name="color_system">Dinámico (Sistema)</string>
+    <string name="color_system">Dinámico (Material You)</string>
     <string name="completed">Completadas</string>
     <string name="completed_tasks">Tareas Completadas</string>
     <string name="completed_tasks_label">Completadas</string>
@@ -288,7 +288,7 @@
     <string name="importance">Importancia</string>
     <string name="invalid_input">Entrada no válida</string>
     <string name="label_today">Hoy</string>
-    <string name="lang_system">Sistema</string>
+    <string name="lang_system">Predeterminado del dispositivo</string>
     <string name="light_theme">Tema Claro</string>
     <string name="list_name">Nombre de Categoría</string>
     <string name="low_priority">Prioridad Baja</string>
@@ -553,7 +553,7 @@
     <string name="theme_light">Claro</string>
     <string name="theme_light_desc">Colores claros y brillantes para el día</string>
     <string name="theme_mode">Tema de la App</string>
-    <string name="theme_system">Sistema</string>
+    <string name="theme_system">Predeterminado del dispositivo</string>
     <string name="theme_system_desc">Sigue la configuración de tu teléfono</string>
     <string name="title_empty_err">El título no puede estar vacío</string>
     <string name="toast_backup_export_error">Error al guardar el archivo: %s</string>
@@ -594,7 +594,7 @@
     <string name="back_to_tasks">Volver a la lista</string>
     <string name="drawer_section_views">Vistas principales</string>
     <string name="drawer_section_categories">Mis categorías</string>
-    <string name="drawer_section_system">Sistema</string>
+    <string name="drawer_section_system">Archivo y papelera</string>
     <string name="settings_category_security">Seguridad y Privacidad</string>
     <string name="settings_security_desc">Bloqueo biométrico, protección de capturas y privacidad de datos</string>
     <string name="security_biometric_title">Bloqueo con Biometría o PIN</string>

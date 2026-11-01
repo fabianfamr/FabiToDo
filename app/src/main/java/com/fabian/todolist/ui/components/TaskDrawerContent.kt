@@ -38,7 +38,8 @@ fun TaskDrawerContent(
     onCategorySelected: (String) -> Unit,
     onSettingsSelected: () -> Unit,
     showOnlyCategories: Boolean = false,
-    onAddCategoryClick: () -> Unit = {}
+    onAddCategoryClick: () -> Unit = {},
+    onStatsClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -95,11 +96,10 @@ fun TaskDrawerContent(
                             Icons.Default.CalendarToday,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
-                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
+                            tint = if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     label = stringResource(R.string.calendar_nav_title),
-                    badgeText = stringResource(R.string.calendar_switch_calendar),
                     selected = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR,
                     onClick = {
                         onCategorySelected(com.fabian.todolist.data.SystemCategory.CALENDAR)
@@ -122,6 +122,24 @@ fun TaskDrawerContent(
                     onClick = {
                         onCategorySelected(com.fabian.todolist.data.SystemCategory.EISENHOWER)
                         scope.launch { drawerState.close() }
+                    }
+                )
+
+                // 4. Productivity Statistics
+                DrawerCardItem(
+                    icon = {
+                        Icon(
+                            Icons.Default.Insights,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    label = stringResource(R.string.stats_label),
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onStatsClick()
                     }
                 )
             }

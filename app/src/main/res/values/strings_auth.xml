@@ -21,7 +21,7 @@
     <string name="google_login_desc">Sync your tasks securely across all your devices with automatic cloud backups.</string>
     <string name="google_login_footer">Secure authentication via Google</string>
     <string name="google_login_guest_fallback_button">Continue in Local Mode</string>
-    <string name="google_login_guest_fallback_desc">No active system account was found. You can continue in local mode to store your tasks on this device or sign in via web browser.</string>
+    <string name="google_login_guest_fallback_desc">No active account was found on this device. You can continue in local mode to store your tasks on this device or sign in via web browser.</string>
     <string name="google_login_guest_fallback_title">Google Account Not Detected</string>
     <string name="google_login_title">Secure Access</string>
     <string name="google_login_web_desc">Open the secure browser to sign in with your Google account.</string>

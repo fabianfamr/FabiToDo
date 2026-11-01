@@ -1030,7 +1030,8 @@ fun TaskScreen(
                     onCategorySelected = { viewModel.setSelectedCategory(it) },
                     onSettingsSelected = { showSettingsDialog = true },
                     showOnlyCategories = isTablet,
-                    onAddCategoryClick = { showAddCategoryDialog = true }
+                    onAddCategoryClick = { showAddCategoryDialog = true },
+                    onStatsClick = { showStatsDialog = true }
                 )
 
                 // Translucent backdrop covering remaining space on right

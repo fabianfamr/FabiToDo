@@ -93,7 +93,7 @@
     <string name="app_locked_title">App Bloqueada</string>
     <string name="app_name">FabiToDo</string>
     <string name="app_version">Version %s</string>
-    <string name="auto_dark_theme">Systemdesign verwenden</string>
+    <string name="auto_dark_theme">Gerätedesign verwenden</string>
     <string name="back">Zurück</string>
     <string name="backup_desc">Lokale und Cloud-Sicherung</string>
     <string name="biometric_lock_desc">Requerir huella o rostro para abrir</string>
@@ -140,7 +140,7 @@
     <string name="color_orange">Coral Atardecer</string>
     <string name="color_pink">Rosa Lavanda</string>
     <string name="color_purple">Púrpura Orquídea</string>
-    <string name="color_system">Dinámico (Sistema)</string>
+    <string name="color_system">Dynamisch (Material You)</string>
     <string name="completed">Erledigt</string>
     <string name="completed_tasks">Erledigte Aufgaben</string>
     <string name="completed_tasks_label">Completadas</string>
@@ -285,7 +285,7 @@
     <string name="importance">Wichtigkeit</string>
     <string name="invalid_input">Ungültige Eingabe</string>
     <string name="label_today">Hoy</string>
-    <string name="lang_system">Systemstandard</string>
+    <string name="lang_system">Gerätestandard</string>
     <string name="light_theme">Helles Design</string>
     <string name="list_name">Kategoriename</string>
     <string name="low_priority">Niedrige Priorität</string>
@@ -554,8 +554,8 @@
     <string name="theme_light">Hell</string>
     <string name="theme_light_desc">Colores claros y brillantes para el día</string>
     <string name="theme_mode">App-Design</string>
-    <string name="theme_system">Systemstandard</string>
-    <string name="theme_system_desc">Sigue la configuración de tu teléfono</string>
+    <string name="theme_system">Gerätestandard</string>
+    <string name="theme_system_desc">Folgt den Einstellungen deines Geräts</string>
     <string name="title_empty_err">Titel darf nicht leer sein</string>
     <string name="toast_backup_export_error">Error al guardar el archivo: %s</string>
     <string name="toast_backup_export_success">Copia de seguridad exportada con éxito</string>
@@ -584,4 +584,5 @@
     <string name="widget_loading">Cargando...</string>
     <string name="work">Arbeit</string>
     <string name="yesterday">Gestern</string>
+    <string name="drawer_section_system">Archiv und Papierkorb</string>
 </resources>
