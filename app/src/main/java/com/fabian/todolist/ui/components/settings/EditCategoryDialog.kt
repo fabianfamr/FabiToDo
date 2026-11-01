@@ -55,13 +55,7 @@ fun EditCategoryDialog(
     }
 
     val filteredIcons = remember(iconSearchQuery) {
-        if (iconSearchQuery.isBlank()) {
-            CategoryIconCatalog.ALL_ICONS
-        } else {
-            CategoryIconCatalog.ALL_ICONS.filter {
-                it.first.contains(iconSearchQuery.trim(), ignoreCase = true)
-            }
-        }
+        CategoryIconCatalog.searchIcons(iconSearchQuery)
     }
 
     AlertDialog(
