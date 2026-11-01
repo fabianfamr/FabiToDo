@@ -1,5 +1,7 @@
 package com.fabian.todolist.ui.components.addtask
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -191,90 +193,96 @@ fun DateTimeSection(
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
             )
 
-            if (selectedDateInMillis != null && selectedTimeStr != null) {
-                Spacer(modifier = Modifier.height(12.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f), thickness = 1.dp)
-                Spacer(modifier = Modifier.height(12.dp))
+            AnimatedVisibility(
+                visible = selectedDateInMillis != null && selectedTimeStr != null,
+                enter = expandVertically(animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.75f)) + fadeIn(animationSpec = tween(220)),
+                exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.75f)) + fadeOut(animationSpec = tween(180))
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f), thickness = 1.dp)
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                var showRepeatMenu by remember { mutableStateOf(false) }
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { showRepeatMenu = true }
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Repeat,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(
-                                    text = stringResource(R.string.repeat_label),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                    var showRepeatMenu by remember { mutableStateOf(false) }
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showRepeatMenu = true }
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Repeat,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
                                 )
-                                Text(
-                                    text = when (repeatType) {
-                                        "Diario" -> stringResource(R.string.repeat_daily)
-                                        "Semanal" -> stringResource(R.string.repeat_weekly)
-                                        "Mensual" -> stringResource(R.string.repeat_monthly)
-                                        else -> stringResource(R.string.repeat_none)
-                                    },
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                                )
-                            }
-                        }
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = showRepeatMenu,
-                        onDismissRequest = { showRepeatMenu = false },
-                        modifier = Modifier
-                            .width(220.dp)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        val repeatOptions = listOf("Ninguno", "Diario", "Semanal", "Mensual")
-                        repeatOptions.forEach { opt ->
-                            val label = when(opt) {
-                                "Diario" -> stringResource(R.string.repeat_daily)
-                                "Semanal" -> stringResource(R.string.repeat_weekly)
-                                "Mensual" -> stringResource(R.string.repeat_monthly)
-                                else -> stringResource(R.string.repeat_none)
-                            }
-                            DropdownMenuItem(
-                                text = { Text(label, fontSize = 14.sp) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Repeat,
-                                        contentDescription = null,
-                                        tint = if (repeatType == opt) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.repeat_label),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
-                                },
-                                onClick = {
-                                    onRepeatTypeChanged(opt)
-                                    onRepeatChanged(opt != "Ninguno")
-                                    showRepeatMenu = false
+                                    Text(
+                                        text = when (repeatType) {
+                                            "Diario" -> stringResource(R.string.repeat_daily)
+                                            "Semanal" -> stringResource(R.string.repeat_weekly)
+                                            "Mensual" -> stringResource(R.string.repeat_monthly)
+                                            else -> stringResource(R.string.repeat_none)
+                                        },
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                    )
                                 }
+                            }
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        }
+
+                        DropdownMenu(
+                            expanded = showRepeatMenu,
+                            onDismissRequest = { showRepeatMenu = false },
+                            modifier = Modifier
+                                .width(220.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            val repeatOptions = listOf("Ninguno", "Diario", "Semanal", "Mensual")
+                            repeatOptions.forEach { opt ->
+                                val label = when(opt) {
+                                    "Diario" -> stringResource(R.string.repeat_daily)
+                                    "Semanal" -> stringResource(R.string.repeat_weekly)
+                                    "Mensual" -> stringResource(R.string.repeat_monthly)
+                                    else -> stringResource(R.string.repeat_none)
+                                }
+                                DropdownMenuItem(
+                                    text = { Text(label, fontSize = 14.sp) },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Repeat,
+                                            contentDescription = null,
+                                            tint = if (repeatType == opt) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    },
+                                    onClick = {
+                                        onRepeatTypeChanged(opt)
+                                        onRepeatChanged(opt != "Ninguno")
+                                        showRepeatMenu = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }

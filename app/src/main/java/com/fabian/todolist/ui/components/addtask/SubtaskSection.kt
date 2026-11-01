@@ -1,7 +1,9 @@
 package com.fabian.todolist.ui.components.addtask
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -107,15 +109,27 @@ fun SubtaskSection(
                     }
                 }
 
+                val arrowRotation by animateFloatAsState(
+                    targetValue = if (isSubtasksExpanded) 180f else 0f,
+                    animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.75f),
+                    label = "SubtaskArrow"
+                )
+
                 Icon(
-                    imageVector = if (isSubtasksExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier
+                        .size(24.dp)
+                        .graphicsLayer { rotationZ = arrowRotation }
                 )
             }
 
-            AnimatedVisibility(visible = isSubtasksExpanded) {
+            AnimatedVisibility(
+                visible = isSubtasksExpanded,
+                enter = expandVertically(animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.75f)) + fadeIn(animationSpec = tween(220)),
+                exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.75f)) + fadeOut(animationSpec = tween(180))
+            ) {
                 Column {
                     Spacer(modifier = Modifier.height(12.dp))
 

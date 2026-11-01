@@ -73,8 +73,14 @@ fun TaskDetailedRow(
         } else {
             MaterialTheme.colorScheme.surface
         },
-        animationSpec = tween(durationMillis = 300),
+        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
         label = "CardBgColor"
+    )
+
+    val cardElevation by animateDpAsState(
+        targetValue = if (isExpanded) 6.dp else 2.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.75f),
+        label = "CardElevation"
     )
 
     val dismissState = rememberSwipeToDismissBoxState(
@@ -104,11 +110,12 @@ fun TaskDetailedRow(
             val direction = dismissState.dismissDirection
             if (direction != SwipeToDismissBoxValue.Settled) {
                 val color by animateColorAsState(
-                    when (dismissState.targetValue) {
+                    when (direction) {
                         SwipeToDismissBoxValue.StartToEnd -> if (task.isCompleted) Color(0xFFFBBC05) else Color(0xFF34A853)
                         SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
                         SwipeToDismissBoxValue.Settled -> Color.Transparent
                     },
+                    animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
                     label = "SwipeColor"
                 )
                 val alignment = when (direction) {
@@ -154,7 +161,7 @@ fun TaskDetailedRow(
                     containerColor = cardBgColor
                 ),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = if (isExpanded) 6.dp else 2.dp
+                    defaultElevation = cardElevation
                 ),
                 border = if (isSelected) {
                     BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
@@ -168,7 +175,12 @@ fun TaskDetailedRow(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateContentSize(animationSpec = tween(durationMillis = 150))
+                        .animateContentSize(
+                            animationSpec = spring(
+                                dampingRatio = 0.75f,
+                                stiffness = Spring.StiffnessLow
+                            )
+                        )
                 ) {
                     Row(
                         modifier = Modifier
