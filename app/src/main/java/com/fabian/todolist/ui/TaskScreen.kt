@@ -994,21 +994,31 @@ fun TaskScreen(
                         }
                     )
             ) {
-                if (selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {
-                    calendarPaneContent(false)
-                } else if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
-                    eisenhowerContent()
-                } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                    TaskEmptyState(
-                        onAddTask = {
-                            taskToEdit = null
-                            showAddEditDialog = true
-                        },
-                        onOpenCategories = { scope.launch { drawerState.open() } },
-                        onOpenStats = { showStatsDialog = true }
-                    )
-                } else {
-                    taskListContent()
+                AnimatedContent(
+                    targetState = selectedCategory,
+                    transitionSpec = {
+                        (fadeIn(animationSpec = tween(280, easing = FastOutSlowInEasing)) + scaleIn(initialScale = 0.98f, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f))) togetherWith
+                        (fadeOut(animationSpec = tween(200, easing = FastOutSlowInEasing)) + scaleOut(targetScale = 0.98f, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)))
+                    },
+                    label = "CategoryViewTransition",
+                    modifier = Modifier.fillMaxSize()
+                ) { currentCategory ->
+                    if (currentCategory == com.fabian.todolist.data.SystemCategory.CALENDAR) {
+                        calendarPaneContent(false)
+                    } else if (currentCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
+                        eisenhowerContent()
+                    } else if (tasks.isEmpty() && currentCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                        TaskEmptyState(
+                            onAddTask = {
+                                taskToEdit = null
+                                showAddEditDialog = true
+                            },
+                            onOpenCategories = { scope.launch { drawerState.open() } },
+                            onOpenStats = { showStatsDialog = true }
+                        )
+                    } else {
+                        taskListContent()
+                    }
                 }
             }
         }
@@ -1016,8 +1026,8 @@ fun TaskScreen(
         // Quick Access Drawer Overlay (Does NOT close when tapping outside space)
         androidx.compose.animation.AnimatedVisibility(
             visible = drawerState.isOpen,
-            enter = androidx.compose.animation.slideInHorizontally(initialOffsetX = { -it }) + androidx.compose.animation.fadeIn(),
-            exit = androidx.compose.animation.slideOutHorizontally(targetOffsetX = { -it }) + androidx.compose.animation.fadeOut()
+            enter = androidx.compose.animation.slideInHorizontally(initialOffsetX = { -it }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) + androidx.compose.animation.fadeIn(animationSpec = tween(250)),
+            exit = androidx.compose.animation.slideOutHorizontally(targetOffsetX = { -it }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) + androidx.compose.animation.fadeOut(animationSpec = tween(200))
         ) {
             Row(modifier = Modifier.fillMaxSize()) {
                 TaskDrawerContent(

@@ -31,6 +31,8 @@ import com.fabian.todolist.ui.TaskViewModel
 import com.fabian.todolist.ui.SettingsViewModel
 import com.fabian.todolist.ui.theme.FabiToDoTheme
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -128,7 +130,11 @@ class MainActivity : AppCompatActivity() {
           NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            enterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
+            exitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
+            popExitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) }
           ) {
             composable("login") {
               LoginScreen(
