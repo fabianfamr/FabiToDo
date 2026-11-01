@@ -81,23 +81,10 @@ fun AISettingsDialog(
     val models = listOf(
         "gemini-3.8-flash",
         "gemini-3.5-flash-lite",
-        "gemini-4-argon",
-        "gpt-4o",
-        "gpt-4o-mini",
-        "claude-3-5-sonnet",
-        "deepseek-chat",
-        "llama-3.3-70b"
+        "gemini-4-argon"
     )
 
-    // Detallar qué tipo de API Key se necesita según el modelo
-    val keyRequirementText = when {
-        aiModel.startsWith("gemini") -> stringResource(R.string.ai_key_req_gemini)
-        aiModel.startsWith("gpt") -> stringResource(R.string.ai_key_req_gpt)
-        aiModel.startsWith("claude") -> stringResource(R.string.ai_key_req_claude)
-        aiModel.startsWith("deepseek") -> stringResource(R.string.ai_key_req_deepseek)
-        aiModel.startsWith("llama") -> stringResource(R.string.ai_key_req_llama)
-        else -> stringResource(R.string.ai_key_req_generic)
-    }
+    val keyRequirementText = stringResource(R.string.ai_key_req_gemini)
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -838,154 +825,23 @@ fun ModelBrandBadge(model: String, modifier: Modifier = Modifier) {
                         )
                     )
                 }
-                lower.contains("gpt") -> {
-                    // Official OpenAI Emerald Green Backdrop
-                    drawRect(color = Color(0xFF10A37F))
-                    
-                    // Create the exact official OpenAI 6-segment rosette spiral!
-                    val scale = width / 100f
-                    val strokeW = scale * 5.5f
-                    for (i in 0 until 6) {
-                        val angle = i * 60f
-                        rotate(angle, androidx.compose.ui.geometry.Offset(cx, cy)) {
-                            val path = Path().apply {
-                                val sX = cx
-                                val sY = cy - 3f * scale
-                                moveTo(sX, sY)
-                                // Smooth official curve styling of the interlocking OpenAI petal loops
-                                cubicTo(
-                                    cx - 16f * scale, cy - 23f * scale,
-                                    cx + 4f * scale, cy - 38f * scale,
-                                    cx + 17f * scale, cy - 24f * scale
-                                )
-                                cubicTo(
-                                    cx + 25f * scale, cy - 14f * scale,
-                                    cx + 14f * scale, cy - 5f * scale,
-                                    cx, cy - 3f * scale
-                                )
-                            }
-                            drawPath(
-                                path = path,
-                                color = Color.White,
-                                style = Stroke(width = strokeW)
-                            )
-                        }
-                    }
-                }
-                lower.contains("claude") -> {
-                    // Official Anthropic Warm Coral/Terracotta hue
-                    drawRect(color = Color(0xFFD97706))
-                    
-                    val scale = width / 100f
-                    // Sleek 3-petal organic Anthropic brand silhouette
-                    val claudePath = Path().apply {
-                        // Left hand-brushed organic petal
-                        moveTo(cx - 16f * scale, cy + 18f * scale)
-                        quadraticTo(cx - 25f * scale, cy + 9f * scale, cx - 18f * scale, cy - 6f * scale)
-                        quadraticTo(cx - 11f * scale, cy - 19f * scale, cx - 5f * scale, cy - 21f * scale)
-                        quadraticTo(cx + 1f * scale, cy - 23f * scale, cx, cy - 13f * scale)
-                        quadraticTo(cx - 1f * scale, cy + 1f * scale, cx - 16f * scale, cy + 18f * scale)
-                    }
-                    drawPath(path = claudePath, color = Color.White)
-
-                    val claudeRightPath = Path().apply {
-                        // Right hand-brushed organic petal
-                        moveTo(cx + 16f * scale, cy + 18f * scale)
-                        quadraticTo(cx + 25f * scale, cy + 9f * scale, cx + 18f * scale, cy - 6f * scale)
-                        quadraticTo(cx + 11f * scale, cy - 19f * scale, cx + 5f * scale, cy - 21f * scale)
-                        quadraticTo(cx - 1f * scale, cy - 23f * scale, cx, cy - 13f * scale)
-                        quadraticTo(cx + 1f * scale, cy + 1f * scale, cx + 16f * scale, cy + 18f * scale)
-                    }
-                    drawPath(path = claudeRightPath, color = Color.White)
-                    
-                    // Center circular joint
-                    drawCircle(
-                        color = Color.White,
-                        radius = 8.5f * scale,
-                        center = androidx.compose.ui.geometry.Offset(cx, cy + 10f * scale)
-                    )
-                }
-                lower.contains("deepseek") -> {
-                    // Official DeepSeek Deep Blue Gradient
-                    drawRect(
-                        brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF1652F0), Color(0xFF003AB3))
-                        )
-                    )
-                    
-                    val scale = width / 100f
-                    // Professional 'd' monogram logo loop
-                    val dOutlinePath = Path().apply {
-                        moveTo(cx - 15f * scale, cy + 18f * scale)
-                        lineTo(cx + 12f * scale, cy + 18f * scale)
-                        quadraticTo(cx + 26f * scale, cy + 18f * scale, cx + 26f * scale, cy)
-                        quadraticTo(cx + 26f * scale, cy - 18f * scale, cx + 12f * scale, cy - 18f * scale)
-                        lineTo(cx - 12f * scale, cy - 18f * scale)
-                        lineTo(cx - 12f * scale, cy + 5f * scale)
-                        // Inner loop hollow curve
-                        quadraticTo(cx - 12f * scale, cy - 6f * scale, cx + 2f * scale, cy - 6f * scale)
-                        quadraticTo(cx + 13f * scale, cy - 6f * scale, cx + 13f * scale, cy + 2f * scale)
-                        quadraticTo(cx + 13f * scale, cy + 8f * scale, cx + 2f * scale, cy + 8f * scale)
-                        lineTo(cx - 15f * scale, cy + 8f * scale)
-                        close()
-                    }
-                    drawPath(
-                        path = dOutlinePath,
-                        color = Color.White
-                    )
-                    
-                    // Glowing cyan intelligent center node representing Deep Search core
-                    drawCircle(
-                        color = Color(0xFF00F2FE),
-                        radius = 4.5f * scale,
-                        center = androidx.compose.ui.geometry.Offset(cx + 2.5f * scale, cy + 1.5f * scale)
-                    )
-                }
-                lower.contains("llama") -> {
-                    // Meta AI Obsidian Gradient & Neon Infinity Energy Loop
-                    drawRect(
-                        brush = Brush.radialGradient(
-                            colors = listOf(Color(0xFF131524), Color(0xFF0B0C14)),
-                            center = androidx.compose.ui.geometry.Offset(cx, cy),
-                            radius = width * 0.7f
-                        )
-                    )
-                    
-                    val lw = width * 0.28f
-                    val lh = width * 0.13f
-                    val infinityPath = Path().apply {
-                        moveTo(cx, cy)
-                        cubicTo(cx - lw, cy - lh, cx - lw, cy + lh, cx, cy)
-                        cubicTo(cx + lw, cy - lh, cx + lw, cy + lh, cx, cy)
-                    }
-                    drawPath(
-                        path = infinityPath,
-                        brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF9333EA), Color(0xFF2563EB), Color(0xFF06B6D4))
-                        ),
-                        style = Stroke(width = width * 0.11f)
-                    )
-                }
                 else -> {
-                    // Tech Microchip generic logo representation
-                    drawRect(color = Color(0xFF6B7280))
-                    drawRect(
-                        color = Color.White,
-                        size = androidx.compose.ui.geometry.Size(width * 0.36f, height * 0.36f),
-                        topLeft = androidx.compose.ui.geometry.Offset(width * 0.32f, height * 0.32f),
-                        style = Stroke(width = width * 0.08f)
-                    )
-                    drawLine(
-                        color = Color.White,
-                        start = androidx.compose.ui.geometry.Offset(cx, 0f),
-                        end = androidx.compose.ui.geometry.Offset(cx, height),
-                        strokeWidth = width * 0.07f
-                    )
-                    drawLine(
-                        color = Color.White,
-                        start = androidx.compose.ui.geometry.Offset(0f, cy),
-                        end = androidx.compose.ui.geometry.Offset(width, cy),
-                        strokeWidth = width * 0.07f
+                    // Fallback Gemini Sparkle Star
+                    val starPath = Path().apply {
+                        val scx = width * 0.5f
+                        val scy = height * 0.5f
+                        val r = width * 0.35f
+                        moveTo(scx, scy - r)
+                        quadraticTo(scx, scy, scx + r, scy)
+                        quadraticTo(scx, scy, scx, scy + r)
+                        quadraticTo(scx, scy, scx - r, scy)
+                        quadraticTo(scx, scy, scx, scy - r)
+                    }
+                    drawPath(
+                        path = starPath,
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF38BDF8), Color(0xFF818CF8), Color(0xFFEC4899))
+                        )
                     )
                 }
             }
@@ -994,13 +850,9 @@ fun ModelBrandBadge(model: String, modifier: Modifier = Modifier) {
 }
 
 fun getModelCreator(model: String): String {
-    val lower = model.lowercase()
     return when {
-        lower.contains("gemini") -> "Google DeepMind"
-        lower.contains("gpt") -> "OpenAI"
-        lower.contains("claude") -> "Anthropic"
-        lower.contains("deepseek") -> "DeepSeek AI"
-        lower.contains("llama") -> "Meta AI"
-        else -> "Inteligencia Artificial"
+        model.contains("flash-lite", ignoreCase = true) -> "Gemini 3.5 • Alta velocidad y bajo consumo"
+        model.contains("argon", ignoreCase = true) -> "Gemini 4 • Razonamiento avanzado y profundidad"
+        else -> "Gemini 3.8 • Equilibrio óptimo de precisión y fluidez"
     }
 }

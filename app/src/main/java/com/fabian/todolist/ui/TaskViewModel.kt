@@ -155,13 +155,7 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             _isGeneratingAI.value = true
             try {
-                val isGemini = com.fabian.todolist.data.gemini.FirebaseAiManager.isGeminiModel(model)
                 val key = if (apiKey.isNotBlank()) apiKey else com.fabian.todolist.BuildConfig.GEMINI_API_KEY
-                // Only require API key for third-party non-Gemini models (OpenAI, Anthropic, etc.)
-                if (!isGemini && (key.isBlank() || key == "PLACEHOLDER_NOT_CONFIGURED" || key == "YOUR_GEMINI_API_KEY")) {
-                    onError("API Key is missing for $model. Please configure it in settings.")
-                    return@launch
-                }
             
                 val categoriesListStr = if (categories.isEmpty()) "[\"General\"]" else categories.joinToString(prefix = "[", postfix = "]") { "\"$it\"" }
                 val languageName = if (langCode == "system") Locale.getDefault().displayLanguage else java.util.Locale.forLanguageTag(langCode).displayLanguage
@@ -174,15 +168,15 @@ class TaskViewModel @Inject constructor(
 
                     Your goals:
                     1. Reason about the scope of the task. Break it down chronologically and logically into $subtaskCount highly actionable, concrete, and concise subtasks. Do NOT include any durations, times, or parenthetical estimates in the titles.
-                    2. Write a highly motivational, encouraging, and clear 1-sentence description that summarizes the task goal. At the end, append a cozy "Tip: <useful advice>" related to this specific task (e.g., "Tip: Haz esto por la mañana cuando tu energía esté alta!" or "Tip: Divide y vencerás, enfócate en la primera subtarea.").
-                    3. Determine the natural priority of this task (Baja / Media / Alta / Critica) based on its title and urgency keywords (like "asap", "pronto", "urgente", "importante", "luego", "cuando pueda").
-                    4. Pick the most suitable category for this task from the available categories list: $categoriesListStr. If NONE of the categories in that list naturally fit the task's theme, you MUST invent a new, highly specific, and creative category (maximum 2 words, capitalized) that perfectly represents it.
+                    2. Write a clear, encouraging, and serious 1-sentence description that summarizes the task goal. At the end, append a practical tip: "Consejo: <useful advice>".
+                    3. Determine the natural priority of this task (Baja / Media / Alta / Critica) based on its title and urgency keywords.
+                    4. Pick the most suitable category for this task from the available categories list: $categoriesListStr. If NONE of the categories in that list naturally fit the task's theme, provide a concise and suitable new category (maximum 2 words, capitalized).
 
                     Analyze step-by-step and output strictly a valid RAW JSON object matching this structure. Translate values to language: $languageName.
                     
                     Expected JSON schema:
                     {
-                      "description": "Revised motivational description with Tip.",
+                      "description": "Clear descriptive goal with practical advice.",
                       "category": "Selected or creative category name",
                       "priority": "Baja" or "Media" or "Alta" or "Critica",
                       "subtasks": [
@@ -195,11 +189,7 @@ class TaskViewModel @Inject constructor(
                 """.trimIndent()
                 
                 val useLowLatency = prefs.getBoolean("ai_low_latency_mode", true)
-                val finalModel = if (isGemini) {
-                    if (useLowLatency) "gemini-3.5-flash-lite" else com.fabian.todolist.data.gemini.FirebaseAiManager.mapToSupportedModel(model)
-                } else {
-                    model
-                }
+                val finalModel = if (useLowLatency) "gemini-3.5-flash-lite" else com.fabian.todolist.data.gemini.FirebaseAiManager.mapToSupportedModel(model)
                 
                 Log.d("TaskViewModel", "Calling AI with model: $finalModel (low-latency enabled: $useLowLatency)")
                 val responseText = callAiApi(finalModel, key, promptText)
@@ -271,97 +261,34 @@ class TaskViewModel @Inject constructor(
     }
 
     private suspend fun callAiApi(model: String, key: String, prompt: String): String? = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-        val isGemini = com.fabian.todolist.data.gemini.FirebaseAiManager.isGeminiModel(model)
-        if (isGemini) {
-            try {
-                return@withContext com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
-                    modelName = model,
-                    prompt = prompt,
-                    systemInstructionText = "You are a helpful AI task intelligence assistant. You must output ONLY a valid RAW JSON object.",
-                    timeoutMs = 60_000L
-                )
-            } catch (e: kotlinx.coroutines.CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Log.e("TaskViewModel", "Firebase AI Logic call failed, testing fallback if key available", e)
-                if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
-                    val request = com.fabian.todolist.data.gemini.GenerateContentRequest(
-                        contents = listOf(
-                            com.fabian.todolist.data.gemini.Content(
-                                parts = listOf(com.fabian.todolist.data.gemini.Part(text = prompt))
-                            )
-                        ),
-                        systemInstruction = com.fabian.todolist.data.gemini.Content(
-                            parts = listOf(com.fabian.todolist.data.gemini.Part(text = "You are a helpful AI task intelligence assistant. You must output ONLY a valid RAW JSON object."))
+        val geminiModel = com.fabian.todolist.data.gemini.FirebaseAiManager.mapToSupportedModel(model)
+        try {
+            return@withContext com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
+                modelName = geminiModel,
+                prompt = prompt,
+                systemInstructionText = "You are a professional, helpful, and empathetic personal productivity strategist. You must output ONLY a valid RAW JSON object.",
+                timeoutMs = 60_000L
+            )
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e("TaskViewModel", "Firebase AI Logic call failed, attempting direct Gemini call if key available", e)
+            if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
+                val request = com.fabian.todolist.data.gemini.GenerateContentRequest(
+                    contents = listOf(
+                        com.fabian.todolist.data.gemini.Content(
+                            parts = listOf(com.fabian.todolist.data.gemini.Part(text = prompt))
                         )
+                    ),
+                    systemInstruction = com.fabian.todolist.data.gemini.Content(
+                        parts = listOf(com.fabian.todolist.data.gemini.Part(text = "You are a professional, helpful, and empathetic personal productivity strategist. You must output ONLY a valid RAW JSON object."))
                     )
-                    val response = com.fabian.todolist.data.gemini.RetrofitClient.service.generateContent(model, key, request)
-                    return@withContext response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-                }
-                throw e
+                )
+                val response = com.fabian.todolist.data.gemini.RetrofitClient.service.generateContent(geminiModel, key, request)
+                return@withContext response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
             }
-        } else {
-            val (url, body) = prepareExternalAiRequest(model, key, prompt)
-            val reqBody = body.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-            val builder = okhttp3.Request.Builder().url(url).post(reqBody)
-            
-            // Set Headers
-            when {
-                model.contains("gpt") || model.contains("deepseek") || model.contains("llama") -> builder.addHeader("Authorization", "Bearer $key")
-                model.contains("claude") -> {
-                    builder.addHeader("x-api-key", key)
-                    builder.addHeader("anthropic-version", "2023-06-01")
-                }
-            }
-            builder.addHeader("Content-Type", "application/json")
-            
-            // Wrap in .use { } so the Response (and its underlying connection) is
-            // always closed, even on exception. Previously the Response was never
-            // explicitly closed, leaking a connection per AI call.
-            return@withContext client.newCall(builder.build()).execute().use { result ->
-                if (!result.isSuccessful) return@use null
-
-                val respStr = result.body?.string() ?: ""
-                val parsed = JSONObject(respStr)
-
-                if (model.contains("claude")) {
-                    parsed.getJSONArray("content").getJSONObject(0).getString("text")
-                } else {
-                    parsed.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content")
-                }
-            }
+            throw e
         }
-    }
-
-    private fun prepareExternalAiRequest(model: String, key: String, prompt: String): Pair<String, JSONObject> {
-        val body = JSONObject()
-        val url = when {
-            model.contains("gpt") -> "https://api.openai.com/v1/chat/completions"
-            model.contains("claude") -> "https://api.anthropic.com/v1/messages"
-            model.contains("deepseek") -> "https://api.deepseek.com/v1/chat/completions"
-            model.contains("llama") -> "https://api.groq.com/openai/v1/chat/completions"
-            else -> ""
-        }
-
-        if (model.contains("claude")) {
-            body.put("model", "claude-3-5-sonnet-20241022")
-            body.put("system", "Output ONLY raw JSON.")
-            body.put("max_tokens", 1024)
-            body.put("messages", JSONArray().put(JSONObject().put("role", "user").put("content", prompt)))
-        } else {
-            body.put("model", when(model) {
-                "llama-3.3-70b" -> "llama-3.3-70b-versatile"
-                else -> model
-            })
-            val msgs = JSONArray()
-            msgs.put(JSONObject().put("role", "system").put("content", "Output ONLY raw JSON."))
-            msgs.put(JSONObject().put("role", "user").put("content", prompt))
-            body.put("messages", msgs)
-            if (!model.contains("llama")) {
-                body.put("response_format", JSONObject().put("type", "json_object"))
-            }
-        }
-        return url to body
     }
 
     fun runTrashAutoCleanup() {

@@ -291,12 +291,11 @@
     <string name="low_priority">Basse priorité</string>
     <string name="mark_as_completed">Marcar como completada</string>
     <string name="matrix_empty_quadrant">Aucune tâche active dans ce quadrant</string>
-    <string name="matrix_info_desc">Organisez vos tâches en 4 quadrants selon l\'Importance et l\'Urgence :
-
-• 🔴 Faire d\'abord : Important &amp; Urgent (Haute priorité, pour aujourd\'hui ou demain).
-• 🔵 Planifier : Important mais Non Urgent (Haute priorité sans urgence immédiate).
-• 🟡 Déléguer : Urgent mais Non Important (Échéance proche, priorité moyenne/basse).
-• ⚪ Éliminer : Ni Urgent ni Important (Basse priorité).</string>
+    <string name="matrix_info_desc">Organisez vos tâches en quatre quadrants selon l\'importance et l\'urgence :
+\n• Quadrant 1 - Faire d\'abord : Important &amp; Urgent (haute priorité, pour aujourd\'hui ou demain).
+\n• Quadrant 2 - Planifier : Important mais non urgent (haute priorité sans urgence immédiate).
+\n• Quadrant 3 - Déléguer : Urgent mais non important (échéance proche, priorité moyenne ou basse).
+\n• Quadrant 4 - Éliminer : Ni urgent ni important (basse priorité sans échéance).</string>
     <string name="matrix_info_title">Comment fonctionne la Matrice d\'Eisenhower ?</string>
     <string name="matrix_q1">1. Faire d\'abord (Urgent &amp; Important)</string>
     <string name="matrix_q1_desc">À traiter immédiatement. Priorité Haute/Critique + Échéance proche.</string>
@@ -344,47 +343,47 @@
     <string name="notification_test_content_de">Alles funktioniert perfekt.</string>
     <string name="notification_test_content_fr">Tout fonctionne parfaitement.</string>
     <string name="notification_test_content_jp">すべてが完璧に機能しています。</string>
-    <string name="notification_test_title">🔔 ¡Alerta de prueba FabiToDo!</string>
+    <string name="notification_test_title">Notification test FabiToDo</string>
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
     <string name="open">Ouvrir</string>
     <string name="optional">Optionnel</string>
     <string name="pending">En attente</string>
     <string name="pending_tasks">%d en attente</string>
-    <string name="pending_tasks_label">Pendientes</string>
-    <string name="permission_denied_desc">Atención: no se han otorgado los permisos para notificaciones. Los recordatorios fallarán.</string>
-    <string name="permission_granted_desc">Perfecto, la app tiene permisos para notificarte.</string>
+    <string name="pending_tasks_label">En attente</string>
+    <string name="permission_denied_desc">Les autorisations de notification ne sont pas accordées.</string>
+    <string name="permission_granted_desc">Les autorisations de notification sont actives.</string>
     <string name="personal">Personnel</string>
     <string name="pick_color">Choisir une couleur</string>
     <string name="pick_icon">Choisir une icône</string>
     <string name="priority">Priorité</string>
     <string name="priority_critical">Critique</string>
-    <string name="priority_critical_label">Prioridad Crítica</string>
+    <string name="priority_critical_label">Priorité critique</string>
     <string name="priority_high">Haute</string>
-    <string name="priority_high_label">Prioridad Alta</string>
+    <string name="priority_high_label">Priorité haute</string>
     <string name="priority_low">Basse</string>
-    <string name="priority_low_label">Prioridad Baja</string>
+    <string name="priority_low_label">Priorité basse</string>
     <string name="priority_matrix">Matrice de priorités</string>
     <string name="priority_medium">Moyenne</string>
-    <string name="priority_medium_label">Prioridad Media</string>
+    <string name="priority_medium_label">Priorité moyenne</string>
     <string name="priority_none">Aucune</string>
-    <string name="priority_none_label">Sin Prioridad</string>
+    <string name="priority_none_label">Aucune priorité</string>
     <string name="priority_urgent">Urgente</string>
-    <string name="productivity_stats_title">Estadísticas de Productividad</string>
-    <string name="progress_desc_ratio">%1$d de %2$d completadas</string>
-    <string name="progress_status_all_done">¡Todo listo! ¡Puntuación perfecta! ¡Disfruta tu día! 🎉</string>
-    <string name="progress_status_almost_done">¡Casi! ¡Sigue así! ✨</string>
-    <string name="progress_status_empty">¡Empecemos! Toca + para añadir tareas.</string>
-    <string name="progress_status_half_done">¡Ya vas a la mitad! ¡Increíble! 👍</string>
-    <string name="progress_status_none_done">Aún no hay tareas completadas. ¡Tú puedes! 💪</string>
-    <string name="progress_status_some_done">¡Buen trabajo! Sigue así paso a paso 🚀</string>
-    <string name="progress_title_all">Tu progreso</string>
-    <string name="progress_title_category">Progreso en %s</string>
+    <string name="productivity_stats_title">Statistiques de productivité</string>
+    <string name="progress_desc_ratio">%1$d sur %2$d terminées</string>
+    <string name="progress_status_all_done">Toutes les tâches planifiées ont été accomplies.</string>
+    <string name="progress_status_almost_done">Presque toutes les tâches sont achevées.</string>
+    <string name="progress_status_empty">Commencez par ajouter une nouvelle tâche.</string>
+    <string name="progress_status_half_done">La moitié des tâches ont été accomplies.</string>
+    <string name="progress_status_none_done">Aucune tâche terminée pour le moment.</string>
+    <string name="progress_status_some_done">Progression régulière de vos activités.</string>
+    <string name="progress_title_all">Votre progression</string>
+    <string name="progress_title_category">Progression dans %s</string>
     <string name="quick_add_hint">Ajouter rapidement une tâche…</string>
-    <string name="quick_add_notification_button">➕ Nueva Tarea</string>
-    <string name="quick_add_notification_channel_name">Sugerencias de Añadido Rápido</string>
-    <string name="quick_add_notification_text">Toca aquí para anotar rápidamente una tarea antes de que lo olvides.</string>
-    <string name="quick_add_notification_title">Sugerencia FabiToDo</string>
+    <string name="quick_add_notification_button">Nouvelle tâche</string>
+    <string name="quick_add_notification_channel_name">Rappels rapides</string>
+    <string name="quick_add_notification_text">Appuyez pour noter rapidement une tâche.</string>
+    <string name="quick_add_notification_title">Rappel d\'organisation</string>
     <string name="quick_add_title">Ajout rapide</string>
     <string name="reminder">Rappel</string>
     <string name="reminder_disabled">Rappel désactivé</string>
@@ -457,7 +456,7 @@
     <string name="settings_alerts_title">Ajustes de Alertas</string>
     <string name="settings_appearance_header">Personaliza tu FabiToDo</string>
     <string name="settings_appearance_preview_task">Reunión FabiToDo</string>
-    <string name="settings_appearance_preview_task_desc">Mira los nuevos ajustes de apariencia ✨</string>
+    <string name="settings_appearance_preview_task_desc">Aperçu du thème et de la palette de couleurs</string>
     <string name="settings_appearance_preview_title">VISTA PREVIA EN TIEMPO REAL</string>
     <string name="settings_appearance_subtitle">Elige tu color distintivo y nivel de contraste favorito para adaptar la app a tu estilo.</string>
     <string name="settings_appearance_title">Ajustes de Apariencia</string>
@@ -533,8 +532,8 @@
     <string name="subtasks_progress">%d%% terminé</string>
     <string name="subtasks_title">Subtareas</string>
     <string name="task_batch_hint">Escribe varias tareas a la vez (una por línea).\nEjemplo:\n• Comprar leche\n• Ir al dentista\n• Aprender Kotlin</string>
-    <string name="task_batch_info">⚡ Se guardará una tarea diferente por cada línea escrita.</string>
-    <string name="task_completed">¡Genial! Tarea completada.</string>
+    <string name="task_batch_info">Une tâche distincte sera créée pour chaque ligne saisie.</string>
+    <string name="task_completed">Tâche marquée comme terminée.</string>
     <string name="task_created">Tâche créée</string>
     <string name="task_deleted">Tâche supprimée</string>
     <string name="task_deleted_msg">Tarea eliminada</string>

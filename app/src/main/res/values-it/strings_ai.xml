@@ -70,14 +70,8 @@
     <string name="settings_ai_title">Artificial Intelligence</string>
     <string name="settings_ai_desc">Manage AI models and test subtasks.</string>
     <string name="subtasks_generating">Generating…</string>
-    <string name="subtasks_generate_magic">Generate with AI</string>
-    <string name="ai_key_req_gemini">Integrato direttamente tramite Firebase AI Logic. Nessuna chiave API manuale richiesta!</string>
-    <string name="ai_key_req_gpt">Requires OpenAI API key.</string>
-    <string name="ai_key_req_claude">Requires Anthropic API key.</string>
-    <string name="ai_key_req_deepseek">Requires DeepSeek API key.</string>
-    <string name="ai_key_req_llama">Requires Groq/LLaMA API key.</string>
-    <string name="ai_key_req_generic">Requires valid API key.</string>
-    <string name="ai_section_model">AI Engine and Model</string>
+    <string name="ai_key_req_gemini">Integrato direttamente tramite Firebase AI Logic. Nessuna chiave API manuale richiesta.</string>
+    <string name="ai_section_model">Modello Gemini</string>
     <string name="ai_select_motor_title">Select AI Engine</string>
     <string name="ai_select_motor_desc">Choose AI model.</string>
     <string name="ai_ultra_low_latency_title">Ultra-low latency mode</string>

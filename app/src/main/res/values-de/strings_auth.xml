@@ -33,11 +33,11 @@
     <string name="login_description">Melde dich mit deinem Google-Konto an, um deine Aufgaben sicher auf allen Geräten zu synchronisieren.</string>
     <string name="login_footer_text">Deine Aufgaben werden privat und sicher auf deinem Gerät gespeichert.</string>
     <string name="login_google_btn">Mit Google fortfahren</string>
-    <string name="login_guest_btn">Loslegen!</string>
+    <string name="login_guest_btn">Im lokalen Modus fortfahren</string>
     <string name="login_perks_title">Warum ein Konto nutzen?</string>
-    <string name="login_start_btn">Loslegen!</string>
-    <string name="login_subtitle">Packen wir es an.</string>
-    <string name="login_tagline">Organisiere dein Leben ✨</string>
+    <string name="login_start_btn">Starten</string>
+    <string name="login_subtitle">Strukturierte Planung für deinen Alltag.</string>
+    <string name="login_tagline">Klare und verlässliche Organisation</string>
     <string name="login_title">Willkommen bei FabiToDo</string>
     <string name="login_welcome">Willkommen bei deiner Aufgabenliste</string>
 </resources>

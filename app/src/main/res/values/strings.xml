@@ -294,12 +294,11 @@
     <string name="low_priority">Low Priority</string>
     <string name="mark_as_completed">Marcar como completada</string>
     <string name="matrix_empty_quadrant">No active tasks in this quadrant</string>
-    <string name="matrix_info_desc">Organize your tasks into 4 quadrants evaluating Importance and Urgency:
-
-• 🔴 Do First: Important &amp; Urgent (High priority, due today or tomorrow).
-• 🔵 Schedule: Important but Not Urgent (High priority without immediate deadline).
-• 🟡 Delegate: Urgent but Not Important (Due soon with medium/low priority).
-• ⚪ Eliminate: Neither Urgent nor Important (Low priority without deadline).</string>
+    <string name="matrix_info_desc">Organize your tasks into four quadrants evaluating importance and urgency:
+\n• Quadrant 1 - Do First: Important &amp; Urgent (high priority, due today or tomorrow).
+\n• Quadrant 2 - Schedule: Important but not urgent (high priority without immediate deadline).
+\n• Quadrant 3 - Delegate: Urgent but not important (due soon with medium or low priority).
+\n• Quadrant 4 - Eliminate: Neither urgent nor important (low priority without deadline).</string>
     <string name="matrix_info_title">How does the Eisenhower Matrix work?</string>
     <string name="matrix_q1">1. Do First (Urgent &amp; Important)</string>
     <string name="matrix_q1_desc">Take care of immediately. High/Critical priority + Due soon.</string>
@@ -340,14 +339,14 @@
     <string name="normal_priority">Normal Priority</string>
     <string name="notification_channel_desc">Notifications for scheduled tasks and upcoming deadlines</string>
     <string name="notification_channel_name">Task Reminders</string>
-    <string name="notification_default_desc">Tienes una tarea pendiente programada para ahora.</string>
-    <string name="notification_priority_high">Alta prioridad:</string>
-    <string name="notification_priority_medium">Prioridad media:</string>
-    <string name="notification_test_content">Todo funciona perfectamente. Tus tareas siempre estarán al día.</string>
+    <string name="notification_default_desc">You have a scheduled task pending now.</string>
+    <string name="notification_priority_high">High priority:</string>
+    <string name="notification_priority_medium">Medium priority:</string>
+    <string name="notification_test_content">Notification system is functioning properly.</string>
     <string name="notification_test_content_de">Alles funktioniert perfekt.</string>
     <string name="notification_test_content_fr">Tout fonctionne parfaitement.</string>
     <string name="notification_test_content_jp">すべてが完璧に機能しています。</string>
-    <string name="notification_test_title">🔔 ¡Alerta de prueba FabiToDo!</string>
+    <string name="notification_test_title">FabiToDo Test Notification</string>
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
     <string name="open">Open</string>
@@ -374,20 +373,20 @@
     <string name="priority_none_label">Sin Prioridad</string>
     <string name="priority_urgent">Urgente</string>
     <string name="productivity_stats_title">Estadísticas de Productividad</string>
-    <string name="progress_desc_ratio">%1$d de %2$d completadas</string>
-    <string name="progress_status_all_done">¡Todo listo! ¡Puntuación perfecta! ¡Disfruta tu día! 🎉</string>
-    <string name="progress_status_almost_done">¡Casi! ¡Sigue así! ✨</string>
-    <string name="progress_status_empty">¡Empecemos! Toca + para añadir tareas.</string>
-    <string name="progress_status_half_done">¡Ya vas a la mitad! ¡Increíble! 👍</string>
-    <string name="progress_status_none_done">Aún no hay tareas completadas. ¡Tú puedes! 💪</string>
-    <string name="progress_status_some_done">¡Buen trabajo! Sigue así paso a paso 🚀</string>
-    <string name="progress_title_all">Tu progreso</string>
-    <string name="progress_title_category">Progreso en %s</string>
+    <string name="progress_desc_ratio">%1$d of %2$d completed</string>
+    <string name="progress_status_all_done">All scheduled tasks have been completed successfully.</string>
+    <string name="progress_status_almost_done">Nearly all scheduled tasks are completed.</string>
+    <string name="progress_status_empty">Start by adding a task to your list.</string>
+    <string name="progress_status_half_done">Half of scheduled tasks are completed.</string>
+    <string name="progress_status_none_done">No completed tasks recorded for this period yet.</string>
+    <string name="progress_status_some_done">Making steady progress on scheduled tasks.</string>
+    <string name="progress_title_all">Your progress</string>
+    <string name="progress_title_category">Progress in %s</string>
     <string name="quick_add_hint">Quick add a task…</string>
-    <string name="quick_add_notification_button">➕ Nueva Tarea</string>
-    <string name="quick_add_notification_channel_name">Sugerencias de Añadido Rápido</string>
-    <string name="quick_add_notification_text">Toca aquí para anotar rápidamente una tarea antes de que lo olvides.</string>
-    <string name="quick_add_notification_title">Sugerencia FabiToDo</string>
+    <string name="quick_add_notification_button">New Task</string>
+    <string name="quick_add_notification_channel_name">Quick Add Reminders</string>
+    <string name="quick_add_notification_text">Tap to quickly record a task.</string>
+    <string name="quick_add_notification_title">Task Reminder</string>
     <string name="quick_add_title">Quick Add</string>
     <string name="reminder">Reminder</string>
     <string name="reminder_disabled">Reminder Disabled</string>
@@ -458,15 +457,15 @@
     <string name="settings_alerts_subtitle">Mantén el control total sobre tus recordatorios diarios y alarmas para que nunca olvides una tarea.</string>
     <string name="settings_alerts_test_btn">Enviar Notificación de Prueba</string>
     <string name="settings_alerts_title">Ajustes de Alertas</string>
-    <string name="settings_appearance_header">Personaliza tu FabiToDo</string>
-    <string name="settings_appearance_preview_task">Reunión FabiToDo</string>
-    <string name="settings_appearance_preview_task_desc">Mira los nuevos ajustes de apariencia ✨</string>
-    <string name="settings_appearance_preview_title">VISTA PREVIA EN TIEMPO REAL</string>
-    <string name="settings_appearance_subtitle">Elige tu color distintivo y nivel de contraste favorito para adaptar la app a tu estilo.</string>
-    <string name="settings_appearance_title">Ajustes de Apariencia</string>
-    <string name="settings_backup_header">Copias de Seguridad (Archivos)</string>
+    <string name="settings_appearance_header">Appearance Settings</string>
+    <string name="settings_appearance_preview_task">Team Sync Meeting</string>
+    <string name="settings_appearance_preview_task_desc">Live preview of selected theme styling</string>
+    <string name="settings_appearance_preview_title">LIVE PREVIEW</string>
+    <string name="settings_appearance_subtitle">Choose your preferred accent and theme mode.</string>
+    <string name="settings_appearance_title">Appearance Settings</string>
+    <string name="settings_backup_header">Backups &amp; Data</string>
     <string name="settings_backup_local">Local</string>
-    <string name="settings_brand_footer">FabiToDo — Crafted with care for an organized day</string>
+    <string name="settings_brand_footer">FabiToDo — Structured productivity and personal task management</string>
     <string name="settings_export_backup">Exportar copia de seguridad</string>
     <string name="settings_import_backup">Seleccionar archivo de respaldo</string>
     <string name="settings_quick_add_12h">Cada 12 Horas</string>
@@ -535,9 +534,9 @@
     <string name="subtasks_empty">Aún no hay subtareas</string>
     <string name="subtasks_progress">%d%% completed</string>
     <string name="subtasks_title">Subtareas</string>
-    <string name="task_batch_hint">Escribe varias tareas a la vez (una por línea).\nEjemplo:\n• Comprar leche\n• Ir al dentista\n• Aprender Kotlin</string>
-    <string name="task_batch_info">⚡ Se guardará una tarea diferente por cada línea escrita.</string>
-    <string name="task_completed">¡Genial! Tarea completada.</string>
+    <string name="task_batch_hint">Enter multiple tasks (one per line).\nExample:\n• Review report\n• Follow up on email\n• Plan project sprint</string>
+    <string name="task_batch_info">An individual task will be saved for each line entered.</string>
+    <string name="task_completed">Task marked as completed.</string>
     <string name="task_created">Task created</string>
     <string name="task_deleted">Task deleted</string>
     <string name="task_deleted_msg">Tarea eliminada</string>

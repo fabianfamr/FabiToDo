@@ -33,11 +33,11 @@
     <string name="login_description">Entre com sua conta Google para sincronizar suas tarefas com segurança em todos os seus dispositivos.</string>
     <string name="login_footer_text">Suas tarefas são armazenadas de forma privada e segura no seu dispositivo.</string>
     <string name="login_google_btn">Continuar com Google</string>
-    <string name="login_guest_btn">Começar!</string>
+    <string name="login_guest_btn">Continuar no modo local</string>
     <string name="login_perks_title">Por que usar uma conta?</string>
-    <string name="login_start_btn">Começar!</string>
-    <string name="login_subtitle">Vamos fazer acontecer.</string>
-    <string name="login_tagline">Organize sua vida ✨</string>
+    <string name="login_start_btn">Começar</string>
+    <string name="login_subtitle">Planejamento estruturado para suas atividades diárias.</string>
+    <string name="login_tagline">Organização clara e eficiente</string>
     <string name="login_title">Boas-vindas ao FabiToDo</string>
     <string name="login_welcome">Boas-vindas à sua Lista</string>
 </resources>

@@ -33,11 +33,11 @@
     <string name="login_description">Accedi con il tuo account Google per sincronizzare le attività in sicurezza su tutti i dispositivi.</string>
     <string name="login_footer_text">Le tue attività sono salvate in modo privato e sicuro sul tuo dispositivo.</string>
     <string name="login_google_btn">Continua con Google</string>
-    <string name="login_guest_btn">Inizia ora!</string>
+    <string name="login_guest_btn">Continua in modalità locale</string>
     <string name="login_perks_title">Perché usare un account?</string>
-    <string name="login_start_btn">Inizia ora!</string>
-    <string name="login_subtitle">Facciamo accadere le cose.</string>
-    <string name="login_tagline">Organizza la tua vita ✨</string>
+    <string name="login_start_btn">Inizia</string>
+    <string name="login_subtitle">Pianificazione strutturata per la tua routine quotidiana.</string>
+    <string name="login_tagline">Organizzazione chiara ed efficiente</string>
     <string name="login_title">Benvenuto su FabiToDo</string>
     <string name="login_welcome">Benvenuto nella tua Lista</string>
 </resources>
