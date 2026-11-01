@@ -13,7 +13,9 @@ import androidx.room.PrimaryKey
         Index(value = ["isDeleted"]),
         Index(value = ["dueDate"]),
         Index(value = ["cloudId"]),
-        Index(value = ["updatedAt"])
+        Index(value = ["updatedAt"]),
+        Index(value = ["displayOrder"]),
+        Index(value = ["category"])
     ]
 )
 data class Task(

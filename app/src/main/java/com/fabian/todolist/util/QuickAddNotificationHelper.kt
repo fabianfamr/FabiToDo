@@ -51,13 +51,7 @@ object QuickAddNotificationHelper {
         val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
         val userKey = prefs.getString("ai_api_key", "") ?: ""
         val key = if (userKey.isNotBlank()) userKey else com.fabian.todolist.BuildConfig.GEMINI_API_KEY
-        
-        if (key.isBlank() || key == "PLACEHOLDER_NOT_CONFIGURED" || key == "YOUR_GEMINI_API_KEY") {
-            Log.d("QuickAddNotification", "No API Key configured, defaulting to offline list.")
-            return null
-        }
-
-        val model = prefs.getString("ai_model", "gemini-3.1-flash-lite-preview") ?: "gemini-3.1-flash-lite-preview"
+        val model = prefs.getString("ai_model", "gemini-3.5-flash-lite") ?: "gemini-3.5-flash-lite"
         
         val currentLocaleCode = context.resources.configuration.locales.get(0).language
         val languageName = if (currentLocaleCode.startsWith("es")) "Spanish" else "English"
@@ -102,20 +96,33 @@ object QuickAddNotificationHelper {
         }
 
         return try {
-            val request = GenerateContentRequest(
-                contents = listOf(
-                    Content(
-                        parts = listOf(Part(text = prompt))
-                    )
-                ),
-                systemInstruction = Content(
-                    parts = listOf(Part(text = "You are a context-aware, highly empathetic and charismatic task companion. Always write exactly one brief line, strictly under 85 characters, with absolutely no formatting, quotes, or markdown."))
+            if (com.fabian.todolist.data.gemini.FirebaseAiManager.isGeminiModel(model)) {
+                val text = com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
+                    modelName = model,
+                    prompt = prompt,
+                    systemInstructionText = "You are a context-aware, highly empathetic and charismatic task companion. Always write exactly one brief line, strictly under 85 characters, with absolutely no formatting, quotes, or markdown.",
+                    lowLatency = true,
+                    timeoutMs = 15_000L
                 )
-            )
-            val response = RetrofitClient.service.generateContent(model, key, request)
-            val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.trim()
-            if (!text.isNullOrBlank()) {
                 text.replace("\"", "").replace("'", "").trim()
+            } else if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
+                val request = GenerateContentRequest(
+                    contents = listOf(
+                        Content(
+                            parts = listOf(Part(text = prompt))
+                        )
+                    ),
+                    systemInstruction = Content(
+                        parts = listOf(Part(text = "You are a context-aware, highly empathetic and charismatic task companion. Always write exactly one brief line, strictly under 85 characters, with absolutely no formatting, quotes, or markdown."))
+                    )
+                )
+                val response = RetrofitClient.service.generateContent(model, key, request)
+                val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.trim()
+                if (!text.isNullOrBlank()) {
+                    text.replace("\"", "").replace("'", "").trim()
+                } else {
+                    null
+                }
             } else {
                 null
             }

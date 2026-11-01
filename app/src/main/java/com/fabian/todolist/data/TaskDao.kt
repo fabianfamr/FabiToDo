@@ -35,6 +35,14 @@ interface TaskDao {
     @Update
     suspend fun updateTasks(tasks: List<Task>)
 
+    @Transaction
+    suspend fun updateTasksOrder(tasks: List<Task>) {
+        updateTasks(tasks)
+    }
+
+    @Query("UPDATE tasks SET displayOrder = :order, updatedAt = :updatedAt, isSynced = 0 WHERE id = :id")
+    suspend fun updateDisplayOrder(id: Int, order: Int, updatedAt: Long = System.currentTimeMillis())
+
     @Query("UPDATE tasks SET isSynced = 1 WHERE id IN (:ids)")
     suspend fun markTasksSynced(ids: List<Int>)
 

@@ -82,8 +82,34 @@ class TaskRepository(
         val updatedTasks = tasks.map { 
             it.copy(updatedAt = System.currentTimeMillis(), isSynced = false) 
         }
-        taskDao.updateTasks(updatedTasks)
+        taskDao.updateTasksOrder(updatedTasks)
         notifyWidget()
+    }
+
+    suspend fun reorderTasksByCategory(categoryOrder: List<String>) {
+        val allTasks = taskDao.getAllTasksSync()
+        if (allTasks.isEmpty()) return
+
+        val categoryRank = categoryOrder.mapIndexed { index, cat -> cat to index }.toMap()
+
+        // Sort tasks according to the new category order while preserving relative displayOrder
+        val sortedTasks = allTasks.sortedWith(
+            compareBy<Task> { categoryRank[it.category] ?: Int.MAX_VALUE }
+                .thenBy { it.displayOrder }
+                .thenBy { it.id }
+        )
+
+        val toUpdate = mutableListOf<Task>()
+        sortedTasks.forEachIndexed { newIndex, task ->
+            if (task.displayOrder != newIndex) {
+                toUpdate.add(task.copy(displayOrder = newIndex, updatedAt = System.currentTimeMillis(), isSynced = false))
+            }
+        }
+
+        if (toUpdate.isNotEmpty()) {
+            taskDao.updateTasksOrder(toUpdate)
+            notifyWidget()
+        }
     }
 
     suspend fun delete(task: Task) {

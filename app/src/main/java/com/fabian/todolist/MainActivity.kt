@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     super.onCreate(savedInstanceState)
+    com.fabian.todolist.util.configureAppCheck(this, intent)
     
     val quickAddInterval = prefs.getString("quick_add_notification_interval", "off") ?: "off"
     if (quickAddInterval != "off") {

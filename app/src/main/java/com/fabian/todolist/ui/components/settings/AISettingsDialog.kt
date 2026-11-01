@@ -79,11 +79,9 @@ fun AISettingsDialog(
     var testResultSubtasks by remember { mutableStateOf<List<String>>(emptyList()) }
 
     val models = listOf(
-        "gemini-3.5-flash",
-        "gemini-3.1-pro-preview",
-        "gemini-flash-latest",
-        "gemini-3.1-flash-lite-preview",
-        "gemini-2.5-flash-preview",
+        "gemini-3.8-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-4-argon",
         "gpt-4o",
         "gpt-4o-mini",
         "claude-3-5-sonnet",
@@ -364,16 +362,16 @@ fun AISettingsDialog(
                                 )
                                 Card(
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                        containerColor = if (aiModel.startsWith("gemini")) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
                                     ),
                                     shape = RoundedCornerShape(6.dp)
                                 ) {
                                     Text(
-                                        text = if (aiModel.startsWith("gemini")) stringResource(R.string.ai_badge_recommended) else stringResource(R.string.ai_badge_required),
+                                        text = if (aiModel.startsWith("gemini")) "Firebase AI Logic" else stringResource(R.string.ai_badge_required),
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                                        color = if (aiModel.startsWith("gemini")) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 }
                             }

@@ -155,11 +155,11 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             _isGeneratingAI.value = true
             try {
+                val isGemini = com.fabian.todolist.data.gemini.FirebaseAiManager.isGeminiModel(model)
                 val key = if (apiKey.isNotBlank()) apiKey else com.fabian.todolist.BuildConfig.GEMINI_API_KEY
-                // Reject blank keys AND the placeholder text used by .env.example
-                // and the CI workflow when the GEMINI_API_KEY secret is not set.
-                if (key.isBlank() || key == "PLACEHOLDER_NOT_CONFIGURED" || key == "YOUR_GEMINI_API_KEY") {
-                    onError("API Key is missing. Please configure it in settings.")
+                // Only require API key for third-party non-Gemini models (OpenAI, Anthropic, etc.)
+                if (!isGemini && (key.isBlank() || key == "PLACEHOLDER_NOT_CONFIGURED" || key == "YOUR_GEMINI_API_KEY")) {
+                    onError("API Key is missing for $model. Please configure it in settings.")
                     return@launch
                 }
             
@@ -194,10 +194,9 @@ class TaskViewModel @Inject constructor(
                     Output ONLY the raw JSON. Absolutely no formatting, prefix, or markdown backticks!
                 """.trimIndent()
                 
-                // Force gemini-3.1-flash-lite-preview for ultra low-latency if preference is enabled and model is Gemini
                 val useLowLatency = prefs.getBoolean("ai_low_latency_mode", true)
-                val finalModel = if (useLowLatency && model.startsWith("gemini")) {
-                    "gemini-3.1-flash-lite-preview"
+                val finalModel = if (isGemini) {
+                    if (useLowLatency) "gemini-3.5-flash-lite" else com.fabian.todolist.data.gemini.FirebaseAiManager.mapToSupportedModel(model)
                 } else {
                     model
                 }
@@ -260,6 +259,8 @@ class TaskViewModel @Inject constructor(
                 } else {
                     onError("No response from AI")
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Log.e("TaskViewModel", "AI Generation Error", e)
                 onError("Error: ${e.localizedMessage ?: "Unknown error"}")
@@ -270,20 +271,35 @@ class TaskViewModel @Inject constructor(
     }
 
     private suspend fun callAiApi(model: String, key: String, prompt: String): String? = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-        val isGemini = model.startsWith("gemini")
+        val isGemini = com.fabian.todolist.data.gemini.FirebaseAiManager.isGeminiModel(model)
         if (isGemini) {
-            val request = com.fabian.todolist.data.gemini.GenerateContentRequest(
-                contents = listOf(
-                    com.fabian.todolist.data.gemini.Content(
-                        parts = listOf(com.fabian.todolist.data.gemini.Part(text = prompt))
-                    )
-                ),
-                systemInstruction = com.fabian.todolist.data.gemini.Content(
-                    parts = listOf(com.fabian.todolist.data.gemini.Part(text = "You are a helpful AI task intelligence assistant. You must output ONLY a valid RAW JSON object."))
+            try {
+                return@withContext com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
+                    modelName = model,
+                    prompt = prompt,
+                    systemInstructionText = "You are a helpful AI task intelligence assistant. You must output ONLY a valid RAW JSON object.",
+                    timeoutMs = 60_000L
                 )
-            )
-            val response = com.fabian.todolist.data.gemini.RetrofitClient.service.generateContent(model, key, request)
-            return@withContext response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "Firebase AI Logic call failed, testing fallback if key available", e)
+                if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
+                    val request = com.fabian.todolist.data.gemini.GenerateContentRequest(
+                        contents = listOf(
+                            com.fabian.todolist.data.gemini.Content(
+                                parts = listOf(com.fabian.todolist.data.gemini.Part(text = prompt))
+                            )
+                        ),
+                        systemInstruction = com.fabian.todolist.data.gemini.Content(
+                            parts = listOf(com.fabian.todolist.data.gemini.Part(text = "You are a helpful AI task intelligence assistant. You must output ONLY a valid RAW JSON object."))
+                        )
+                    )
+                    val response = com.fabian.todolist.data.gemini.RetrofitClient.service.generateContent(model, key, request)
+                    return@withContext response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+                }
+                throw e
+            }
         } else {
             val (url, body) = prepareExternalAiRequest(model, key, prompt)
             val reqBody = body.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -622,10 +638,37 @@ class TaskViewModel @Inject constructor(
             if (fromIndex >= 0 && fromIndex < list.size && toIndex >= 0 && toIndex < list.size) {
                 val item = list.removeAt(fromIndex)
                 list.add(toIndex, item)
-                val updated = list.mapIndexed { index, task ->
-                    task.copy(displayOrder = index)
+
+                // Fetch all tasks currently in Room to prevent index collisions
+                val allTasks = repository.getAllTasksSync()
+                val reorderedIds = list.map { it.id }.toSet()
+
+                // Preserve base offset in the global list
+                val minDisplayOrder = currentList.minOfOrNull { it.displayOrder } ?: 0
+                val updatedSublist = list.mapIndexed { index, task ->
+                    task.copy(displayOrder = minDisplayOrder + index)
                 }
-                repository.updateTasks(updated)
+                val updatedMap = updatedSublist.associateBy { it.id }
+
+                // Merge with global tasks and re-index sequentially
+                val merged = allTasks.map { task ->
+                    updatedMap[task.id] ?: task
+                }.sortedWith(
+                    compareBy<Task> { it.isCompleted }
+                        .thenBy { it.displayOrder }
+                        .thenBy { it.id }
+                )
+
+                val finalToUpdate = mutableListOf<Task>()
+                merged.forEachIndexed { globalIndex, task ->
+                    if (task.displayOrder != globalIndex || reorderedIds.contains(task.id)) {
+                        finalToUpdate.add(task.copy(displayOrder = globalIndex))
+                    }
+                }
+
+                if (finalToUpdate.isNotEmpty()) {
+                    repository.updateTasks(finalToUpdate)
+                }
                 incrementUnsynced()
             }
         }

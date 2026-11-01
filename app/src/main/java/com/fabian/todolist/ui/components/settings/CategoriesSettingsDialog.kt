@@ -230,14 +230,16 @@ fun CategoriesSettingsDialog(
                                         }
                                     }
 
-                                    // Drag handle with fast, smooth 40f responsiveness and haptics
+                                    // Drag handle with smooth, stable drag gestures and haptics
+                                    val currentCanMoveUp by rememberUpdatedState(canMoveUp)
+                                    val currentCanMoveDown by rememberUpdatedState(canMoveDown)
                                     var offsetY by remember { mutableStateOf(0f) }
                                     Box(
                                         modifier = Modifier
                                             .size(36.dp)
                                             .clip(CircleShape)
                                             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f))
-                                            .pointerInput(category, canMoveUp, canMoveDown) {
+                                            .pointerInput(category) {
                                                 detectVerticalDragGestures(
                                                     onDragStart = { isDragging = true },
                                                     onDragEnd = { isDragging = false; offsetY = 0f },
@@ -245,11 +247,11 @@ fun CategoriesSettingsDialog(
                                                     onVerticalDrag = { change, dragAmount ->
                                                         change.consume()
                                                         offsetY += dragAmount
-                                                        if (offsetY > 40f && canMoveDown) {
+                                                        if (offsetY > 35f && currentCanMoveDown) {
                                                             haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
                                                             settingsViewModel.moveUserCategory(category, 1)
                                                             offsetY = 0f
-                                                        } else if (offsetY < -40f && canMoveUp) {
+                                                        } else if (offsetY < -35f && currentCanMoveUp) {
                                                             haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
                                                             settingsViewModel.moveUserCategory(category, -1)
                                                             offsetY = 0f

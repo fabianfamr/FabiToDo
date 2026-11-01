@@ -71,7 +71,7 @@
     <string name="settings_ai_desc">Manage AI models, API keys, and test subtask breakdown.</string>
     <string name="subtasks_generating">Generating…</string>
     <string name="subtasks_generate_magic">Generate with AI</string>
-    <string name="ai_key_req_gemini">Requires a Google AI Studio API key (free for personal use).</string>
+    <string name="ai_key_req_gemini">Directly integrated via Firebase AI Logic. No manual API key required!</string>
     <string name="ai_key_req_gpt">Requires an OpenAI API key.</string>
     <string name="ai_key_req_claude">Requires an Anthropic Claude API key.</string>
     <string name="ai_key_req_deepseek">Requires a DeepSeek API key.</string>

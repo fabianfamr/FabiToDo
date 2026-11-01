@@ -87,7 +87,7 @@ class SettingsViewModel @Inject constructor(
     private val _trashRetentionDays = MutableStateFlow(prefs.getInt("trash_retention_days", 30))
     val trashRetentionDays: StateFlow<Int> = _trashRetentionDays.asStateFlow()
 
-    private val _aiModel = MutableStateFlow(prefs.getString("ai_model", "gemini-3.1-flash-lite-preview") ?: "gemini-3.1-flash-lite-preview")
+    private val _aiModel = MutableStateFlow(prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash")
     val aiModel: StateFlow<String> = _aiModel.asStateFlow()
 
     private val _aiLowLatencyMode = MutableStateFlow(prefs.getBoolean("ai_low_latency_mode", true))
@@ -364,6 +364,9 @@ class SettingsViewModel @Inject constructor(
             currentList.add(trimmed)
         }
         saveCategories(currentList)
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            repository.reorderTasksByCategory(currentList)
+        }
     }
 
     fun deleteCategory(categoryName: String) {
@@ -434,6 +437,9 @@ class SettingsViewModel @Inject constructor(
                 result.add(SystemCategory.COMPLETED)
             }
             saveCategories(result)
+            viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                repository.reorderTasksByCategory(result)
+            }
         }
     }
 
