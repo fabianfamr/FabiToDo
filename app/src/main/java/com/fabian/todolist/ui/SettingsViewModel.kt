@@ -352,7 +352,7 @@ class SettingsViewModel @Inject constructor(
         _categories.value = list
     }
 
-    fun addCategory(categoryName: String) {
+    fun addCategory(categoryName: String, color: Int? = null, iconName: String? = null) {
         val trimmed = categoryName.trim()
         if (trimmed.isBlank() || _categories.value.contains(trimmed)) return
         val currentList = _categories.value.toMutableList()
@@ -362,6 +362,12 @@ class SettingsViewModel @Inject constructor(
             currentList.add(completedIndex, trimmed)
         } else {
             currentList.add(trimmed)
+        }
+        if (color != null) {
+            setCategoryColor(trimmed, color)
+        }
+        if (iconName != null) {
+            setCategoryIcon(trimmed, iconName)
         }
         saveCategories(currentList)
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {

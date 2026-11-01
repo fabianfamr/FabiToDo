@@ -181,23 +181,27 @@ fun TaskDrawerContent(
                     )
                 }
 
-                // Add Category Button Item
-                DrawerCardItem(
-                    icon = {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    label = stringResource(R.string.add_category_title),
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onAddCategoryClick()
-                    }
-                )
+                // Add Category Button Item - only shown on large screens and tablets
+                val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+                val isLargeScreen = configuration.screenWidthDp >= 600
+                if (isLargeScreen) {
+                    DrawerCardItem(
+                        icon = {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
+                        label = stringResource(R.string.add_category_title),
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onAddCategoryClick()
+                        }
+                    )
+                }
             }
 
             if (!showOnlyCategories) {

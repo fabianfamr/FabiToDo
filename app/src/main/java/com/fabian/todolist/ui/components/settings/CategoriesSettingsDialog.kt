@@ -371,7 +371,8 @@ fun CategoriesSettingsDialog(
     TaskAddCategoryDialog(
         showDialog = showAddCategoryDialog,
         onDismiss = { showAddCategoryDialog = false },
-        onConfirm = { settingsViewModel.addCategory(it) }
+        onConfirm = { settingsViewModel.addCategory(it) },
+        onConfirmWithCustomization = { name, color, icon -> settingsViewModel.addCategory(name, color, icon) }
     )
 
     // Modal to safely confirm category deletion
