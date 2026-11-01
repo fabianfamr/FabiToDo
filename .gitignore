@@ -47,3 +47,4 @@ app/build/
 *.class
 *.log
 *.py
+public
