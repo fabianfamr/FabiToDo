@@ -69,13 +69,13 @@ fun LanguageSettingsDialog(
                     }
 
                     val languagesList = listOf(
-                        "system" to (R.string.lang_system to "AUTO"),
-                        "es" to (null to "ES"),
-                        "en" to (null to "EN"),
-                        "pt" to (null to "PT"),
-                        "fr" to (null to "FR"),
-                        "de" to (null to "DE"),
-                        "it" to (null to "IT")
+                        "system" to (R.string.lang_system to "🌐"),
+                        "es" to (null to "🇪🇸"),
+                        "en" to (null to "🇺🇸"),
+                        "pt" to (null to "🇧🇷"),
+                        "fr" to (null to "🇫🇷"),
+                        "de" to (null to "🇩🇪"),
+                        "it" to (null to "🇮🇹")
                     )
 
                     items(languagesList, key = { it.first }) { (code, pair) ->
@@ -146,9 +146,7 @@ fun LanguageSettingsDialog(
                                 ) {
                                     Text(
                                         text = langBadge,
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        fontSize = 22.sp
                                     )
                                 }
 

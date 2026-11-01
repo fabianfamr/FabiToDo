@@ -144,19 +144,29 @@ fun AddEditTaskDialog(
 
     var showDiscardDialog by remember { mutableStateOf(false) }
 
-    val hasUnsavedChanges = remember(title, description, selectedCategory, selectedPriority, selectedDateInMillis, selectedTimeStr, setupReminder, isRepeat, repeatType) {
-        val originalTitle = task?.title ?: ""
-        val originalDescription = task?.description ?: ""
-        val originalCategory = task?.category ?: ""
-        val originalPriority = task?.priority ?: com.fabian.todolist.data.TaskPriority.MEDIUM
-        val originalDate = task?.dueDate
-        val originalTime = task?.dueTime
-        val originalRepeat = task?.isRepeat ?: false
-        val originalRepeatType = task?.repeatType ?: "Ninguno"
-        
-        title != originalTitle || description != originalDescription || selectedCategory != originalCategory ||
-        selectedPriority != originalPriority || selectedDateInMillis != originalDate || selectedTimeStr != originalTime ||
-        isRepeat != originalRepeat || repeatType != originalRepeatType
+    val hasUnsavedChanges = remember(title, description, selectedCategory, selectedPriority, selectedDateInMillis, selectedTimeStr, setupReminder, isRepeat, repeatType, localSubtasks, attachedImageUri) {
+        if (task == null) {
+            title.isNotBlank() || description.isNotBlank() || localSubtasks.isNotEmpty() ||
+            selectedDateInMillis != null || selectedTimeStr != null || attachedImageUri != null ||
+            selectedCategory != (initialCategory.ifBlank { "General" }) || selectedPriority != com.fabian.todolist.data.TaskPriority.MEDIUM ||
+            isRepeat || repeatType != "Ninguno"
+        } else {
+            val originalTitle = task.title
+            val originalDescription = task.description
+            val originalCategory = task.category
+            val originalPriority = task.priority
+            val originalDate = task.dueDate
+            val originalTime = task.dueTime
+            val originalRepeat = task.isRepeat
+            val originalRepeatType = task.repeatType
+            val originalImage = task.attachedImageUri
+            val originalSubtasks = task.getSubtasks()
+
+            title != originalTitle || description != originalDescription || selectedCategory != originalCategory ||
+            selectedPriority != originalPriority || selectedDateInMillis != originalDate || selectedTimeStr != originalTime ||
+            isRepeat != originalRepeat || repeatType != originalRepeatType || attachedImageUri != originalImage ||
+            localSubtasks != originalSubtasks
+        }
     }
 
     val attemptDismiss = {
