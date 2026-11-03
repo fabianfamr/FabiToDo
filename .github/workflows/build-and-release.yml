@@ -44,13 +44,20 @@ jobs:
           fi
 
       - name: Restore google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
           mkdir -p app
-          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
             echo "Restaurando google-services.json desde secreto..."
-            echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > app/google-services.json 2>/dev/null || echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
+            # Si el secreto está codificado en Base64, intentar decodificarlo
+            echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json 2>/dev/null || true
+            # Si no produjo un JSON válido con project_info, guardar el texto crudo preservando comillas
+            if ! grep -q "project_info" app/google-services.json 2>/dev/null; then
+              printf '%s\n' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+            fi
           fi
-          if [ ! -f "app/google-services.json" ]; then
+          if [ ! -s "app/google-services.json" ]; then
             echo "Creando dummy app/google-services.json para compilación CI..."
             echo '{"project_info":{"project_number":"1234567890","project_id":"fabitodo-list","storage_bucket":"fabitodo-list.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:abcdef1234567890","android_client_info":{"package_name":"com.fabian.todolist"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyDummyApiKeyForGoogleServices"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
           fi

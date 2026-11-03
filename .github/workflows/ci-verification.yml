@@ -38,6 +38,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Prepare build environment (.env & Keystore & google-services)
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
           touch .env
           mkdir -p app
@@ -46,7 +48,13 @@ jobs:
           else
             keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           fi
-          if [ ! -f "app/google-services.json" ]; then
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json 2>/dev/null || true
+            if ! grep -q "project_info" app/google-services.json 2>/dev/null; then
+              printf '%s\n' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+            fi
+          fi
+          if [ ! -s "app/google-services.json" ]; then
             echo '{"project_info":{"project_number":"1234567890","project_id":"fabitodo-list","storage_bucket":"fabitodo-list.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:abcdef1234567890","android_client_info":{"package_name":"com.fabian.todolist"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyDummyApiKeyForGoogleServices"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
           fi
 

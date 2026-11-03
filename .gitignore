@@ -8,10 +8,9 @@ local.properties
 debug.keystore
 debug.keystore.base64
 
-# Firebase / Google services config — inject via CI, never commit
-app/google-services.json
+# Firebase / Google services config
+# app/google-services.json is tracked for CI/CD builds
 app/google-services-debug.json
-google-services.json
 
 # Signing keystores & credentials
 *.jks
