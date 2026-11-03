@@ -433,6 +433,8 @@ class TaskViewModel @Inject constructor(
         cal.set(Calendar.DAY_OF_MONTH, 1)
         cal.add(Calendar.MONTH, 1)
         val endOfMonth = cal.timeInMillis
+        cal.add(Calendar.MONTH, 1)
+        val endOfNextMonth = cal.timeInMillis
 
         val groups = mutableMapOf<String, MutableMap<String, MutableList<Task>>>()
         
@@ -447,6 +449,7 @@ class TaskViewModel @Inject constructor(
                 due < dayAfterDayAfterTomorrow -> "group_pasado_manana"
                 due < endOfWeek -> "group_esta_semana"
                 due < endOfMonth -> "group_este_mes"
+                due < endOfNextMonth -> "group_siguiente_mes"
                 else -> "group_futuro"
             }
             

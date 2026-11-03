@@ -147,11 +147,17 @@ class FirestoreSyncManager @Inject constructor(
                 val localTask = taskDao.getTaskByCloudId(remoteTask.cloudId)
 
                 if (localTask == null) {
-                    taskDao.insertTask(remoteTask.copy(id = 0, isSynced = true))
-                } else if (remoteTask.updatedAt > localTask.updatedAt) {
-                    taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
-                } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
-                    uploadTaskToFirestore(userId, localTask)
+                    if (!remoteTask.isDeleted) {
+                        taskDao.insertTask(remoteTask.copy(id = 0, isSynced = true))
+                    }
+                } else {
+                    if (remoteTask.isDeleted) {
+                        taskDao.deleteTask(localTask)
+                    } else if (remoteTask.updatedAt > localTask.updatedAt) {
+                        taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
+                    } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
+                        uploadTaskToFirestore(userId, localTask)
+                    }
                 }
             }
 

@@ -478,7 +478,7 @@ fun TaskScreen(
 
                         val groupOrder = listOf(
                             "group_vencidos", "group_hoy",
-                            "group_manana", "group_pasado_manana", "group_esta_semana", "group_este_mes", "group_futuro", "group_not_set"
+                            "group_manana", "group_pasado_manana", "group_esta_semana", "group_este_mes", "group_siguiente_mes", "group_futuro", "group_not_set"
                         )
 
                         val taskListContent: @Composable () -> Unit = {
@@ -678,6 +678,7 @@ fun TaskScreen(
                                             "group_pasado_manana" -> stringResource(R.string.group_pasado_manana)
                                             "group_esta_semana" -> stringResource(R.string.group_esta_semana)
                                             "group_este_mes" -> stringResource(R.string.group_este_mes)
+                                            "group_siguiente_mes" -> stringResource(R.string.group_next_month)
                                             "group_futuro" -> stringResource(R.string.group_futuro)
                                             "group_not_set" -> stringResource(R.string.group_not_set)
                                             else -> ""

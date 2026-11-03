@@ -270,6 +270,7 @@
     <string name="group_day_after">Pasado mañana</string>
     <string name="group_esta_semana">Esta semana</string>
     <string name="group_este_mes">Este mes</string>
+    <string name="group_siguiente_mes">Siguiente mes</string>
     <string name="group_futuro">Futuro</string>
     <string name="group_hoy">Hoy</string>
     <string name="group_manana">Mañana</string>
