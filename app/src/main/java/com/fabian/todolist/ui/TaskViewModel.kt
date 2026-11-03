@@ -546,15 +546,6 @@ class TaskViewModel @Inject constructor(
             "Mensual" -> cal.add(Calendar.MONTH, 1)
             else -> return null
         }
-        val now = System.currentTimeMillis()
-        while (cal.timeInMillis <= now) {
-            when (task.repeatType) {
-                "Diario" -> cal.add(Calendar.DAY_OF_YEAR, 1)
-                "Semanal" -> cal.add(Calendar.WEEK_OF_YEAR, 1)
-                "Mensual" -> cal.add(Calendar.MONTH, 1)
-                else -> break
-            }
-        }
         return cal.timeInMillis
     }
 
