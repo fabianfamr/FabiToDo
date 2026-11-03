@@ -1,0 +1,8 @@
+{
+  "firestore": [
+    {
+      "database": "ai-studio-android-fabitodo-0806aeaf-cd0b-407f-9e7b-ca984745a68a",
+      "rules": "firestore.rules"
+    }
+  ]
+}
