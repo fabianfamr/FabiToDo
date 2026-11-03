@@ -620,4 +620,16 @@
     <string name="toast_write_error">Error writing file</string>
     <string name="toast_clear_cache_error">Error clearing cache</string>
     <string name="toast_optimize_db_error">Error optimizing database</string>
+
+    <string name="account_sign_in_google">Sign in with Google</string>
+    <string name="account_sign_out">Sign out</string>
+    <string name="account_connected_as">Connected as</string>
+    <string name="account_cloud_sync_active">Cloud Sync Active</string>
+    <string name="account_cloud_sync_desc">Your tasks and categories are synchronized with Firebase</string>
+    <string name="account_not_signed_in">Not Signed In</string>
+    <string name="account_not_signed_in_desc">Sign in with your Google account to back up and sync tasks</string>
+    <string name="account_sign_out_confirm_title">Sign out?</string>
+    <string name="account_sign_out_confirm_msg">Are you sure you want to sign out of your Google account?</string>
+    <string name="toast_signed_out">Signed out successfully</string>
+    <string name="toast_signed_in">Signed in successfully</string>
 </resources>

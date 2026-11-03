@@ -16,6 +16,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
@@ -119,17 +121,26 @@ class MainActivity : AppCompatActivity() {
         selectedDarkTheme = themeDark
       ) {
         val authViewModel: AuthViewModel = hiltViewModel()
-        val welcomeSeen by authViewModel.welcomeSeen.collectAsStateWithLifecycle()
+        val context = LocalContext.current
+        val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle()
+        var hasPromptedSignIn by rememberSaveable { mutableStateOf(false) }
+
+        LaunchedEffect(currentUser) {
+          if (currentUser == null && !hasPromptedSignIn) {
+            hasPromptedSignIn = true
+            authViewModel.signInWithGoogle(context)
+          }
+        }
+
         val navController = rememberNavController()
         val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
         LaunchedEffect(Unit) {
           transition.start()
         }
-        val startDestination = if (welcomeSeen) "home" else "login"
         val appContent: @Composable () -> Unit = {
           NavHost(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = "home",
             modifier = Modifier.fillMaxSize(),
             enterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
             exitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
@@ -151,7 +162,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel = viewModel,
                 settingsViewModel = settingsViewModel,
                 authViewModel = authViewModel,
-                onNavigateToGoogleLogin = {},
+                onNavigateToGoogleLogin = {
+                  authViewModel.signInWithGoogle(context)
+                },
                 modifier = Modifier.fillMaxSize()
               )
             }

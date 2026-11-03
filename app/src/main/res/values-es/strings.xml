@@ -616,4 +616,16 @@
     <string name="toast_write_error">Error al escribir</string>
     <string name="toast_clear_cache_error">Error al limpiar caché</string>
     <string name="toast_optimize_db_error">Error al optimizar</string>
+
+    <string name="account_sign_in_google">Iniciar sesión con Google</string>
+    <string name="account_sign_out">Cerrar sesión</string>
+    <string name="account_connected_as">Conectado como</string>
+    <string name="account_cloud_sync_active">Sincronización en la nube activa</string>
+    <string name="account_cloud_sync_desc">Tus tareas y categorías están sincronizadas con Firebase</string>
+    <string name="account_not_signed_in">No has iniciado sesión</string>
+    <string name="account_not_signed_in_desc">Inicia sesión con tu cuenta de Google para respaldar y sincronizar tus tareas</string>
+    <string name="account_sign_out_confirm_title">¿Cerrar sesión?</string>
+    <string name="account_sign_out_confirm_msg">¿Seguro que deseas cerrar la sesión de tu cuenta de Google?</string>
+    <string name="toast_signed_out">Sesión cerrada correctamente</string>
+    <string name="toast_signed_in">Sesión iniciada correctamente</string>
 </resources>

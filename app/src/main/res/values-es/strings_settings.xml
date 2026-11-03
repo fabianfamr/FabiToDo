@@ -84,7 +84,7 @@
     <string name="settings_account_register_desc">Asocia tu cuenta para disfrutar de sincronización en tiempo real y copias de seguridad automáticas.</string>
     <string name="settings_account_sync_active">Copia de Seguridad Continua Activa</string>
     <string name="settings_account_sync_active_desc">Tus tareas están sincronizadas en la nube</string>
-    <string name="settings_account_title">Tu cuenta</string>
+    <string name="settings_account_title">Cuenta</string>
     <string name="settings_app_subtitle">Agenda y Tareas • v4.9</string>
     <string name="settings_app_title">FabiToDo</string>
     <string name="settings_appearance_desc">Temas, diseño y personalizaciones visuales</string>

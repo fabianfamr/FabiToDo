@@ -18,8 +18,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 77
-    versionName = "1.30.0"
+    versionCode = 78
+    versionName = "1.30.1"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }
@@ -147,12 +147,11 @@ dependencies {
   implementation(libs.firebase.appcheck.recaptcha)
   implementation(libs.firebase.appcheck.playintegrity)
   implementation(libs.firebase.appcheck.debug)
-  // implementation(libs.firebase.auth)
-  // implementation(libs.firebase.firestore)
-  // implementation(libs.play.services.auth)
-  // implementation(libs.androidx.credentials)
-  // implementation(libs.androidx.credentials.play.services.auth)
-  // implementation(libs.googleid)
+  implementation(libs.firebase.auth)
+  implementation(libs.firebase.firestore)
+  implementation(libs.androidx.credentials)
+  implementation(libs.androidx.credentials.play.services.auth)
+  implementation(libs.googleid)
   implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
   implementation(libs.kotlinx.coroutines.android)

@@ -174,6 +174,14 @@ fun SettingsPreferencesDialog(
     val titleSecurity = stringResource(R.string.settings_category_security)
     val descSecurity = stringResource(R.string.settings_security_desc)
 
+    val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle()
+    val titleAccount = stringResource(R.string.settings_account_title)
+    val descAccount = if (currentUser != null) {
+        currentUser?.email ?: currentUser?.displayName ?: stringResource(R.string.account_connected_as)
+    } else {
+        stringResource(R.string.account_not_signed_in)
+    }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
@@ -252,6 +260,38 @@ fun SettingsPreferencesDialog(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 10.dp)
                         )
+                    }
+
+                    // --- Grupo 0: Cuenta de Google ---
+                    item {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp, 6.dp)
+                                    .background(Color(0xFF4285F4), RoundedCornerShape(3.dp))
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = titleAccount,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary,
+                                letterSpacing = 1.sp
+                            )
+                        }
+                        SettingsSectionCard {
+                            SettingsPreferenceItem(
+                                title = if (currentUser != null) (currentUser?.displayName?.ifBlank { null } ?: titleAccount) else titleAccount,
+                                subtitle = descAccount,
+                                icon = Icons.Rounded.AccountCircle,
+                                iconContainerColor = Color(0xFF4285F4),
+                                onClick = { currentDestination = SettingsDestinations.ACCOUNT }
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
                     }
 
                     // --- Grupo 1: Personalización ---
@@ -485,7 +525,7 @@ fun SettingsPreferencesDialog(
             }
         }
     }
-    }
+}
 
     SettingsDialogRouter(
         currentDestination = currentDestination,

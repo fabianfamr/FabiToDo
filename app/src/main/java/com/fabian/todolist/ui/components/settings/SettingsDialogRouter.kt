@@ -104,6 +104,13 @@ fun SettingsDialogRouter(
         )
     }
 
+    if (currentDestination == SettingsDestinations.ACCOUNT) {
+        AccountSettingsDialog(
+            authViewModel = authViewModel,
+            onDismiss = { onDestinationChanged(SettingsDestinations.NONE) }
+        )
+    }
+
     if (currentDestination == SettingsDestinations.AI) {
         AISettingsDialog(
             viewModel = settingsViewModel,
