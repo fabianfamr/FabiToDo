@@ -80,10 +80,16 @@ fun TaskCalendarPane(
     }
     var selectedDateMillis by rememberSaveable { mutableStateOf(todayMidnight) }
 
-    // Map tasks by day formatted as yyyyMMdd for fast lookup
     val dayFormat = remember { SimpleDateFormat("yyyyMMdd", Locale.getDefault()) }
     val monthFormat = remember { SimpleDateFormat("MMMM yyyy", Locale.getDefault()) }
-    val dayHeaderFormat = remember { SimpleDateFormat("EEEE, d 'de' MMMM", Locale.getDefault()) }
+    val dayHeaderFormat = remember {
+        val currentLocale = Locale.getDefault()
+        if (currentLocale.language.equals("es", ignoreCase = true)) {
+            SimpleDateFormat("EEEE, d 'de' MMMM", currentLocale)
+        } else {
+            SimpleDateFormat("EEEE, MMMM d", currentLocale)
+        }
+    }
 
     // Pre-index tasks with due dates
     val tasksByDay = remember(tasks) {
@@ -306,8 +312,15 @@ fun TaskCalendarPane(
 
                         Spacer(modifier = Modifier.height(14.dp))
 
-                        // Weekday labels (L, M, X, J, V, S, D)
-                        val weekdays = listOf("L", "M", "X", "J", "V", "S", "D")
+                        // Weekday labels
+                        val weekdays = remember {
+                            val loc = Locale.getDefault()
+                            if (loc.language.equals("es", ignoreCase = true)) {
+                                listOf("L", "M", "X", "J", "V", "S", "D")
+                            } else {
+                                listOf("M", "T", "W", "T", "F", "S", "S")
+                            }
+                        }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             weekdays.forEach { dayName ->
                                 Text(
@@ -464,8 +477,17 @@ fun TaskCalendarPane(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
+                            val countSubtitle = remember(tasksForSelectedDay.size) {
+                                val count = tasksForSelectedDay.size
+                                val isSpanish = Locale.getDefault().language.equals("es", ignoreCase = true)
+                                if (isSpanish) {
+                                    if (count == 1) "1 tarea programada" else "$count tareas programadas"
+                                } else {
+                                    if (count == 1) "1 scheduled task" else "$count scheduled tasks"
+                                }
+                            }
                             Text(
-                                text = "${tasksForSelectedDay.size} ${if (tasksForSelectedDay.size == 1) "tarea" else "tareas"} programadas",
+                                text = countSubtitle,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

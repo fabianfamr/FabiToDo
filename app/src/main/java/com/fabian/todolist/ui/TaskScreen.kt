@@ -725,8 +725,8 @@ fun TaskScreen(
                                             }
 
                                             itemsIndexed(tasksOfPrio, key = { _, it -> it.id }) { index, task ->
-                                                var isVisible by rememberSaveable { mutableStateOf(true) }
-                                                var isExpanded by rememberSaveable { mutableStateOf(false) }
+                                                var isVisible by remember(task.id, task.isCompleted, selectedCategory) { mutableStateOf(true) }
+                                                var isExpanded by rememberSaveable(task.id) { mutableStateOf(false) }
 
                                                 AnimatedVisibility(
                                                     visible = isVisible,
@@ -810,8 +810,8 @@ fun TaskScreen(
                         } else {
                             // Flat list of tasks for Manual sorting mode!
                             itemsIndexed(tasks, key = { _, it -> it.id }) { index, task ->
-                                var isVisible by rememberSaveable { mutableStateOf(true) }
-                                var isExpanded by rememberSaveable { mutableStateOf(false) }
+                                var isVisible by remember(task.id, task.isCompleted, selectedCategory) { mutableStateOf(true) }
+                                var isExpanded by rememberSaveable(task.id) { mutableStateOf(false) }
 
                                 AnimatedVisibility(
                                     visible = isVisible,

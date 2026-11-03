@@ -513,7 +513,7 @@
     <string name="stats_completed_count">%d terminadas</string>
     <string name="stats_completed_ratio">%1$d de %2$d tareas completadas</string>
     <string name="stats_completion_rate">Erfolgsquote</string>
-    <string name="stats_label">Estadísticas</string>
+    <string name="stats_label">Statistiken</string>
     <string name="stats_pending">Ausstehend</string>
     <string name="stats_pending_count">%d pendientes</string>
     <string name="stats_title">Aufgaben-Statistiken</string>
