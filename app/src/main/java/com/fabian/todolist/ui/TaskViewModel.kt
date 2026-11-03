@@ -335,7 +335,9 @@ class TaskViewModel @Inject constructor(
                 // Category filter
                 val categoryMatch = when (state.selectedCategory) {
                     SystemCategory.COMPLETED -> task.isCompleted
-                    SystemCategory.ALL_TASKS -> !task.isCompleted
+                    SystemCategory.ALL_TASKS,
+                    SystemCategory.EISENHOWER -> !task.isCompleted
+                    SystemCategory.CALENDAR -> !task.isDeleted
                     else -> task.category == state.selectedCategory && !task.isCompleted
                 }
                 if (!categoryMatch) return@filter false
@@ -439,7 +441,7 @@ class TaskViewModel @Inject constructor(
             
             val key = when {
                 due == null -> "group_not_set"
-                due < today -> "group_vencidos"
+                due < today -> if (task.isCompleted) "group_hoy" else "group_vencidos"
                 due < tomorrow -> "group_hoy"
                 due < dayAfterTomorrow -> "group_manana"
                 due < dayAfterDayAfterTomorrow -> "group_pasado_manana"
@@ -534,7 +536,43 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    private fun computeNextRepeatTrigger(task: Task): Long? {
+        if (!task.isRepeat || task.repeatType == "Ninguno") return null
+        val baseline = task.dueDate ?: task.reminderTime ?: System.currentTimeMillis()
+        val cal = Calendar.getInstance().apply { timeInMillis = baseline }
+        when (task.repeatType) {
+            "Diario" -> cal.add(Calendar.DAY_OF_YEAR, 1)
+            "Semanal" -> cal.add(Calendar.WEEK_OF_YEAR, 1)
+            "Mensual" -> cal.add(Calendar.MONTH, 1)
+            else -> return null
+        }
+        val now = System.currentTimeMillis()
+        while (cal.timeInMillis <= now) {
+            when (task.repeatType) {
+                "Diario" -> cal.add(Calendar.DAY_OF_YEAR, 1)
+                "Semanal" -> cal.add(Calendar.WEEK_OF_YEAR, 1)
+                "Mensual" -> cal.add(Calendar.MONTH, 1)
+                else -> break
+            }
+        }
+        return cal.timeInMillis
+    }
+
     fun toggleTaskCompletion(task: Task) {
+        if (!task.isCompleted && task.isRepeat && task.repeatType != "Ninguno") {
+            val nextDueDate = computeNextRepeatTrigger(task)
+            if (nextDueDate != null) {
+                val updatedTask = task.copy(
+                    dueDate = nextDueDate,
+                    reminderTime = if (task.reminderTime != null) nextDueDate else null,
+                    isCompleted = false,
+                    updatedAt = System.currentTimeMillis(),
+                    isSynced = false
+                )
+                updateTask(updatedTask)
+                return
+            }
+        }
         val updatedTask = task.copy(isCompleted = !task.isCompleted)
         updateTask(updatedTask)
     }

@@ -135,21 +135,6 @@ class ReminderReceiver : BroadcastReceiver() {
                             val vibrateEnabled = prefs.getBoolean("notifications_vibrate", true)
                             val soundEnabled = prefs.getBoolean("notifications_sound", true)
                             showNotification(context, task.id, task.title, task.description, task.priority, vibrateEnabled, soundEnabled)
-
-                            // Reschedule the next occurrence for repeating reminders.
-                            if (task.isRepeat && task.repeatType != "Ninguno") {
-                                val nextTrigger = computeNextRepeatTrigger(task)
-                                if (nextTrigger != null) {
-                                    val updatedTask = task.copy(
-                                        dueDate = nextTrigger,
-                                        reminderTime = nextTrigger,
-                                        updatedAt = System.currentTimeMillis(),
-                                        isSynced = false
-                                    )
-                                    db.taskDao().updateTask(updatedTask)
-                                    com.fabian.todolist.util.AlarmSchedulerHelper.scheduleTaskAlarms(context, updatedTask)
-                                }
-                            }
                         }
                     }
                 }

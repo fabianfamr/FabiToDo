@@ -78,8 +78,9 @@ fun EisenhowerMatrixView(
 
         for (task in tasks) {
             if (task.isCompleted || task.isDeleted) continue
-            val isImportant = task.priority == "Critica" || task.priority == "Alta"
-            val isUrgent = task.dueDate != null && task.dueDate <= tomorrowMillis
+            val prio = task.priority.lowercase()
+            val isImportant = prio.contains("critica") || prio.contains("crítica") || prio.contains("alta") || prio.contains("high") || prio.contains("critical")
+            val isUrgent = (task.dueDate != null && task.dueDate <= tomorrowMillis) || task.reminderTime != null
 
             if (isImportant && isUrgent) hHacerAhora.add(task)
             else if (isImportant && !isUrgent) hProgramar.add(task)
