@@ -69,7 +69,7 @@ fun BackupSettingsDialog(
                         if (success) {
                             Toast.makeText(context, context.getString(R.string.toast_backup_export_success), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, context.getString(R.string.toast_backup_export_error, "Error al escribir"), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_backup_export_error, context.getString(R.string.toast_write_error)), Toast.LENGTH_SHORT).show()
                         }
                     }
                 } catch (e: Exception) {
@@ -267,7 +267,7 @@ fun BackupSettingsDialog(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Text(
-                                            text = "Formato de exportación:",
+                                            text = stringResource(R.string.backup_export_format_label),
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.SemiBold,
                                             color = MaterialTheme.colorScheme.onSurface
@@ -304,7 +304,7 @@ fun BackupSettingsDialog(
                                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                                             Text(".json", fontWeight = FontWeight.Bold)
                                                             Spacer(modifier = Modifier.width(8.dp))
-                                                            Text("(JSON estándar)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                            Text(stringResource(R.string.backup_export_format_json_desc), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         }
                                                     },
                                                     onClick = {
@@ -326,7 +326,7 @@ fun BackupSettingsDialog(
                                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                                             Text(".fabitodo", fontWeight = FontWeight.Bold)
                                                             Spacer(modifier = Modifier.width(8.dp))
-                                                            Text("(Formato FabiToDo)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                            Text(stringResource(R.string.backup_export_format_fabitodo_desc), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         }
                                                     },
                                                     onClick = {
@@ -528,7 +528,7 @@ fun BackupSettingsDialog(
                                     OutlinedButton(
                                         onClick = {
                                             settingsViewModel.clearAppCache { success ->
-                                                val msg = if (success) context.getString(R.string.toast_cache_cleared) else "Error al limpiar caché"
+                                                val msg = if (success) context.getString(R.string.toast_cache_cleared) else context.getString(R.string.toast_clear_cache_error)
                                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                                             }
                                         },
@@ -545,7 +545,7 @@ fun BackupSettingsDialog(
                                     OutlinedButton(
                                         onClick = {
                                             settingsViewModel.optimizeDatabase { success ->
-                                                val msg = if (success) context.getString(R.string.toast_db_optimized) else "Error al optimizar"
+                                                val msg = if (success) context.getString(R.string.toast_db_optimized) else context.getString(R.string.toast_optimize_db_error)
                                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                                             }
                                         },

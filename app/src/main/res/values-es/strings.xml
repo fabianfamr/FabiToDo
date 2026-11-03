@@ -609,4 +609,11 @@
     <string name="security_wipe_confirm_msg">Esta acción es permanente e irreversible. Se eliminarán todas las tareas almacenadas.</string>
     <string name="calendar_toggle_pane">Alternar panel de calendario</string>
     <string name="calendar_overdue_tasks">Tareas Vencidas</string>
+    <string name="search_icon_placeholder">Buscar icono…</string>
+    <string name="backup_export_format_label">Formato de exportación:</string>
+    <string name="backup_export_format_json_desc">(JSON estándar)</string>
+    <string name="backup_export_format_fabitodo_desc">(Formato FabiToDo)</string>
+    <string name="toast_write_error">Error al escribir</string>
+    <string name="toast_clear_cache_error">Error al limpiar caché</string>
+    <string name="toast_optimize_db_error">Error al optimizar</string>
 </resources>

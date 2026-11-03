@@ -613,4 +613,11 @@
     <string name="security_wipe_confirm_msg">This action is permanent and cannot be undone. All local tasks will be deleted.</string>
     <string name="calendar_toggle_pane">Toggle Calendar</string>
     <string name="calendar_overdue_tasks">Overdue Tasks</string>
+    <string name="search_icon_placeholder">Search icon…</string>
+    <string name="backup_export_format_label">Export format:</string>
+    <string name="backup_export_format_json_desc">(Standard JSON)</string>
+    <string name="backup_export_format_fabitodo_desc">(FabiToDo format)</string>
+    <string name="toast_write_error">Error writing file</string>
+    <string name="toast_clear_cache_error">Error clearing cache</string>
+    <string name="toast_optimize_db_error">Error optimizing database</string>
 </resources>

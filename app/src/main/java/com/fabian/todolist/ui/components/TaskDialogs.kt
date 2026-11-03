@@ -266,7 +266,7 @@ fun TaskAddCategoryDialog(
                     OutlinedTextField(
                         value = iconSearchQuery,
                         onValueChange = { iconSearchQuery = it },
-                        placeholder = { Text("Buscar icono...") },
+                        placeholder = { Text(stringResource(R.string.search_icon_placeholder)) },
                         singleLine = true,
                         leadingIcon = {
                             Icon(
