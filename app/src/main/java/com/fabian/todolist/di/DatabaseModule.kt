@@ -29,7 +29,23 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideTaskRepository(taskDao: TaskDao, @ApplicationContext context: Context): TaskRepository {
-        return TaskRepository(taskDao, context)
+    fun provideTaskRepository(
+        taskDao: TaskDao,
+        @ApplicationContext context: Context,
+        firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager
+    ): TaskRepository {
+        return TaskRepository(taskDao, context, firestoreSyncManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(@ApplicationContext context: Context): com.google.firebase.firestore.FirebaseFirestore {
+        val databaseId = context.getString(com.fabian.todolist.R.string.firestore_database_id)
+        return try {
+            val app = com.google.firebase.FirebaseApp.getInstance()
+            com.google.firebase.firestore.FirebaseFirestore.getInstance(app, databaseId)
+        } catch (_: Exception) {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        }
     }
 }

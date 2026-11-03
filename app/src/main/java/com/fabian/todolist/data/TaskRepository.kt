@@ -11,7 +11,8 @@ import kotlinx.coroutines.launch
 
 class TaskRepository(
     private val taskDao: TaskDao,
-    private val context: Context
+    private val context: Context,
+    private val firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager? = null
 ) {
     // Application-scoped coroutine scope for fire-and-forget widget refreshes.
     // Previously notifyWidget() spawned a brand-new CoroutineScope per write
@@ -32,6 +33,30 @@ class TaskRepository(
         }
     }
 
+    private fun getUserIdOrNull(): String? {
+        return try {
+            com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun syncTaskToCloud(task: Task) {
+        val syncManager = firestoreSyncManager ?: return
+        val userId = getUserIdOrNull() ?: return
+        applicationScope.launch {
+            syncManager.pushTask(userId, task)
+        }
+    }
+
+    private fun syncTasksToCloud(tasks: List<Task>) {
+        val syncManager = firestoreSyncManager ?: return
+        val userId = getUserIdOrNull() ?: return
+        applicationScope.launch {
+            syncManager.pushTasks(userId, tasks)
+        }
+    }
+
     // Returns all tasks (active and trashed) so ViewModel flows can route/filter correctly
     val allTasks: Flow<List<Task>> = taskDao.getAllTasksIncludeDeleted()
     
@@ -40,8 +65,16 @@ class TaskRepository(
     suspend fun getAllTrashedTasksSync(): List<Task> = taskDao.getAllTrashedTasksSync()
 
     suspend fun emptyTrash() {
+        val trashed = taskDao.getAllTrashedTasksSync()
         taskDao.emptyTrash()
         notifyWidget()
+        val userId = getUserIdOrNull()
+        if (userId != null && firestoreSyncManager != null && trashed.isNotEmpty()) {
+            applicationScope.launch {
+                val marked = trashed.map { it.copy(isDeleted = true, updatedAt = System.currentTimeMillis()) }
+                firestoreSyncManager.pushTasks(userId, marked)
+            }
+        }
     }
 
     suspend fun getTaskById(id: Int): Task? {
@@ -55,6 +88,7 @@ class TaskRepository(
         )
         val id = taskDao.insertTask(newTask)
         notifyWidget()
+        syncTaskToCloud(newTask.copy(id = id.toInt()))
         return id
     }
 
@@ -67,6 +101,7 @@ class TaskRepository(
         }
         taskDao.insertTasks(newTasks)
         notifyWidget()
+        syncTasksToCloud(newTasks)
     }
 
     suspend fun update(task: Task) {
@@ -76,6 +111,7 @@ class TaskRepository(
         )
         taskDao.updateTask(updatedTask)
         notifyWidget()
+        syncTaskToCloud(updatedTask)
     }
 
     suspend fun updateTasks(tasks: List<Task>) {
@@ -84,6 +120,7 @@ class TaskRepository(
         }
         taskDao.updateTasksOrder(updatedTasks)
         notifyWidget()
+        syncTasksToCloud(updatedTasks)
     }
 
     suspend fun reorderTasksByCategory(categoryOrder: List<String>) {
@@ -109,6 +146,7 @@ class TaskRepository(
         if (toUpdate.isNotEmpty()) {
             taskDao.updateTasksOrder(toUpdate)
             notifyWidget()
+            syncTasksToCloud(toUpdate)
         }
     }
 
@@ -122,6 +160,7 @@ class TaskRepository(
         )
         taskDao.updateTask(deletedTask)
         notifyWidget()
+        syncTaskToCloud(deletedTask)
     }
 
     suspend fun hardDelete(task: Task) {

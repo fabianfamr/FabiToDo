@@ -26,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager
 ) : AndroidViewModel(application) {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -38,12 +39,31 @@ class AuthViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    val syncStatus = firestoreSyncManager.syncStatus
+    val lastSyncTimestamp = firestoreSyncManager.lastSyncTimestamp
+
     private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-        _currentUser.value = firebaseAuth.currentUser
+        val user = firebaseAuth.currentUser
+        _currentUser.value = user
+        if (user != null) {
+            firestoreSyncManager.startRealtimeSync(user.uid)
+        } else {
+            firestoreSyncManager.stopRealtimeSync()
+        }
     }
 
     init {
         auth.addAuthStateListener(authStateListener)
+        val user = auth.currentUser
+        if (user != null) {
+            viewModelScope.launch {
+                try {
+                    user.reload().await()
+                    _currentUser.value = auth.currentUser
+                } catch (_: Exception) {}
+                firestoreSyncManager.startRealtimeSync(user.uid)
+            }
+        }
     }
 
     fun signInWithGoogle(context: Context, onResult: (Boolean, String?) -> Unit = { _, _ -> }) {
@@ -87,6 +107,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signOut(context: Context, onComplete: () -> Unit = {}) {
+        firestoreSyncManager.stopRealtimeSync()
         viewModelScope.launch {
             try {
                 auth.signOut()
@@ -100,12 +121,29 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun triggerSync(onComplete: (Boolean) -> Unit = {}) {
+        val user = auth.currentUser
+        if (user == null) {
+            onComplete(false)
+            return
+        }
+        viewModelScope.launch {
+            try {
+                user.reload().await()
+                _currentUser.value = auth.currentUser
+            } catch (_: Exception) {}
+            val success = firestoreSyncManager.syncAllNow(user.uid)
+            onComplete(success)
+        }
+    }
+
     fun completeWelcome(onComplete: () -> Unit = {}) {
         onComplete()
     }
 
     override fun onCleared() {
         super.onCleared()
+        firestoreSyncManager.stopRealtimeSync()
         auth.removeAuthStateListener(authStateListener)
     }
 }
