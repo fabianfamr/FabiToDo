@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CloudSync
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.CloudDownload
 import androidx.compose.material.icons.rounded.CloudUpload
@@ -51,6 +52,9 @@ fun BackupSettingsDialog(
     val storageStats by settingsViewModel.storageStats.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    var selectedExportFormat by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("json") }
+    var isFormatMenuExpanded by remember { mutableStateOf(false) }
 
     // Launcher for exporting backup
     val createDocumentLauncher = rememberLauncherForActivityResult(
@@ -244,10 +248,111 @@ fun BackupSettingsDialog(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                                Spacer(modifier = Modifier.height(18.dp))
+                                Spacer(modifier = Modifier.height(14.dp))
                                 
+                                // Format Selector Dropdown
+                                Surface(
+                                    shape = RoundedCornerShape(14.dp),
+                                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 16.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = "Formato de exportación:",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+
+                                        Box {
+                                            FilledTonalButton(
+                                                onClick = { isFormatMenuExpanded = true },
+                                                shape = RoundedCornerShape(10.dp),
+                                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                                modifier = Modifier.height(38.dp)
+                                            ) {
+                                                Text(
+                                                    text = if (selectedExportFormat == "fabitodo") ".fabitodo" else ".json",
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    fontWeight = FontWeight.ExtraBold,
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Icon(
+                                                    imageVector = Icons.Default.ArrowDropDown,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(20.dp),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+
+                                            DropdownMenu(
+                                                expanded = isFormatMenuExpanded,
+                                                onDismissRequest = { isFormatMenuExpanded = false }
+                                            ) {
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                                            Text(".json", fontWeight = FontWeight.Bold)
+                                                            Spacer(modifier = Modifier.width(8.dp))
+                                                            Text("(JSON estándar)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                        }
+                                                    },
+                                                    onClick = {
+                                                        selectedExportFormat = "json"
+                                                        isFormatMenuExpanded = false
+                                                    },
+                                                    leadingIcon = {
+                                                        if (selectedExportFormat == "json") {
+                                                            Icon(
+                                                                imageVector = Icons.Default.Check,
+                                                                contentDescription = null,
+                                                                tint = MaterialTheme.colorScheme.primary
+                                                            )
+                                                        }
+                                                    }
+                                                )
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                                            Text(".fabitodo", fontWeight = FontWeight.Bold)
+                                                            Spacer(modifier = Modifier.width(8.dp))
+                                                            Text("(Formato FabiToDo)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                        }
+                                                    },
+                                                    onClick = {
+                                                        selectedExportFormat = "fabitodo"
+                                                        isFormatMenuExpanded = false
+                                                    },
+                                                    leadingIcon = {
+                                                        if (selectedExportFormat == "fabitodo") {
+                                                            Icon(
+                                                                imageVector = Icons.Default.Check,
+                                                                contentDescription = null,
+                                                                tint = MaterialTheme.colorScheme.primary
+                                                            )
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
                                 Button(
-                                    onClick = { createDocumentLauncher.launch("fabitodo_backup.json") },
+                                    onClick = {
+                                        val fileName = if (selectedExportFormat == "fabitodo") "fabitodo_backup.fabitodo" else "fabitodo_backup.json"
+                                        createDocumentLauncher.launch(fileName)
+                                    },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(50.dp),
@@ -316,7 +421,7 @@ fun BackupSettingsDialog(
                                 Spacer(modifier = Modifier.height(18.dp))
                                 
                                 Button(
-                                    onClick = { openDocumentLauncher.launch(arrayOf("application/json")) },
+                                    onClick = { openDocumentLauncher.launch(arrayOf("*/*")) },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(50.dp),
