@@ -22,10 +22,45 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     application: Application,
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    private val firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager
 ) : AndroidViewModel(application) {
 
     private val prefs = application.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+
+    private fun triggerSettingsCloudPush() {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            firestoreSyncManager.pushUserSettings()
+        }
+    }
+
+    private val prefListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
+        when (key) {
+            "accent_color" -> _themeAccent.value = p.getString("accent_color", "system") ?: "system"
+            "theme_mode" -> _themeDark.value = p.getString("theme_mode", "system") ?: "system"
+            "app_locale" -> _languageCode.value = p.getString("app_locale", "system") ?: "system"
+            "date_format" -> _dateFormat.value = p.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA"
+            "time_format" -> _timeFormat.value = p.getString("time_format", "24h") ?: "24h"
+            "custom_categories" -> _categories.value = loadInitialCategories()
+            "category_colors" -> _categoryColors.value = loadCategoryColors()
+            "category_icons" -> _categoryIcons.value = loadCategoryIcons()
+            "global_notifications_enabled" -> _notificationsEnabled.value = p.getBoolean("global_notifications_enabled", true)
+            "ai_model" -> _aiModel.value = p.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash"
+            "ai_low_latency_mode" -> _aiLowLatencyMode.value = p.getBoolean("ai_low_latency_mode", true)
+            "ai_subtask_count" -> _aiSubtaskCount.value = p.getInt("ai_subtask_count", 5)
+            "trash_retention_days" -> _trashRetentionDays.value = p.getInt("trash_retention_days", 30)
+            "user_display_name" -> _userName.value = p.getString("user_display_name", "") ?: ""
+        }
+    }
+
+    init {
+        prefs.registerOnSharedPreferenceChangeListener(prefListener)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        prefs.unregisterOnSharedPreferenceChangeListener(prefListener)
+    }
 
     private val _themeAccent = MutableStateFlow(prefs.getString("accent_color", "system") ?: "system")
     val themeAccent: StateFlow<String> = _themeAccent.asStateFlow()
@@ -194,16 +229,19 @@ class SettingsViewModel @Inject constructor(
     fun setThemeAccent(accent: String) {
         _themeAccent.value = accent
         prefs.edit().putString("accent_color", accent).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setThemeDark(mode: String) {
         _themeDark.value = mode
         prefs.edit().putString("theme_mode", mode).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setLanguageCode(lang: String) {
         _languageCode.value = lang
         prefs.edit().putString("app_locale", lang).apply()
+        triggerSettingsCloudPush()
         
         val appLocale = if (lang == "system") {
             androidx.core.os.LocaleListCompat.getEmptyLocaleList()
@@ -216,11 +254,13 @@ class SettingsViewModel @Inject constructor(
     fun setDateFormat(format: String) {
         _dateFormat.value = format
         prefs.edit().putString("date_format", format).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setTimeFormat(format: String) {
         _timeFormat.value = format
         prefs.edit().putString("time_format", format).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setLongPressAction(action: String) {
@@ -346,10 +386,22 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun saveCategories(list: List<String>) {
+        val userCats = list.filter {
+            it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED &&
+            it != "Completed" && it != "Todas" && it != SystemCategory.TRASH &&
+            it != SystemCategory.CALENDAR && it != SystemCategory.EISENHOWER
+        }.distinct()
+
+        val fullList = mutableListOf<String>()
+        fullList.add(SystemCategory.ALL_TASKS)
+        fullList.addAll(userCats)
+        fullList.add(SystemCategory.COMPLETED)
+
         val jsonArray = JSONArray()
-        list.forEach { jsonArray.put(it) }
+        fullList.forEach { jsonArray.put(it) }
         prefs.edit().putString("custom_categories", jsonArray.toString()).apply()
-        _categories.value = list
+        _categories.value = fullList
+        triggerSettingsCloudPush()
     }
 
     fun addCategory(categoryName: String, color: Int? = null, iconName: String? = null) {
@@ -464,6 +516,7 @@ class SettingsViewModel @Inject constructor(
         val jsonObject = JSONObject()
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
         prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setCategoryIcon(category: String, iconName: String) {
@@ -473,6 +526,7 @@ class SettingsViewModel @Inject constructor(
         val jsonObject = JSONObject()
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
         prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+        triggerSettingsCloudPush()
     }
 
     data class StorageStats(

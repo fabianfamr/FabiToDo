@@ -2,12 +2,10 @@ package com.fabian.todolist.data.sync
 
 import android.content.Context
 import android.util.Log
-import com.fabian.todolist.R
 import com.fabian.todolist.data.Subtask
 import com.fabian.todolist.data.Task
 import com.fabian.todolist.data.TaskDao
 import com.fabian.todolist.data.subtasksToJson
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,7 +40,8 @@ class FirestoreSyncManager @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private var snapshotListener: ListenerRegistration? = null
+    private var tasksListener: ListenerRegistration? = null
+    private var settingsListener: ListenerRegistration? = null
     private var currentActiveUserId: String? = null
 
     private val _syncStatus = MutableStateFlow(SyncStatus.IDLE)
@@ -56,16 +55,16 @@ class FirestoreSyncManager @Inject constructor(
 
     fun startRealtimeSync(userId: String) {
         if (userId.isBlank()) return
-        if (currentActiveUserId == userId && snapshotListener != null) return
+        if (currentActiveUserId == userId && tasksListener != null) return
 
         stopRealtimeSync()
         currentActiveUserId = userId
 
+        // 1. Escuchar cambios en tareas
         val tasksCollection = firestore.collection("users").document(userId).collection("tasks")
-
-        snapshotListener = tasksCollection.addSnapshotListener { snapshot, error ->
+        tasksListener = tasksCollection.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                Log.e("FirestoreSyncManager", "SnapshotListener error", error)
+                Log.e("FirestoreSyncManager", "Tasks SnapshotListener error", error)
                 _syncStatus.value = SyncStatus.ERROR
                 return@addSnapshotListener
             }
@@ -73,22 +72,16 @@ class FirestoreSyncManager @Inject constructor(
             if (snapshot != null && !snapshot.isEmpty) {
                 syncScope.launch {
                     try {
-                        var hasIncomingChanges = false
                         for (doc in snapshot.documents) {
                             val remoteTask = parseDocumentToTask(doc) ?: continue
                             val localTask = taskDao.getTaskByCloudId(remoteTask.cloudId)
 
                             if (localTask == null) {
-                                // Nuevo documento creado en otro dispositivo
                                 taskDao.insertTask(remoteTask.copy(id = 0, isSynced = true))
-                                hasIncomingChanges = true
                             } else {
                                 if (remoteTask.updatedAt > localTask.updatedAt) {
-                                    // La versión remota es más reciente
                                     taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
-                                    hasIncomingChanges = true
                                 } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
-                                    // La versión local tiene cambios pendientes de subir
                                     uploadTaskToFirestore(userId, localTask)
                                 }
                             }
@@ -97,22 +90,34 @@ class FirestoreSyncManager @Inject constructor(
                         updateLastSyncTimestamp()
                         _syncStatus.value = SyncStatus.SUCCESS
                     } catch (e: Exception) {
-                        Log.e("FirestoreSyncManager", "Error processing remote snapshot", e)
+                        Log.e("FirestoreSyncManager", "Error processing remote task snapshot", e)
                         _syncStatus.value = SyncStatus.ERROR
                     }
                 }
             }
         }
 
-        // Ejecutar subida de tareas locales pendientes que no se hayan sincronizado
+        // 2. Escuchar cambios en categorías y ajustes
+        val settingsDoc = firestore.collection("users").document(userId).collection("settings").document("preferences")
+        settingsListener = settingsDoc.addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+            syncScope.launch {
+                applyRemoteSettings(snapshot)
+            }
+        }
+
+        // Subir tareas no sincronizadas e iniciar ajustes
         syncScope.launch {
             uploadUnsyncedLocalTasks(userId)
+            pushUserSettings(userId)
         }
     }
 
     fun stopRealtimeSync() {
-        snapshotListener?.remove()
-        snapshotListener = null
+        tasksListener?.remove()
+        tasksListener = null
+        settingsListener?.remove()
+        settingsListener = null
         currentActiveUserId = null
         _syncStatus.value = SyncStatus.IDLE
     }
@@ -122,10 +127,18 @@ class FirestoreSyncManager @Inject constructor(
         _syncStatus.value = SyncStatus.SYNCING
 
         try {
-            // 1. Subir tareas locales pendientes
+            // 1. Subir tareas pendientes
             uploadUnsyncedLocalTasks(userId)
 
-            // 2. Descargar todos los documentos de Firestore
+            // 2. Sincronizar ajustes y categorías
+            val settingsDocRef = firestore.collection("users").document(userId).collection("settings").document("preferences")
+            val settingsSnap = settingsDocRef.get().await()
+            if (settingsSnap.exists()) {
+                applyRemoteSettings(settingsSnap)
+            }
+            pushUserSettings(userId)
+
+            // 3. Descargar todas las tareas remotas
             val tasksCollection = firestore.collection("users").document(userId).collection("tasks")
             val remoteDocs = tasksCollection.get().await()
 
@@ -176,6 +189,64 @@ class FirestoreSyncManager @Inject constructor(
             updateLastSyncTimestamp()
         } catch (e: Exception) {
             Log.e("FirestoreSyncManager", "Error batch pushing tasks", e)
+        }
+    }
+
+    suspend fun pushUserSettings(userId: String = FirebaseAuth.getInstance().currentUser?.uid ?: "") = withContext(Dispatchers.IO) {
+        if (userId.isBlank()) return@withContext
+        try {
+            val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+            val settingsMap = mapOf(
+                "customCategories" to (prefs.getString("custom_categories", "[]") ?: "[]"),
+                "categoryColors" to (prefs.getString("category_colors", "{}") ?: "{}"),
+                "categoryIcons" to (prefs.getString("category_icons", "{}") ?: "{}"),
+                "themeAccent" to (prefs.getString("accent_color", "system") ?: "system"),
+                "themeDark" to (prefs.getString("theme_mode", "system") ?: "system"),
+                "languageCode" to (prefs.getString("app_locale", "system") ?: "system"),
+                "dateFormat" to (prefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA"),
+                "timeFormat" to (prefs.getString("time_format", "24h") ?: "24h"),
+                "globalNotificationsEnabled" to prefs.getBoolean("global_notifications_enabled", true),
+                "aiModel" to (prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash"),
+                "aiLowLatencyMode" to prefs.getBoolean("ai_low_latency_mode", true),
+                "aiSubtaskCount" to prefs.getInt("ai_subtask_count", 5),
+                "trashRetentionDays" to prefs.getInt("trash_retention_days", 30),
+                "updatedAt" to System.currentTimeMillis()
+            )
+            firestore.collection("users").document(userId).collection("settings").document("preferences")
+                .set(settingsMap, SetOptions.merge()).await()
+        } catch (e: Exception) {
+            Log.e("FirestoreSyncManager", "Error pushing user settings", e)
+        }
+    }
+
+    private fun applyRemoteSettings(doc: DocumentSnapshot) {
+        try {
+            val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+            val remoteUpdatedAt = doc.getLong("updatedAt") ?: 0L
+            val localLastSync = prefs.getLong("last_settings_cloud_sync", 0L)
+
+            if (remoteUpdatedAt <= localLastSync) return
+
+            val editor = prefs.edit()
+
+            doc.getString("customCategories")?.let { editor.putString("custom_categories", it) }
+            doc.getString("categoryColors")?.let { editor.putString("category_colors", it) }
+            doc.getString("categoryIcons")?.let { editor.putString("category_icons", it) }
+            doc.getString("themeAccent")?.let { editor.putString("accent_color", it) }
+            doc.getString("themeDark")?.let { editor.putString("theme_mode", it) }
+            doc.getString("languageCode")?.let { editor.putString("app_locale", it) }
+            doc.getString("dateFormat")?.let { editor.putString("date_format", it) }
+            doc.getString("timeFormat")?.let { editor.putString("time_format", it) }
+            doc.getBoolean("globalNotificationsEnabled")?.let { editor.putBoolean("global_notifications_enabled", it) }
+            doc.getString("aiModel")?.let { editor.putString("ai_model", it) }
+            doc.getBoolean("aiLowLatencyMode")?.let { editor.putBoolean("ai_low_latency_mode", it) }
+            doc.getLong("aiSubtaskCount")?.let { editor.putInt("ai_subtask_count", it.toInt()) }
+            doc.getLong("trashRetentionDays")?.let { editor.putInt("trash_retention_days", it.toInt()) }
+
+            editor.putLong("last_settings_cloud_sync", remoteUpdatedAt)
+            editor.apply()
+        } catch (e: Exception) {
+            Log.e("FirestoreSyncManager", "Error applying remote settings", e)
         }
     }
 

@@ -656,6 +656,7 @@ class TaskViewModel @Inject constructor(
         customCategories: List<String>
     ): Boolean = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
         try {
+            val prefs = getApplication<Application>().getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
             val writer = android.util.JsonWriter(java.io.OutputStreamWriter(outputStream, Charsets.UTF_8))
             writer.setIndent("  ")
             writer.beginObject()
@@ -668,7 +669,26 @@ class TaskViewModel @Inject constructor(
             }
             writer.endArray()
 
-            // 2. Tasks
+            // 2. Category Colors & Icons
+            writer.name("categoryColors").value(prefs.getString("category_colors", "{}") ?: "{}")
+            writer.name("categoryIcons").value(prefs.getString("category_icons", "{}") ?: "{}")
+
+            // 3. Settings & Preferences
+            writer.name("settings")
+            writer.beginObject()
+            writer.name("themeAccent").value(prefs.getString("accent_color", "system") ?: "system")
+            writer.name("themeDark").value(prefs.getString("theme_mode", "system") ?: "system")
+            writer.name("languageCode").value(prefs.getString("app_locale", "system") ?: "system")
+            writer.name("dateFormat").value(prefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA")
+            writer.name("timeFormat").value(prefs.getString("time_format", "24h") ?: "24h")
+            writer.name("globalNotificationsEnabled").value(prefs.getBoolean("global_notifications_enabled", true))
+            writer.name("aiModel").value(prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash")
+            writer.name("aiLowLatencyMode").value(prefs.getBoolean("ai_low_latency_mode", true))
+            writer.name("aiSubtaskCount").value(prefs.getInt("ai_subtask_count", 5))
+            writer.name("trashRetentionDays").value(prefs.getInt("trash_retention_days", 30))
+            writer.endObject()
+
+            // 4. Tasks
             writer.name("tasks")
             writer.beginArray()
             for (task in tasks) {
@@ -718,6 +738,8 @@ class TaskViewModel @Inject constructor(
         onCategoriesImported: (List<String>) -> Unit = {}
     ): Boolean = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
         try {
+            val prefs = getApplication<Application>().getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+            val editor = prefs.edit()
             val reader = android.util.JsonReader(java.io.InputStreamReader(inputStream, Charsets.UTF_8))
             reader.beginObject()
             val importedTasks = mutableListOf<Task>()
@@ -734,6 +756,39 @@ class TaskViewModel @Inject constructor(
                             }
                         }
                         reader.endArray()
+                    }
+                    "categoryColors", "category_colors" -> {
+                        if (reader.peek() == android.util.JsonToken.STRING) {
+                            editor.putString("category_colors", reader.nextString())
+                        } else {
+                            reader.skipValue()
+                        }
+                    }
+                    "categoryIcons", "category_icons" -> {
+                        if (reader.peek() == android.util.JsonToken.STRING) {
+                            editor.putString("category_icons", reader.nextString())
+                        } else {
+                            reader.skipValue()
+                        }
+                    }
+                    "settings", "preferences" -> {
+                        reader.beginObject()
+                        while (reader.hasNext()) {
+                            when (reader.nextName()) {
+                                "themeAccent", "accent_color" -> editor.putString("accent_color", reader.nextString())
+                                "themeDark", "theme_mode" -> editor.putString("theme_mode", reader.nextString())
+                                "languageCode", "app_locale" -> editor.putString("app_locale", reader.nextString())
+                                "dateFormat", "date_format" -> editor.putString("date_format", reader.nextString())
+                                "timeFormat", "time_format" -> editor.putString("time_format", reader.nextString())
+                                "globalNotificationsEnabled", "global_notifications_enabled" -> editor.putBoolean("global_notifications_enabled", reader.nextBoolean())
+                                "aiModel", "ai_model" -> editor.putString("ai_model", reader.nextString())
+                                "aiLowLatencyMode", "ai_low_latency_mode" -> editor.putBoolean("ai_low_latency_mode", reader.nextBoolean())
+                                "aiSubtaskCount", "ai_subtask_count" -> editor.putInt("ai_subtask_count", reader.nextInt())
+                                "trashRetentionDays", "trash_retention_days" -> editor.putInt("trash_retention_days", reader.nextInt())
+                                else -> reader.skipValue()
+                            }
+                        }
+                        reader.endObject()
                     }
                     "tasks" -> {
                         reader.beginArray()
@@ -838,6 +893,7 @@ class TaskViewModel @Inject constructor(
                 }
             }
             reader.endObject()
+            editor.apply()
 
             if (importedCategories.isNotEmpty()) {
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
