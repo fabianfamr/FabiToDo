@@ -32,7 +32,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.fabian.todolist.R
 import com.fabian.todolist.ui.AuthViewModel
 
@@ -48,6 +51,28 @@ fun AccountSettingsDialog(
     val lastSyncTimestamp by authViewModel.lastSyncTimestamp.collectAsStateWithLifecycle()
     var showSignOutConfirm by rememberSaveable { mutableStateOf(false) }
     val defaultConnectedTitle = stringResource(R.string.account_connected_as)
+
+    val gifImageLoader = remember(context) {
+        ImageLoader.Builder(context)
+            .components {
+                if (android.os.Build.VERSION.SDK_INT >= 28) {
+                    add(ImageDecoderDecoder.Factory())
+                } else {
+                    add(GifDecoder.Factory())
+                }
+            }
+            .build()
+    }
+
+    val avatarUrl = remember(currentUser?.photoUrl) {
+        currentUser?.photoUrl?.toString()?.let { url ->
+            if (url.contains("googleusercontent.com")) {
+                url.replace("=s96-c", "=s400").replace("-c", "")
+            } else {
+                url
+            }
+        }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -103,9 +128,10 @@ fun AccountSettingsDialog(
                                     modifier = Modifier.padding(20.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (photoUrl != null) {
+                                    if (avatarUrl != null) {
                                         AsyncImage(
-                                            model = photoUrl,
+                                            model = avatarUrl,
+                                            imageLoader = gifImageLoader,
                                             contentDescription = displayName,
                                             modifier = Modifier
                                                 .size(64.dp)
