@@ -71,7 +71,12 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val serverClientId = context.getString(R.string.default_web_client_id)
+                val resId = context.resources.getIdentifier("default_web_client_id", "string", context.packageName)
+                val serverClientId = if (resId != 0) {
+                    context.getString(resId)
+                } else {
+                    "14026788849-6o166494a1rsfqj0ed5lm849upa9l2ds.apps.googleusercontent.com"
+                }
                 val googleIdOption = GetSignInWithGoogleOption.Builder(serverClientId)
                     .build()
 
