@@ -11,6 +11,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.ui.input.pointer.pointerInput
@@ -333,6 +334,9 @@ fun AddEditTaskDialog(
         )
     }
 
+    var isVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { isVisible = true }
+
     Dialog(
         onDismissRequest = attemptDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
@@ -352,6 +356,11 @@ fun AddEditTaskDialog(
         ) {
             val isTablet = maxWidth >= 600.dp
             val surfaceInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = fadeIn(tween(400)) + scaleIn(initialScale = 0.94f, animationSpec = spring(dampingRatio = 0.82f, stiffness = Spring.StiffnessLow)) + slideInVertically(initialOffsetY = { it / 14 }),
+                exit = fadeOut(tween(300)) + scaleOut(targetScale = 0.94f) + slideOutVertically(targetOffsetY = { it / 14 })
+            ) {
             Surface(
                 modifier = (if (isTablet) {
                     Modifier
@@ -955,7 +964,7 @@ fun AddEditTaskDialog(
             }
         }
     }
-    }
+}
 
     if (showAddCategoryDialog) {
         AlertDialog(

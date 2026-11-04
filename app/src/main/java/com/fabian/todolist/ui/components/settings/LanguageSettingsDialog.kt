@@ -35,12 +35,7 @@ fun LanguageSettingsDialog(
     onSaveLang: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
-            SettingsSubmenuScaffold(
+    SettingsSubmenuScaffold(
                 title = stringResource(R.string.app_language),
                 onBack = onDismiss
             ) {
@@ -183,6 +178,4 @@ fun LanguageSettingsDialog(
                     }
                 }
             }
-        }
-    }
 }

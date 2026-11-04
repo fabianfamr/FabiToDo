@@ -74,15 +74,10 @@ fun AccountSettingsDialog(
         }
     }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+    SettingsSubmenuScaffold(
+        title = stringResource(R.string.settings_account_title),
+        onBack = onDismiss
     ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
-            SettingsSubmenuScaffold(
-                title = stringResource(R.string.settings_account_title),
-                onBack = onDismiss
-            ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -392,12 +387,10 @@ fun AccountSettingsDialog(
                                     }
                                 }
                             }
-                        }
                     }
                 }
             }
         }
-    }
 
     if (showSignOutConfirm) {
         AlertDialog(

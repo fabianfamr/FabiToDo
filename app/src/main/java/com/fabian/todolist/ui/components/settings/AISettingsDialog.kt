@@ -86,18 +86,10 @@ fun AISettingsDialog(
 
     val keyRequirementText = stringResource(R.string.ai_key_req_gemini)
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = true)
+    SettingsSubmenuScaffold(
+        title = stringResource(R.string.ai_center_title),
+        onBack = onDismiss
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Transparent
-        ) {
-            SettingsSubmenuScaffold(
-                title = stringResource(R.string.ai_center_title),
-                onBack = onDismiss
-            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -754,12 +746,9 @@ fun AISettingsDialog(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
         }
-    }
-}
 
 @Composable
 fun ModelBrandBadge(model: String, modifier: Modifier = Modifier) {

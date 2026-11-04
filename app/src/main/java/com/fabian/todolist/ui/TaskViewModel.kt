@@ -449,7 +449,7 @@ class TaskViewModel @Inject constructor(
                 due < dayAfterDayAfterTomorrow -> "group_pasado_manana"
                 due < endOfWeek -> "group_esta_semana"
                 due < endOfMonth -> "group_este_mes"
-                due < endOfNextMonth -> "group_siguiente_mes"
+                due < endOfNextMonth -> "group_next_month"
                 else -> "group_futuro"
             }
             
@@ -533,7 +533,13 @@ class TaskViewModel @Inject constructor(
                 repository.hardDelete(task)
             } else {
                 cancelReminder(task)
-                updateTask(task.copy(isDeleted = true, deletedTimestamp = System.currentTimeMillis()))
+                // Bump updatedAt so sync knows this is the latest change
+                updateTask(task.copy(
+                    isDeleted = true, 
+                    deletedTimestamp = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis(),
+                    isSynced = false
+                ))
             }
             incrementUnsynced()
         }
@@ -553,6 +559,9 @@ class TaskViewModel @Inject constructor(
     }
 
     fun toggleTaskCompletion(task: Task) {
+        // Prevent completing tasks that are in the trash
+        if (task.isDeleted) return
+
         if (!task.isCompleted && task.isRepeat && task.repeatType != "Ninguno") {
             val nextDueDate = computeNextRepeatTrigger(task)
             if (nextDueDate != null) {
@@ -567,7 +576,11 @@ class TaskViewModel @Inject constructor(
                 return
             }
         }
-        val updatedTask = task.copy(isCompleted = !task.isCompleted)
+        val updatedTask = task.copy(
+            isCompleted = !task.isCompleted,
+            updatedAt = System.currentTimeMillis(),
+            isSynced = false
+        )
         updateTask(updatedTask)
     }
 

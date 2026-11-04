@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -201,52 +202,67 @@ fun SettingsPreferencesDialog(
         ) {
             val isTablet = maxWidth >= 600.dp
             val surfaceInteractionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-            Surface(
-                modifier = (if (isTablet) {
-                    Modifier
-                        .widthIn(min = 400.dp, max = 640.dp)
-                        .fillMaxHeight(0.92f)
-                        .clip(RoundedCornerShape(32.dp))
-                        .shadow(16.dp, RoundedCornerShape(32.dp))
-                } else {
-                    Modifier.fillMaxSize()
-                }).clickable(
-                    indication = null,
-                    interactionSource = surfaceInteractionSource
-                ) {
-                    // Consume click inside settings card
+            
+            AnimatedContent(
+                targetState = currentDestination,
+                transitionSpec = {
+                    if (targetState != SettingsDestinations.NONE) {
+                        (slideInHorizontally { it } + fadeIn()).togetherWith(slideOutHorizontally { -it / 2 } + fadeOut())
+                    } else {
+                        (slideInHorizontally { -it / 2 } + fadeIn()).togetherWith(slideOutHorizontally { it } + fadeOut())
+                    }.using(SizeTransform(clip = false))
                 },
-                color = MaterialTheme.colorScheme.background,
-                shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .then(if (!isTablet) Modifier.systemBarsPadding() else Modifier.padding(top = 16.dp))
-                ) {
-                // High-fidelity elegant top actions bar
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 12.dp)
-                ) {
-                    IconButton(onClick = onDismiss) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
-                            contentDescription = stringResource(R.string.nav_back), 
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.settings),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        letterSpacing = (-0.5).sp
-                    )
-                }
+                label = "SettingsTransition"
+            ) { dest ->
+                if (dest == SettingsDestinations.NONE) {
+                    Surface(
+                        modifier = (if (isTablet) {
+                            Modifier
+                                .widthIn(min = 400.dp, max = 640.dp)
+                                .fillMaxHeight(0.92f)
+                                .clip(RoundedCornerShape(32.dp))
+                                .shadow(16.dp, RoundedCornerShape(32.dp))
+                        } else {
+                            Modifier.fillMaxSize()
+                        }).clickable(
+                            indication = null,
+                            interactionSource = surfaceInteractionSource
+                        ) {
+                            // Consume click
+                        },
+                        color = MaterialTheme.colorScheme.background,
+                        shape = if (isTablet) RoundedCornerShape(32.dp) else RoundedCornerShape(0.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .then(if (!isTablet) Modifier.systemBarsPadding() else Modifier.padding(top = 16.dp))
+                        ) {
+                            // Header
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 12.dp)
+                            ) {
+                                IconButton(onClick = onDismiss) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
+                                        contentDescription = stringResource(R.string.nav_back), 
+                                        tint = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(R.string.settings),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Black,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    letterSpacing = (-0.5).sp
+                                )
+                            }
+                            // Rest of the list... (I will keep the LazyColumn here)
+
 
                 LazyColumn(
                     modifier = Modifier
@@ -516,7 +532,6 @@ fun SettingsPreferencesDialog(
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                                textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(horizontal = 24.dp)
                             )
                         }
@@ -524,24 +539,26 @@ fun SettingsPreferencesDialog(
                 }
             }
         }
+    } else {
+                    SettingsDialogRouter(
+                        currentDestination = currentDestination,
+                        onDestinationChanged = { currentDestination = it },
+                        currentAccent = currentAccent,
+                        currentDark = currentDark,
+                        onSaveAccent = onSaveAccent,
+                        onSaveDark = onSaveDark,
+                        currentLang = currentLang,
+                        onSaveLang = onSaveLang,
+                        viewModel = viewModel,
+                        settingsViewModel = settingsViewModel,
+                        authViewModel = authViewModel,
+                        onNavigateToGoogleLogin = onNavigateToGoogleLogin,
+                        categories = categories,
+                        categoryColors = categoryColors,
+                        categoryIcons = categoryIcons
+                    )
+                }
+            }
+        }
     }
-}
-
-    SettingsDialogRouter(
-        currentDestination = currentDestination,
-        onDestinationChanged = { currentDestination = it },
-        currentAccent = currentAccent,
-        currentDark = currentDark,
-        onSaveAccent = onSaveAccent,
-        onSaveDark = onSaveDark,
-        currentLang = currentLang,
-        onSaveLang = onSaveLang,
-        viewModel = viewModel,
-        settingsViewModel = settingsViewModel,
-        authViewModel = authViewModel,
-        onNavigateToGoogleLogin = onNavigateToGoogleLogin,
-        categories = categories,
-        categoryColors = categoryColors,
-        categoryIcons = categoryIcons
-    )
 }

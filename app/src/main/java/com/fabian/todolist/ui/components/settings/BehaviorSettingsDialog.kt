@@ -52,15 +52,7 @@ fun BehaviorSettingsDialog(
     val hapticFeedbackOnComplete by viewModel.hapticFeedbackOnComplete.collectAsStateWithLifecycle()
     val currentTrashRetention by viewModel.trashRetentionDays.collectAsStateWithLifecycle()
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Transparent
-        ) {
-            SettingsSubmenuScaffold(
+    SettingsSubmenuScaffold(
                 title = stringResource(R.string.settings_behavior_title),
                 onBack = onDismiss
             ) {
@@ -484,6 +476,4 @@ fun BehaviorSettingsDialog(
                     }
                 }
             }
-        }
-    }
 }

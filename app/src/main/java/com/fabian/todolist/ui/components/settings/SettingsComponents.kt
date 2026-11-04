@@ -75,16 +75,14 @@ fun SettingsSubmenuScaffold(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val backdropInteractionSource = remember { MutableInteractionSource() }
     val surfaceInteractionSource = remember { MutableInteractionSource() }
 
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.45f))
             .clickable(
                 indication = null,
-                interactionSource = backdropInteractionSource
+                interactionSource = remember { MutableInteractionSource() }
             ) {
                 onBack()
             },

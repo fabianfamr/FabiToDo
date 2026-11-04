@@ -42,12 +42,7 @@ fun AppearanceSettingsDialog(
     onSaveDark: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
-            val selectedColorAccentValue = when (currentAccent) {
+    val selectedColorAccentValue = when (currentAccent) {
                 "blue" -> Color(0xFF4285F4)
                 "green" -> Color(0xFF34A853)
                 "coral" -> Color(0xFFEA4335)
@@ -392,8 +387,6 @@ fun AppearanceSettingsDialog(
                     item {
                         Spacer(modifier = Modifier.height(72.dp))
                     }
-                }
             }
         }
-    }
 }

@@ -103,15 +103,10 @@ fun BackupSettingsDialog(
         }
     }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+    SettingsSubmenuScaffold(
+        title = stringResource(R.string.backup_restore_title),
+        onBack = onDismiss
     ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
-            SettingsSubmenuScaffold(
-                title = stringResource(R.string.backup_restore_title),
-                onBack = onDismiss
-            ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -564,6 +559,4 @@ fun BackupSettingsDialog(
                     }
                 }
             }
-        }
-    }
 }

@@ -46,15 +46,7 @@ fun SecuritySettingsDialog(
 
     var showWipeConfirmDialog by remember { mutableStateOf(false) }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Transparent
-        ) {
-            SettingsSubmenuScaffold(
+    SettingsSubmenuScaffold(
                 title = stringResource(R.string.settings_category_security),
                 onBack = onDismiss
             ) {
@@ -239,12 +231,10 @@ fun SecuritySettingsDialog(
                                     }
                                 }
                             }
-                        }
                     }
                 }
             }
         }
-    }
 
     if (showWipeConfirmDialog) {
         AlertDialog(

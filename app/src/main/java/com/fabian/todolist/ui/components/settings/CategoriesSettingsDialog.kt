@@ -66,12 +66,7 @@ fun CategoriesSettingsDialog(
         }
     }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
-            SettingsSubmenuScaffold(
+    SettingsSubmenuScaffold(
                 title = stringResource(R.string.dialog_task_list_header),
                 onBack = onDismiss
             ) {
@@ -361,11 +356,9 @@ fun CategoriesSettingsDialog(
                                 }
                             }
                         }
-                    }
                 }
             }
         }
-    }
 
     // Modal to add a new category
     TaskAddCategoryDialog(

@@ -42,15 +42,7 @@ fun DateTimeFormatSettingsDialog(
     val currentDateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
     val currentTimeFormat by viewModel.timeFormat.collectAsStateWithLifecycle()
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Transparent
-        ) {
-            SettingsSubmenuScaffold(
+    SettingsSubmenuScaffold(
                 title = stringResource(R.string.settings_datetime_title),
                 onBack = onDismiss
             ) {
@@ -94,7 +86,6 @@ fun DateTimeFormatSettingsDialog(
                 }
             }
         }
-    }
 }
 
 data class FormatOption(

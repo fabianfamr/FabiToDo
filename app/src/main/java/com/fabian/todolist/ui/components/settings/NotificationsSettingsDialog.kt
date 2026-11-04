@@ -108,12 +108,7 @@ fun NotificationsSettingsDialog(
     viewModel: SettingsViewModel,
     onDismiss: () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
-            val context = LocalContext.current
+    val context = LocalContext.current
             val globalNotificationsEnabled by viewModel.notificationsEnabled.collectAsStateWithLifecycle()
             val quickAddNotificationEnabled by viewModel.quickAddNotificationEnabled.collectAsStateWithLifecycle()
             val quickAddNotificationInterval by viewModel.quickAddNotificationInterval.collectAsStateWithLifecycle()
@@ -531,6 +526,4 @@ fun NotificationsSettingsDialog(
                     }
                 }
             }
-        }
-    }
 }
