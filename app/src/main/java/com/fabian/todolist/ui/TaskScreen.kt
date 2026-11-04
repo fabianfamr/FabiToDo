@@ -1023,6 +1023,7 @@ fun TaskScreen(
                 }
             }
         }
+    }
 
         // Quick Access Drawer Overlay (Does NOT close when tapping outside space)
         androidx.compose.animation.AnimatedVisibility(
@@ -1061,6 +1062,8 @@ fun TaskScreen(
             }
         }
     }
+}
+}
 
     if (showSettingsDialog) {
         SettingsPreferencesDialog(
@@ -1206,5 +1209,6 @@ fun TaskScreen(
             onDismiss = { showFocusDrawer = false }
         )
     }
+}
 }
 

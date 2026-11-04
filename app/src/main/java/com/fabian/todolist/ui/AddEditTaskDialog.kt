@@ -273,23 +273,40 @@ fun AddEditTaskDialog(
             }
         }
 
-        val constructedTask = Task(
-            id = task?.id ?: 0,
-            title = title.trim(),
-            description = description.trim(),
-            dueDate = selectedDateInMillis,
-            dueTime = selectedTimeStr,
-            // Default to "General" — saving an empty-string category previously
-            // orphaned tasks in the UI (drawer has no "uncategorized" entry,
-            // getLocalizedCategoryName("") returns "", getCategoryColor returns Gray).
-            category = selectedCategory.ifBlank { "General" },
-            priority = selectedPriority,
-            reminderTime = alarmTime,
-            isRepeat = isRepeat,
-            repeatType = repeatType,
-            displayOrder = task?.displayOrder ?: 0,
-            attachedImageUri = attachedImageUri
-        ).withSubtasks(localSubtasks)
+        val constructedTask = (if (task != null && task.id != 0) {
+            task.copy(
+                title = title.trim(),
+                description = description.trim(),
+                dueDate = selectedDateInMillis,
+                dueTime = selectedTimeStr,
+                category = selectedCategory.ifBlank { "General" },
+                priority = selectedPriority,
+                reminderTime = alarmTime,
+                isRepeat = isRepeat,
+                repeatType = repeatType,
+                attachedImageUri = attachedImageUri,
+                updatedAt = System.currentTimeMillis(),
+                isSynced = false
+            )
+        } else {
+            Task(
+                id = 0,
+                cloudId = task?.cloudId ?: java.util.UUID.randomUUID().toString(),
+                title = title.trim(),
+                description = description.trim(),
+                dueDate = selectedDateInMillis,
+                dueTime = selectedTimeStr,
+                category = selectedCategory.ifBlank { "General" },
+                priority = selectedPriority,
+                reminderTime = alarmTime,
+                isRepeat = isRepeat,
+                repeatType = repeatType,
+                displayOrder = task?.displayOrder ?: 0,
+                attachedImageUri = attachedImageUri,
+                updatedAt = System.currentTimeMillis(),
+                isSynced = false
+            )
+        }).withSubtasks(localSubtasks)
         onSave(constructedTask)
     }
 
@@ -964,6 +981,7 @@ fun AddEditTaskDialog(
             }
         }
     }
+}
 }
 
     if (showAddCategoryDialog) {

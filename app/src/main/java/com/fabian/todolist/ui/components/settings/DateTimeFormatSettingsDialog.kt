@@ -86,7 +86,6 @@ fun DateTimeFormatSettingsDialog(
                 }
             }
         }
-}
 
 data class FormatOption(
     val id: String,

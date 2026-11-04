@@ -71,8 +71,7 @@ class TaskRepository(
         val userId = getUserIdOrNull()
         if (userId != null && firestoreSyncManager != null && trashed.isNotEmpty()) {
             applicationScope.launch {
-                val marked = trashed.map { it.copy(isDeleted = true, updatedAt = System.currentTimeMillis()) }
-                firestoreSyncManager.pushTasks(userId, marked)
+                firestoreSyncManager.deleteRemoteTasks(userId, trashed.map { it.cloudId })
             }
         }
     }
@@ -166,6 +165,12 @@ class TaskRepository(
     suspend fun hardDelete(task: Task) {
         taskDao.deleteTask(task)
         notifyWidget()
+        val userId = getUserIdOrNull()
+        if (userId != null && firestoreSyncManager != null) {
+            applicationScope.launch {
+                firestoreSyncManager.deleteRemoteTask(userId, task.cloudId)
+            }
+        }
     }
 
     suspend fun deleteById(id: Int) {
