@@ -206,20 +206,25 @@ class FirestoreSyncManager @Inject constructor(
         if (userId.isBlank() || cloudId.isBlank()) return@withContext
         try {
             firestore.collection("users").document(userId).collection("tasks").document(cloudId).delete().await()
+            updateLastSyncTimestamp()
         } catch (e: Exception) {
             Log.e("FirestoreSyncManager", "Error deleting remote task $cloudId", e)
         }
     }
 
     suspend fun deleteRemoteTasks(userId: String, cloudIds: List<String>) = withContext(Dispatchers.IO) {
-        if (userId.isBlank() || cloudIds.isEmpty()) return@withContext
+        val validIds = cloudIds.filter { it.isNotBlank() }
+        if (userId.isBlank() || validIds.isEmpty()) return@withContext
         try {
-            val batch = firestore.batch()
             val collection = firestore.collection("users").document(userId).collection("tasks")
-            cloudIds.forEach { id ->
-                batch.delete(collection.document(id))
+            validIds.chunked(500).forEach { chunk ->
+                val batch = firestore.batch()
+                chunk.forEach { id ->
+                    batch.delete(collection.document(id))
+                }
+                batch.commit().await()
             }
-            batch.commit().await()
+            updateLastSyncTimestamp()
         } catch (e: Exception) {
             Log.e("FirestoreSyncManager", "Error batch deleting remote tasks", e)
         }

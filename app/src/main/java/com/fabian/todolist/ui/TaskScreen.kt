@@ -628,10 +628,18 @@ fun TaskScreen(
                                                         containerColor = MaterialTheme.colorScheme.error,
                                                         contentColor = MaterialTheme.colorScheme.onError
                                                     ),
-                                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
                                                     shape = RoundedCornerShape(12.dp),
-                                                    modifier = Modifier.padding(start = 8.dp)
+                                                    modifier = Modifier
+                                                        .padding(start = 8.dp)
+                                                        .testTag("empty_trash_button")
                                                 ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.DeleteForever,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(6.dp))
                                                     Text(
                                                         text = stringResource(R.string.empty_trash_action),
                                                         style = MaterialTheme.typography.labelMedium,
@@ -661,6 +669,47 @@ fun TaskScreen(
                                         completedCount = completedCount,
                                         categoryName = selectedCategory,
                                         modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH && tasks.isEmpty()) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 56.dp, horizontal = 24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(72.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.DeleteSweep,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                            modifier = Modifier.size(36.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = stringResource(R.string.empty_state_trash),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = stringResource(R.string.empty_state_trash_tip),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                     )
                                 }
                             }
@@ -1185,9 +1234,17 @@ fun TaskScreen(
             confirmButton = {
                 Button(
                     onClick = {
+                        if (hapticFeedbackOnComplete) {
+                            com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
+                        }
                         viewModel.emptyTrash()
+                        selectedTaskIds.clear()
                         showEmptyTrashDialog = false
+                        scope.launch {
+                            snackbarHostState.showSnackbar(context.getString(R.string.trash_cleared))
+                        }
                     },
+                    modifier = Modifier.testTag("confirm_empty_trash_button"),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
                     Text(stringResource(R.string.empty_trash_action))
