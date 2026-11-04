@@ -20,25 +20,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import androidx.compose.ui.res.stringResource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.testTag
 import com.fabian.todolist.R
 
 @Stable
 class PixelTransitionState {
     val progress = Animatable(0f)
     val running = mutableStateOf(true)
+    private var isDismissing = false
 
-    suspend fun start() {
-        // Optimizing launch speed: reduce delay to 1100ms so checkmark draws beautifully and transitions snappily
-        delay(1100)
+    suspend fun dismiss() {
+        if (isDismissing) return
+        isDismissing = true
         progress.animateTo(
             targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 500,
+                durationMillis = 450,
                 easing = CubicBezierEasing(0.25f, 1f, 0.5f, 1f) // Ultra-smooth deceleration
             )
         )
         delay(50) // Settle frame transition buffer
         running.value = false
+    }
+
+    suspend fun start() {
+        dismiss()
     }
 }
 
@@ -47,7 +60,10 @@ fun lerp(start: Float, end: Float, t: Float): Float {
 }
 
 @Composable
-fun PixelSplashScene(t: Float) {
+fun PixelSplashScene(
+    t: Float,
+    onStartClick: () -> Unit = {}
+) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val tertiaryColor = MaterialTheme.colorScheme.tertiary
@@ -60,6 +76,11 @@ fun PixelSplashScene(t: Float) {
     val textAlpha = remember { Animatable(0f) }
     val textOffsetY = remember { Animatable(30f) }
     val subtitleAlpha = remember { Animatable(0f) }
+
+    // Start button emergence animation
+    val buttonAlpha = remember { Animatable(0f) }
+    val buttonOffsetY = remember { Animatable(25f) }
+    var isButtonClicked by remember { mutableStateOf(false) }
 
     // Floating bob animation
     val infiniteTransition = rememberInfiniteTransition(label = "splash_infinite")
@@ -131,6 +152,19 @@ fun PixelSplashScene(t: Float) {
         subtitleAlpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(500, easing = LinearOutSlowInEasing)
+        )
+
+        delay(150)
+        buttonAlpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(450, easing = EaseOutCubic)
+        )
+        buttonOffsetY.animateTo(
+            targetValue = 0f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMediumLow
+            )
         )
     }
 
@@ -290,6 +324,54 @@ fun PixelSplashScene(t: Float) {
                     ),
                     color = Color.White.copy(alpha = subtitleAlpha.value * 0.85f)
                 )
+
+                Spacer(modifier = Modifier.height(44.dp))
+
+                Button(
+                    onClick = {
+                        if (!isButtonClicked) {
+                            isButtonClicked = true
+                            onStartClick()
+                        }
+                    },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 10.dp,
+                        pressedElevation = 2.dp
+                    ),
+                    modifier = Modifier
+                        .graphicsLayer {
+                            alpha = buttonAlpha.value
+                            translationY = buttonOffsetY.value
+                        }
+                        .shadow(12.dp, CircleShape, spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                        .heightIn(min = 54.dp)
+                        .testTag("splash_start_button")
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.action_start),
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
         }
     }

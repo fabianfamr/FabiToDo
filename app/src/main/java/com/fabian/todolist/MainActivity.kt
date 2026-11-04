@@ -5,6 +5,7 @@ import android.os.Build
 import android.content.Intent
 import com.fabian.todolist.data.Task
 import java.util.UUID
+import kotlinx.coroutines.launch
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -22,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -125,17 +127,15 @@ class MainActivity : AppCompatActivity() {
         val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle()
         var hasPromptedSignIn by rememberSaveable { mutableStateOf(false) }
 
-        LaunchedEffect(currentUser) {
-          if (currentUser == null && !hasPromptedSignIn) {
+        val coroutineScope = rememberCoroutineScope()
+        val navController = rememberNavController()
+        val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
+
+        LaunchedEffect(currentUser, transition.running.value) {
+          if (!transition.running.value && currentUser == null && !hasPromptedSignIn) {
             hasPromptedSignIn = true
             authViewModel.signInWithGoogle(context)
           }
-        }
-
-        val navController = rememberNavController()
-        val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
-        LaunchedEffect(Unit) {
-          transition.start()
         }
         val appContent: @Composable () -> Unit = {
           NavHost(
@@ -207,7 +207,14 @@ class MainActivity : AppCompatActivity() {
           }
 
           if (isRunning) {
-            com.fabian.todolist.ui.PixelSplashScene(transition.progress.value)
+            com.fabian.todolist.ui.PixelSplashScene(
+              t = transition.progress.value,
+              onStartClick = {
+                coroutineScope.launch {
+                  transition.dismiss()
+                }
+              }
+            )
           }
         }
       }
