@@ -343,20 +343,7 @@ fun TaskScreen(
                                     },
                                     onShareSelected = {
                                         val selectedTasks = tasks.filter { it.id in selectedTaskIds }
-                                        val textToShare = selectedTasks.joinToString("\n\n---\n\n") { t ->
-                                            val subtasks = t.getSubtasks()
-                                            val subtasksText = if (subtasks.isNotEmpty()) {
-                                                "\n\nSubtareas:\n" + subtasks.joinToString("\n") { "- " + (if (it.isCompleted) "[✔] " else "[ ] ") + it.title }
-                                            } else ""
-                                            
-                                            "Tarea: ${t.title}\n" +
-                                            (if (t.description.isNotEmpty()) "Descripción: ${t.description}\n" else "") +
-                                            "Categoría: ${t.category}\n" +
-                                            "Prioridad: ${t.priority}\n" +
-                                            (t.dueDate?.let { context.getString(R.string.due_date_prefix) + com.fabian.todolist.util.DateTimeUtils.formatDateSimpleSlash(it) + "\n" } ?: "") +
-                                            (if (t.isRepeat) "Repetición: ${t.repeatType}\n" else "") +
-                                            subtasksText
-                                        }
+                                        val textToShare = com.fabian.todolist.util.TaskShareUtils.formatMultipleTasksForSharing(context, selectedTasks)
                                         val sendIntent: android.content.Intent = android.content.Intent().apply {
                                             action = android.content.Intent.ACTION_SEND
                                             putExtra(android.content.Intent.EXTRA_TEXT, textToShare)

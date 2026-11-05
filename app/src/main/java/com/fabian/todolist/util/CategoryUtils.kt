@@ -1,5 +1,6 @@
 package com.fabian.todolist.util
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.fabian.todolist.R
@@ -124,19 +125,25 @@ object CategoryIconCatalog {
 
 @Composable
 fun getLocalizedCategoryName(category: String): String {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    return getLocalizedCategoryName(context, category)
+}
+
+fun getLocalizedCategoryName(context: Context, category: String): String {
     return when (category.trim()) {
-        SystemCategory.ALL_TASKS -> stringResource(R.string.category_all)
-        SystemCategory.COMPLETED, "Completed" -> stringResource(R.string.status_completed)
-        SystemCategory.TRASH, "Trash" -> stringResource(R.string.trash_title)
-        SystemCategory.CALENDAR, "Calendar" -> stringResource(R.string.calendar_nav_title)
-        SystemCategory.EISENHOWER, "Eisenhower" -> stringResource(R.string.priority_matrix)
-        "Personal", "Personnel" -> stringResource(R.string.category_personal)
-        "Trabajo", "Work", "Travail", "Arbeit" -> stringResource(R.string.category_work)
-        "Compras", "Shopping", "Achats", "Einkaufen" -> stringResource(R.string.category_shopping)
-        "Hogar", "Home", "Maison", "Casa", "Zuhause" -> stringResource(R.string.category_home)
-        "Salud", "Health", "Santé", "Saúde", "Gesundheit" -> stringResource(R.string.category_health)
-        "Matriz de Eisenhower", "Matriz de Prioridades" -> stringResource(R.string.priority_matrix)
-        "Calendario", "Calendar", "Agenda" -> stringResource(R.string.calendar_nav_title)
+        SystemCategory.ALL_TASKS -> context.getString(R.string.category_all)
+        SystemCategory.COMPLETED, "Completed" -> context.getString(R.string.status_completed)
+        SystemCategory.TRASH, "Trash" -> context.getString(R.string.trash_title)
+        SystemCategory.CALENDAR, "Calendar" -> context.getString(R.string.calendar_nav_title)
+        SystemCategory.EISENHOWER, "Eisenhower" -> context.getString(R.string.priority_matrix)
+        "Personal", "Personnel" -> context.getString(R.string.category_personal)
+        "Trabajo", "Work", "Travail", "Arbeit" -> context.getString(R.string.category_work)
+        "Compras", "Shopping", "Achats", "Einkaufen" -> context.getString(R.string.category_shopping)
+        "Hogar", "Home", "Maison", "Casa", "Zuhause" -> context.getString(R.string.category_home)
+        "Salud", "Health", "Santé", "Saúde", "Gesundheit" -> context.getString(R.string.category_health)
+        "Estudios", "Education", "Studies", "Escuela" -> context.getString(R.string.category_studies)
+        "Matriz de Eisenhower", "Matriz de Prioridades" -> context.getString(R.string.priority_matrix)
+        "Calendario", "Calendar", "Agenda" -> context.getString(R.string.calendar_nav_title)
         else -> category
     }
 }

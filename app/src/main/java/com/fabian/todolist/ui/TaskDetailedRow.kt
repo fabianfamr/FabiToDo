@@ -798,8 +798,8 @@ private fun TaskActions(
             IconButton(
                 onClick = {
                     val shareIntent = android.content.Intent().apply {
-                        action = android.content.Intent.ACTION_SEND
-                        putExtra(android.content.Intent.EXTRA_TEXT, "${task.title}\n${task.description}")
+                        val shareText = com.fabian.todolist.util.TaskShareUtils.formatTaskForSharing(context, task)
+                        putExtra(android.content.Intent.EXTRA_TEXT, shareText)
                         type = "text/plain"
                     }
                     context.startActivity(android.content.Intent.createChooser(shareIntent, shareTitle))
