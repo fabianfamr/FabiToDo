@@ -240,17 +240,12 @@ class FirestoreSyncManager @Inject constructor(
             val localUpdate = prefs.getLong("last_settings_local_update", now)
             val updatedAt = maxOf(now, localUpdate)
 
-            // Asegurar que las categorías nunca queden vacías al enviar a la nube
+            // Category configuration as defined by the user
             val rawCatsJson = prefs.getString("custom_categories", null)
             val parsedList = parseCategoryList(rawCatsJson ?: "")
             val userCats = parsedList.filter { !SystemCategory.isSystemCategory(it) }
-            val taskCats = try {
-                taskDao.getAllTasksSync().map { it.category.trim() }.filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) }.distinct()
-            } catch (_: Exception) { emptyList() }
-
-            val mergedUserCats = (userCats + taskCats).distinct()
-            val finalUserCats = if (mergedUserCats.isNotEmpty()) {
-                mergedUserCats
+            val finalUserCats = if (userCats.isNotEmpty()) {
+                userCats
             } else {
                 listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
             }
@@ -270,7 +265,20 @@ class FirestoreSyncManager @Inject constructor(
                 "languageCode" to (prefs.getString("app_locale", "system") ?: "system"),
                 "dateFormat" to (prefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA"),
                 "timeFormat" to (prefs.getString("time_format", "24h") ?: "24h"),
+                "longPressAction" to (prefs.getString("long_press_action", "select") ?: "select"),
+                "confirmOnDelete" to prefs.getBoolean("confirm_on_delete", true),
+                "hapticFeedbackOnComplete" to prefs.getBoolean("haptic_feedback_on_complete", true),
+                "requireBiometrics" to prefs.getBoolean("require_biometrics", false),
+                "secureScreenMode" to prefs.getBoolean("secure_screen_mode", false),
+                "encryptBackups" to prefs.getBoolean("encrypt_backups", false),
                 "globalNotificationsEnabled" to prefs.getBoolean("global_notifications_enabled", true),
+                "quickAddNotificationEnabled" to prefs.getBoolean("quick_add_notification_enabled", false),
+                "quickAddNotificationInterval" to (prefs.getString("quick_add_notification_interval", "off") ?: "off"),
+                "quickAddQuietHoursEnabled" to prefs.getBoolean("quick_add_quiet_hours_enabled", true),
+                "notificationsSound" to prefs.getBoolean("notifications_sound", true),
+                "notificationsVibrate" to prefs.getBoolean("notifications_vibrate", true),
+                "reminderOffsetMinutes" to prefs.getInt("reminder_offset_minutes", 0),
+                "snoozeDurationMinutes" to prefs.getInt("snooze_duration_minutes", 10),
                 "aiModel" to (prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash"),
                 "aiLowLatencyMode" to prefs.getBoolean("ai_low_latency_mode", true),
                 "aiSubtaskCount" to prefs.getInt("ai_subtask_count", 5),
@@ -312,21 +320,15 @@ class FirestoreSyncManager @Inject constructor(
             val editor = prefs.edit()
 
             doc.getString("customCategories")?.let { remoteCats ->
-                val localCats = prefs.getString("custom_categories", "[]") ?: "[]"
-                val mergedCats = mergeCategoriesJson(localCats, remoteCats)
-                editor.putString("custom_categories", mergedCats)
+                editor.putString("custom_categories", remoteCats)
             }
 
             doc.getString("categoryColors")?.let { remoteColors ->
-                val localColors = prefs.getString("category_colors", "{}") ?: "{}"
-                val mergedColors = mergeJsonObjectStrings(localColors, remoteColors)
-                editor.putString("category_colors", mergedColors)
+                editor.putString("category_colors", remoteColors)
             }
 
             doc.getString("categoryIcons")?.let { remoteIcons ->
-                val localIcons = prefs.getString("category_icons", "{}") ?: "{}"
-                val mergedIcons = mergeJsonObjectStrings(localIcons, remoteIcons)
-                editor.putString("category_icons", mergedIcons)
+                editor.putString("category_icons", remoteIcons)
             }
 
             doc.getString("themeAccent")?.let { editor.putString("accent_color", it) }
@@ -334,7 +336,20 @@ class FirestoreSyncManager @Inject constructor(
             doc.getString("languageCode")?.let { editor.putString("app_locale", it) }
             doc.getString("dateFormat")?.let { editor.putString("date_format", it) }
             doc.getString("timeFormat")?.let { editor.putString("time_format", it) }
+            doc.getString("longPressAction")?.let { editor.putString("long_press_action", it) }
+            doc.getBoolean("confirmOnDelete")?.let { editor.putBoolean("confirm_on_delete", it) }
+            doc.getBoolean("hapticFeedbackOnComplete")?.let { editor.putBoolean("haptic_feedback_on_complete", it) }
+            doc.getBoolean("requireBiometrics")?.let { editor.putBoolean("require_biometrics", it) }
+            doc.getBoolean("secureScreenMode")?.let { editor.putBoolean("secure_screen_mode", it) }
+            doc.getBoolean("encryptBackups")?.let { editor.putBoolean("encrypt_backups", it) }
             doc.getBoolean("globalNotificationsEnabled")?.let { editor.putBoolean("global_notifications_enabled", it) }
+            doc.getBoolean("quickAddNotificationEnabled")?.let { editor.putBoolean("quick_add_notification_enabled", it) }
+            doc.getString("quickAddNotificationInterval")?.let { editor.putString("quick_add_notification_interval", it) }
+            doc.getBoolean("quickAddQuietHoursEnabled")?.let { editor.putBoolean("quick_add_quiet_hours_enabled", it) }
+            doc.getBoolean("notificationsSound")?.let { editor.putBoolean("notifications_sound", it) }
+            doc.getBoolean("notificationsVibrate")?.let { editor.putBoolean("notifications_vibrate", it) }
+            doc.getLong("reminderOffsetMinutes")?.let { editor.putInt("reminder_offset_minutes", it.toInt()) }
+            doc.getLong("snoozeDurationMinutes")?.let { editor.putInt("snooze_duration_minutes", it.toInt()) }
             doc.getString("aiModel")?.let { editor.putString("ai_model", it) }
             doc.getBoolean("aiLowLatencyMode")?.let { editor.putBoolean("ai_low_latency_mode", it) }
             doc.getLong("aiSubtaskCount")?.let { editor.putInt("ai_subtask_count", it.toInt()) }

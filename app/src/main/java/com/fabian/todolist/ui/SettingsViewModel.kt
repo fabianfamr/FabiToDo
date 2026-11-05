@@ -42,53 +42,37 @@ class SettingsViewModel @Inject constructor(
             "app_locale" -> _languageCode.value = p.getString("app_locale", "system") ?: "system"
             "date_format" -> _dateFormat.value = p.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA"
             "time_format" -> _timeFormat.value = p.getString("time_format", "24h") ?: "24h"
-            "custom_categories" -> _categories.value = loadInitialCategories()
-            "category_colors" -> _categoryColors.value = loadCategoryColors()
-            "category_icons" -> _categoryIcons.value = loadCategoryIcons()
+            "long_press_action" -> _longPressAction.value = p.getString("long_press_action", "select") ?: "select"
+            "confirm_on_delete" -> _confirmOnDelete.value = p.getBoolean("confirm_on_delete", true)
+            "haptic_feedback_on_complete" -> _hapticFeedbackOnComplete.value = p.getBoolean("haptic_feedback_on_complete", true)
+            "require_biometrics" -> _requireBiometrics.value = p.getBoolean("require_biometrics", false)
+            "secure_screen_mode" -> _secureScreenMode.value = p.getBoolean("secure_screen_mode", false)
+            "encrypt_backups" -> _encryptBackups.value = p.getBoolean("encrypt_backups", false)
             "global_notifications_enabled" -> _notificationsEnabled.value = p.getBoolean("global_notifications_enabled", true)
+            "quick_add_notification_enabled" -> _quickAddNotificationEnabled.value = p.getBoolean("quick_add_notification_enabled", false)
+            "quick_add_notification_interval" -> _quickAddNotificationInterval.value = p.getString("quick_add_notification_interval", "off") ?: "off"
+            "quick_add_quiet_hours_enabled" -> _quickAddQuietHoursEnabled.value = p.getBoolean("quick_add_quiet_hours_enabled", true)
+            "notifications_sound" -> _notificationsSound.value = p.getBoolean("notifications_sound", true)
+            "notifications_vibrate" -> _notificationsVibrate.value = p.getBoolean("notifications_vibrate", true)
+            "reminder_offset_minutes" -> _reminderOffsetMinutes.value = p.getInt("reminder_offset_minutes", 0)
+            "snooze_duration_minutes" -> _snoozeDurationMinutes.value = p.getInt("snooze_duration_minutes", 10)
+            "trash_retention_days" -> _trashRetentionDays.value = p.getInt("trash_retention_days", 30)
             "ai_model" -> _aiModel.value = p.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash"
             "ai_low_latency_mode" -> _aiLowLatencyMode.value = p.getBoolean("ai_low_latency_mode", true)
             "ai_subtask_count" -> _aiSubtaskCount.value = p.getInt("ai_subtask_count", 5)
             "ai_key_type" -> _aiKeyType.value = p.getString("ai_key_type", "public") ?: "public"
-            "trash_retention_days" -> _trashRetentionDays.value = p.getInt("trash_retention_days", 30)
+            "show_ai_banner" -> _showAiBanner.value = p.getBoolean("show_ai_banner", true)
+            "show_backup_card" -> _showBackupCard.value = p.getBoolean("show_backup_card", true)
+            "onboarding_completed" -> _onboardingCompleted.value = p.getBoolean("onboarding_completed", true)
             "user_display_name" -> _userName.value = p.getString("user_display_name", "") ?: ""
+            "custom_categories" -> _categories.value = loadInitialCategories()
+            "category_colors" -> _categoryColors.value = loadCategoryColors()
+            "category_icons" -> _categoryIcons.value = loadCategoryIcons()
         }
     }
 
     init {
         prefs.registerOnSharedPreferenceChangeListener(prefListener)
-        
-        // Auto-recuperación continua: si existen tareas creadas con categorías (como "Escuela" o "Personal"),
-        // asegurarse de que siempre estén presentes y visibles en la lista de categorías.
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            repository.allTasks.collect { taskList ->
-                val taskCategories = taskList.map { it.category.trim() }
-                    .filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) }
-                    .distinct()
-
-                val currentCats = _categories.value
-                val currentUserCats = currentCats.filter { !SystemCategory.isSystemCategory(it) }
-                val mergedUserCats = (currentUserCats + taskCategories).distinct()
-
-                val finalUserCats = if (mergedUserCats.isNotEmpty()) {
-                    mergedUserCats
-                } else {
-                    listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
-                }
-
-                if (finalUserCats != currentUserCats || currentUserCats.isEmpty()) {
-                    val fullList = mutableListOf<String>()
-                    fullList.add(SystemCategory.ALL_TASKS)
-                    fullList.addAll(finalUserCats)
-                    fullList.add(SystemCategory.COMPLETED)
-
-                    val jsonArray = JSONArray()
-                    fullList.forEach { jsonArray.put(it) }
-                    prefs.edit().putString("custom_categories", jsonArray.toString()).apply()
-                    _categories.value = fullList
-                }
-            }
-        }
     }
 
     override fun onCleared() {
@@ -300,36 +284,43 @@ class SettingsViewModel @Inject constructor(
     fun setLongPressAction(action: String) {
         _longPressAction.value = action
         prefs.edit().putString("long_press_action", action).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setConfirmOnDelete(confirm: Boolean) {
         _confirmOnDelete.value = confirm
         prefs.edit().putBoolean("confirm_on_delete", confirm).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setHapticFeedbackOnComplete(feedback: Boolean) {
         _hapticFeedbackOnComplete.value = feedback
         prefs.edit().putBoolean("haptic_feedback_on_complete", feedback).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setRequireBiometrics(require: Boolean) {
         _requireBiometrics.value = require
         prefs.edit().putBoolean("require_biometrics", require).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setSecureScreenMode(enabled: Boolean) {
         _secureScreenMode.value = enabled
         prefs.edit().putBoolean("secure_screen_mode", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setEncryptBackups(enabled: Boolean) {
         _encryptBackups.value = enabled
         prefs.edit().putBoolean("encrypt_backups", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setNotificationsEnabled(enabled: Boolean) {
         _notificationsEnabled.value = enabled
         prefs.edit().putBoolean("global_notifications_enabled", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setQuickAddNotificationEnabled(enabled: Boolean) {
@@ -344,6 +335,7 @@ class SettingsViewModel @Inject constructor(
         val isEnabled = intervalCode != "off"
         _quickAddNotificationEnabled.value = isEnabled
         prefs.edit().putBoolean("quick_add_notification_enabled", isEnabled).apply()
+        triggerSettingsCloudPush()
 
         val context = getApplication<Application>().applicationContext
         QuickAddNotificationHelper.schedulePeriodicReminders(context, intervalCode)
@@ -352,41 +344,49 @@ class SettingsViewModel @Inject constructor(
     fun setQuickAddQuietHoursEnabled(enabled: Boolean) {
         _quickAddQuietHoursEnabled.value = enabled
         prefs.edit().putBoolean("quick_add_quiet_hours_enabled", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setNotificationsSound(enabled: Boolean) {
         _notificationsSound.value = enabled
         prefs.edit().putBoolean("notifications_sound", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setNotificationsVibrate(enabled: Boolean) {
         _notificationsVibrate.value = enabled
         prefs.edit().putBoolean("notifications_vibrate", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setReminderOffsetMinutes(minutes: Int) {
         _reminderOffsetMinutes.value = minutes
         prefs.edit().putInt("reminder_offset_minutes", minutes).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setSnoozeDuration(minutes: Int) {
         _snoozeDurationMinutes.value = minutes
         prefs.edit().putInt("snooze_duration_minutes", minutes).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setTrashRetentionDays(days: Int) {
         _trashRetentionDays.value = days
         prefs.edit().putInt("trash_retention_days", days).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setAiModel(model: String) {
         _aiModel.value = model
         prefs.edit().putString("ai_model", model).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setAiLowLatencyMode(enabled: Boolean) {
         _aiLowLatencyMode.value = enabled
         prefs.edit().putBoolean("ai_low_latency_mode", enabled).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setAiApiKey(key: String) {
@@ -404,26 +404,31 @@ class SettingsViewModel @Inject constructor(
     fun setAiSubtaskCount(count: Int) {
         _aiSubtaskCount.value = count
         prefs.edit().putInt("ai_subtask_count", count).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setShowAiBanner(show: Boolean) {
         _showAiBanner.value = show
         prefs.edit().putBoolean("show_ai_banner", show).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setShowBackupCard(show: Boolean) {
         _showBackupCard.value = show
         prefs.edit().putBoolean("show_backup_card", show).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setOnboardingCompleted(completed: Boolean) {
         _onboardingCompleted.value = completed
         prefs.edit().putBoolean("onboarding_completed", completed).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setUserName(name: String) {
         _userName.value = name
         prefs.edit().putString("user_display_name", name).apply()
+        triggerSettingsCloudPush()
     }
 
     fun saveCategories(list: List<String>) {
@@ -472,9 +477,8 @@ class SettingsViewModel @Inject constructor(
 
     fun deleteCategory(categoryName: String) {
         if (SystemCategory.isSystemCategory(categoryName)) return
-        saveCategories(_categories.value.filter { it != categoryName })
         
-        // Move tasks to "General" or some default category
+        // 1. Reassign tasks in Room from deleted category to General
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             val tasksToUpdate = repository.allTasks.first()
                 .filter { it.category == categoryName }
@@ -483,33 +487,68 @@ class SettingsViewModel @Inject constructor(
                 repository.updateTasks(tasksToUpdate)
             }
         }
+
+        // 2. Clean up color & icon maps for deleted category
+        val colorMap = _categoryColors.value.toMutableMap()
+        if (colorMap.containsKey(categoryName)) {
+            colorMap.remove(categoryName)
+            _categoryColors.value = colorMap
+            val jsonObject = JSONObject()
+            colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
+            prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+        }
+
+        val iconMap = _categoryIcons.value.toMutableMap()
+        if (iconMap.containsKey(categoryName)) {
+            iconMap.remove(categoryName)
+            _categoryIcons.value = iconMap
+            val jsonObject = JSONObject()
+            iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
+            prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+        }
+
+        // 3. Save remaining categories and push to cloud
+        saveCategories(_categories.value.filter { it != categoryName })
     }
 
     fun renameCategory(oldName: String, newName: String) {
         if (SystemCategory.isSystemCategory(oldName) || SystemCategory.isSystemCategory(newName)) return
-        if (newName.isBlank() || _categories.value.contains(newName)) return
+        val trimmedNew = newName.trim()
+        if (trimmedNew.isBlank() || _categories.value.contains(trimmedNew)) return
         
-        saveCategories(_categories.value.map { if (it == oldName) newName else it })
-        
-        // Update tasks that were in the old category
+        // 1. Update tasks in Room so oldName is no longer associated with tasks
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             val tasksToUpdate = repository.allTasks.first()
                 .filter { it.category == oldName }
-                .map { it.copy(category = newName) }
+                .map { it.copy(category = trimmedNew) }
             if (tasksToUpdate.isNotEmpty()) {
                 repository.updateTasks(tasksToUpdate)
             }
         }
 
-        // Transfer color and icon
-        val currentColor = _categoryColors.value[oldName]
-        if (currentColor != null) {
-            setCategoryColor(newName, currentColor)
+        // 2. Transfer color & icon maps cleanly
+        val colorMap = _categoryColors.value.toMutableMap()
+        val oldColor = colorMap.remove(oldName)
+        if (oldColor != null) {
+            colorMap[trimmedNew] = oldColor
+            _categoryColors.value = colorMap
+            val jsonObject = JSONObject()
+            colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
+            prefs.edit().putString("category_colors", jsonObject.toString()).apply()
         }
-        val currentIcon = _categoryIcons.value[oldName]
-        if (currentIcon != null) {
-            setCategoryIcon(newName, currentIcon)
+
+        val iconMap = _categoryIcons.value.toMutableMap()
+        val oldIcon = iconMap.remove(oldName)
+        if (oldIcon != null) {
+            iconMap[trimmedNew] = oldIcon
+            _categoryIcons.value = iconMap
+            val jsonObject = JSONObject()
+            iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
+            prefs.edit().putString("category_icons", jsonObject.toString()).apply()
         }
+
+        // 3. Update category list and push to cloud
+        saveCategories(_categories.value.map { if (it == oldName) trimmedNew else it })
     }
 
     fun moveUserCategory(category: String, direction: Int) {

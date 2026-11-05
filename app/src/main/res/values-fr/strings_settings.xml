@@ -85,7 +85,7 @@
     <string name="settings_account_sync_active">Sauvegarde continue active</string>
     <string name="settings_account_sync_active_desc">Vos tâches sont synchronisées dans le cloud</string>
     <string name="settings_account_title">Compte</string>
-    <string name="settings_app_subtitle">Agenda et Tâches • v1.34.3</string>
+    <string name="settings_app_subtitle">Agenda et Tâches</string>
     <string name="settings_app_title">FabiToDo</string>
     <string name="settings_appearance_desc">Thèmes, mise en page et personnalisations visuelles</string>
     <string name="settings_appearance_preview_desc">Comment votre ligne de tâches quotidiennes s\'adapte à vos options d\'apparence.</string>

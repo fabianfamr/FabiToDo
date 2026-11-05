@@ -85,7 +85,7 @@
     <string name="settings_account_sync_active">Copia de Seguridad Continua Activa</string>
     <string name="settings_account_sync_active_desc">Tus tareas están sincronizadas en la nube</string>
     <string name="settings_account_title">Cuenta</string>
-    <string name="settings_app_subtitle">Agenda y Tareas • v1.34.3</string>
+    <string name="settings_app_subtitle">Agenda y Tareas</string>
     <string name="settings_app_title">FabiToDo</string>
     <string name="settings_appearance_desc">Temas, diseño y personalizaciones visuales</string>
     <string name="settings_appearance_preview_desc">Cómo se adapta la fila de tareas a tus opciones de apariencia.</string>

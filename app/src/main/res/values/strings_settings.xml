@@ -85,7 +85,7 @@
     <string name="settings_account_sync_active">Continuous Backup Active</string>
     <string name="settings_account_sync_active_desc">Your tasks are synchronized in the cloud</string>
     <string name="settings_account_title">Account</string>
-    <string name="settings_app_subtitle">Agenda &amp; Tasks • v1.34.3</string>
+    <string name="settings_app_subtitle">Agenda &amp; Tasks</string>
     <string name="settings_app_title">FabiToDo</string>
     <string name="settings_appearance_desc">Themes, layout, and visual customizations</string>
     <string name="settings_appearance_preview_desc">How your daily task row adapts to your appearance options.</string>

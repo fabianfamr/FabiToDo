@@ -85,7 +85,7 @@
     <string name="settings_account_sync_active">Backup continuo attivo</string>
     <string name="settings_account_sync_active_desc">Le tue attività sono sincronizzate nel cloud</string>
     <string name="settings_account_title">Account</string>
-    <string name="settings_app_subtitle">Agenda e Attività • v1.34.3</string>
+    <string name="settings_app_subtitle">Agenda e Attività</string>
     <string name="settings_app_title">FabiToDo</string>
     <string name="settings_appearance_desc">Temi, layout e personalizzazioni visive</string>
     <string name="settings_appearance_preview_desc">Come la riga delle attività giornaliere si adatta alle opzioni di aspetto.</string>
