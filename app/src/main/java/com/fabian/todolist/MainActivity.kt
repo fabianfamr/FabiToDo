@@ -127,9 +127,19 @@ class MainActivity : AppCompatActivity() {
         val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle()
         var hasPromptedSignIn by rememberSaveable { mutableStateOf(false) }
 
+        val prefs = remember { context.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
+        var hasCompletedFirstLaunch by remember { mutableStateOf(prefs.getBoolean("has_completed_first_launch", false)) }
+
         val coroutineScope = rememberCoroutineScope()
         val navController = rememberNavController()
         val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
+
+        LaunchedEffect(hasCompletedFirstLaunch) {
+          if (hasCompletedFirstLaunch) {
+            kotlinx.coroutines.delay(1200)
+            transition.dismiss()
+          }
+        }
 
         LaunchedEffect(currentUser, transition.running.value) {
           if (!transition.running.value && currentUser == null && !hasPromptedSignIn) {
@@ -209,7 +219,10 @@ class MainActivity : AppCompatActivity() {
           if (isRunning) {
             com.fabian.todolist.ui.PixelSplashScene(
               t = transition.progress.value,
+              isFirstLaunch = !hasCompletedFirstLaunch,
               onStartClick = {
+                prefs.edit().putBoolean("has_completed_first_launch", true).apply()
+                hasCompletedFirstLaunch = true
                 coroutineScope.launch {
                   transition.dismiss()
                 }

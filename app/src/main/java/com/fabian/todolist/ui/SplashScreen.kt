@@ -62,6 +62,7 @@ fun lerp(start: Float, end: Float, t: Float): Float {
 @Composable
 fun PixelSplashScene(
     t: Float,
+    isFirstLaunch: Boolean = true,
     onStartClick: () -> Unit = {}
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -325,51 +326,53 @@ fun PixelSplashScene(
                     color = Color.White.copy(alpha = subtitleAlpha.value * 0.85f)
                 )
 
-                Spacer(modifier = Modifier.height(44.dp))
+                if (isFirstLaunch) {
+                    Spacer(modifier = Modifier.height(44.dp))
 
-                Button(
-                    onClick = {
-                        if (!isButtonClicked) {
-                            isButtonClicked = true
-                            onStartClick()
-                        }
-                    },
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 10.dp,
-                        pressedElevation = 2.dp
-                    ),
-                    modifier = Modifier
-                        .graphicsLayer {
-                            alpha = buttonAlpha.value
-                            translationY = buttonOffsetY.value
-                        }
-                        .shadow(12.dp, CircleShape, spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-                        .heightIn(min = 54.dp)
-                        .testTag("splash_start_button")
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                    Button(
+                        onClick = {
+                            if (!isButtonClicked) {
+                                isButtonClicked = true
+                                onStartClick()
+                            }
+                        },
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 10.dp,
+                            pressedElevation = 2.dp
+                        ),
+                        modifier = Modifier
+                            .graphicsLayer {
+                                alpha = buttonAlpha.value
+                                translationY = buttonOffsetY.value
+                            }
+                            .shadow(12.dp, CircleShape, spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                            .heightIn(min = 54.dp)
+                            .testTag("splash_start_button")
                     ) {
-                        Text(
-                            text = stringResource(R.string.action_start),
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.5.sp
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.action_start),
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.5.sp
+                                )
                             )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
             }
