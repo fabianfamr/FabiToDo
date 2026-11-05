@@ -178,8 +178,6 @@ fun AddEditTaskDialog(
         }
     }
 
-    val calendar = remember { Calendar.getInstance() }
-
     val speechLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -211,41 +209,75 @@ fun AddEditTaskDialog(
     }
 
     fun launchDatePicker() {
+        val pickerCal = Calendar.getInstance()
+        selectedDateInMillis?.let {
+            pickerCal.timeInMillis = it
+        }
         DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, month)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val newCal = Calendar.getInstance()
+                selectedDateInMillis?.let { newCal.timeInMillis = it }
+                newCal.set(Calendar.YEAR, year)
+                newCal.set(Calendar.MONTH, month)
+                newCal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 if (selectedTimeStr.isNullOrBlank()) {
-                    calendar.set(Calendar.HOUR_OF_DAY, 0)
-                    calendar.set(Calendar.MINUTE, 0)
-                    calendar.set(Calendar.SECOND, 0)
-                    calendar.set(Calendar.MILLISECOND, 0)
+                    newCal.set(Calendar.HOUR_OF_DAY, 0)
+                    newCal.set(Calendar.MINUTE, 0)
+                    newCal.set(Calendar.SECOND, 0)
+                    newCal.set(Calendar.MILLISECOND, 0)
+                } else {
+                    val parts = selectedTimeStr?.split(":")
+                    if (parts?.size == 2) {
+                        newCal.set(Calendar.HOUR_OF_DAY, parts[0].toIntOrNull() ?: 0)
+                        newCal.set(Calendar.MINUTE, parts[1].toIntOrNull() ?: 0)
+                        newCal.set(Calendar.SECOND, 0)
+                        newCal.set(Calendar.MILLISECOND, 0)
+                    }
                 }
-                selectedDateInMillis = calendar.timeInMillis
+                selectedDateInMillis = newCal.timeInMillis
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            pickerCal.get(Calendar.YEAR),
+            pickerCal.get(Calendar.MONTH),
+            pickerCal.get(Calendar.DAY_OF_MONTH)
         ).show()
     }
 
     fun launchTimePicker() {
+        val pickerCal = Calendar.getInstance()
+        var initHour = pickerCal.get(Calendar.HOUR_OF_DAY)
+        var initMinute = pickerCal.get(Calendar.MINUTE)
+
+        if (!selectedTimeStr.isNullOrBlank()) {
+            val parts = selectedTimeStr!!.split(":")
+            if (parts.size == 2) {
+                initHour = parts[0].toIntOrNull() ?: initHour
+                initMinute = parts[1].toIntOrNull() ?: initMinute
+            }
+        }
+
         TimePickerDialog(
             context,
             { _, hourOfDay, minute ->
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
                 val hourFormatted = String.format(Locale.getDefault(), "%02d", hourOfDay)
                 val minuteFormatted = String.format(Locale.getDefault(), "%02d", minute)
                 selectedTimeStr = "$hourFormatted:$minuteFormatted"
                 setupReminder = true // Auto-enable reminder when time is picked
+
+                // Sincronizar también con selectedDateInMillis si ya hay una fecha elegida
+                selectedDateInMillis?.let { dateMillis ->
+                    val cal = Calendar.getInstance().apply {
+                        timeInMillis = dateMillis
+                        set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        set(Calendar.MINUTE, minute)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }
+                    selectedDateInMillis = cal.timeInMillis
+                }
             },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
+            initHour,
+            initMinute,
             true
         ).show()
     }
