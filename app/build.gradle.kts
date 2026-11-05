@@ -10,6 +10,20 @@ plugins {
   alias(libs.plugins.secrets)
 }
 
+val versionFile = rootProject.file("VERSION")
+var parsedVersionName = "1.33.2"
+var parsedVersionCode = 95
+
+if (versionFile.exists()) {
+  val lines = versionFile.readLines().map { it.trim() }.filter { it.isNotEmpty() }
+  if (lines.isNotEmpty()) {
+    parsedVersionName = lines[0]
+  }
+  if (lines.size > 1) {
+    parsedVersionCode = lines[1].toIntOrNull() ?: 95
+  }
+}
+
 android {
   namespace = "com.fabian.todolist"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
@@ -18,8 +32,8 @@ android {
     applicationId = "com.fabian.todolist"
     minSdk = 24
     targetSdk = 36
-    versionCode = 94
-    versionName = "1.33.1"
+    versionCode = parsedVersionCode
+    versionName = parsedVersionName
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "GEMINI_API_KEY", "\"\"")
   }
