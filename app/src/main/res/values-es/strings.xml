@@ -96,6 +96,15 @@
     <string name="app_locked_title">App Bloqueada</string>
     <string name="app_name">FabiToDo</string>
     <string name="app_version">Versión %s</string>
+    <string name="calendar_prev_month">Mes anterior</string>
+    <string name="calendar_next_month">Mes siguiente</string>
+    <string name="calendar_day_mon">L</string>
+    <string name="calendar_day_tue">M</string>
+    <string name="calendar_day_wed">M</string>
+    <string name="calendar_day_thu">J</string>
+    <string name="calendar_day_fri">V</string>
+    <string name="calendar_day_sat">S</string>
+    <string name="calendar_day_sun">D</string>
     <string name="auto_dark_theme">Seguir tema del sistema</string>
     <string name="back">Atrás</string>
     <string name="backup_desc">Copia de seguridad local y en la nube</string>

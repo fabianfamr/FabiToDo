@@ -287,7 +287,7 @@ fun TaskCalendarPane(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Mes anterior",
+                                        contentDescription = stringResource(R.string.calendar_prev_month),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
@@ -303,7 +303,7 @@ fun TaskCalendarPane(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "Mes siguiente",
+                                        contentDescription = stringResource(R.string.calendar_next_month),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
@@ -313,14 +313,15 @@ fun TaskCalendarPane(
                         Spacer(modifier = Modifier.height(14.dp))
 
                         // Weekday labels
-                        val weekdays = remember {
-                            val loc = Locale.getDefault()
-                            if (loc.language.equals("es", ignoreCase = true)) {
-                                listOf("L", "M", "X", "J", "V", "S", "D")
-                            } else {
-                                listOf("M", "T", "W", "T", "F", "S", "S")
-                            }
-                        }
+                        val weekdays = listOf(
+                            stringResource(R.string.calendar_day_mon),
+                            stringResource(R.string.calendar_day_tue),
+                            stringResource(R.string.calendar_day_wed),
+                            stringResource(R.string.calendar_day_thu),
+                            stringResource(R.string.calendar_day_fri),
+                            stringResource(R.string.calendar_day_sat),
+                            stringResource(R.string.calendar_day_sun)
+                        )
                         Row(modifier = Modifier.fillMaxWidth()) {
                             weekdays.forEach { dayName ->
                                 Text(
@@ -592,7 +593,7 @@ private fun CalendarDayCell(
                 } else if (isToday) {
                     Modifier.border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                 } else if (hasOverdue) {
-                    Modifier.border(1.2.dp, Color(0xFFE53935).copy(alpha = 0.8f), RoundedCornerShape(12.dp))
+                    Modifier.border(1.2.dp, com.fabian.todolist.ui.theme.AppColors.Error.copy(alpha = 0.8f), RoundedCornerShape(12.dp))
                 } else if (hasTasks) {
                     Modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f), RoundedCornerShape(12.dp))
                 } else Modifier
@@ -620,11 +621,11 @@ private fun CalendarDayCell(
                 ) {
                     val dotColor = when {
                         isSelected -> MaterialTheme.colorScheme.onPrimary
-                        hasOverdue -> Color(0xFFE53935)
-                        pendingTasks.any { it.priority == TaskPriority.CRITICAL || it.priority == TaskPriority.HIGH } -> Color(0xFFE53935)
-                        pendingTasks.any { it.priority == TaskPriority.MEDIUM } -> Color(0xFFFB8C00)
+                        hasOverdue -> com.fabian.todolist.ui.theme.AppColors.Error
+                        pendingTasks.any { it.priority == TaskPriority.CRITICAL || it.priority == TaskPriority.HIGH } -> com.fabian.todolist.ui.theme.AppColors.Error
+                        pendingTasks.any { it.priority == TaskPriority.MEDIUM } -> com.fabian.todolist.ui.theme.AppColors.Warning
                         pendingTasks.isNotEmpty() -> MaterialTheme.colorScheme.primary
-                        else -> Color(0xFF4CAF50) // All completed on this day
+                        else -> com.fabian.todolist.ui.theme.AppColors.Success // All completed on this day
                     }
 
                     Box(
@@ -699,11 +700,11 @@ private fun CalendarTaskItemCard(
                     .clip(RoundedCornerShape(2.dp))
                     .background(
                         when {
-                            isOverdue -> Color(0xFFE53935)
-                            task.priority == TaskPriority.CRITICAL -> Color(0xFFE53935)
-                            task.priority == TaskPriority.HIGH -> Color(0xFFFF5722)
-                            task.priority == TaskPriority.MEDIUM -> Color(0xFFFF9800)
-                            task.priority == TaskPriority.LOW -> Color(0xFF4CAF50)
+                            isOverdue -> com.fabian.todolist.ui.theme.AppColors.PriorityCritical
+                            task.priority == TaskPriority.CRITICAL -> com.fabian.todolist.ui.theme.AppColors.PriorityCritical
+                            task.priority == TaskPriority.HIGH -> com.fabian.todolist.ui.theme.AppColors.PriorityHigh
+                            task.priority == TaskPriority.MEDIUM -> com.fabian.todolist.ui.theme.AppColors.PriorityMedium
+                            task.priority == TaskPriority.LOW -> com.fabian.todolist.ui.theme.AppColors.PriorityLow
                             else -> MaterialTheme.colorScheme.outlineVariant
                         }
                     )
@@ -757,7 +758,7 @@ private fun CalendarTaskItemCard(
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
                                 Text(
-                                    text = "Vencida",
+                                    text = stringResource(R.string.group_vencidos),
                                     color = MaterialTheme.colorScheme.error,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold
@@ -823,7 +824,7 @@ private fun CalendarTaskItemCard(
             IconButton(onClick = onEdit, modifier = Modifier.size(36.dp)) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Editar",
+                    contentDescription = stringResource(R.string.nav_edit),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp)
                 )

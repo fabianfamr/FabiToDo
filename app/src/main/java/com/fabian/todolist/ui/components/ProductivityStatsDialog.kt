@@ -1,5 +1,7 @@
 package com.fabian.todolist.ui.components
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,14 +13,15 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -93,9 +96,9 @@ fun ProductivityStatsDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        StatBadge(icon = Icons.Default.CheckCircle, value = completedTasks.toString(), label = stringResource(R.string.completed_tasks_label), color = Color(0xFF4CAF50))
-                        StatBadge(icon = Icons.Default.Timer, value = pendingTasks.toString(), label = stringResource(R.string.pending_tasks_label), color = Color(0xFFFF9800))
-                        StatBadge(icon = Icons.Default.Info, value = "$completionRate%", label = stringResource(R.string.efficiency_label), color = MaterialTheme.colorScheme.primary)
+                        StatBadge(icon = Icons.Default.CheckCircle, value = completedTasks.toString(), label = stringResource(R.string.completed_tasks_label), color = com.fabian.todolist.ui.theme.AppColors.Success, delay = 0)
+                        StatBadge(icon = Icons.Default.Timer, value = pendingTasks.toString(), label = stringResource(R.string.pending_tasks_label), color = com.fabian.todolist.ui.theme.AppColors.Warning, delay = 100)
+                        StatBadge(icon = Icons.Default.Info, value = "$completionRate%", label = stringResource(R.string.efficiency_label), color = MaterialTheme.colorScheme.primary, delay = 200)
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -113,8 +116,29 @@ fun ProductivityStatsDialog(
 }
 
 @Composable
-fun StatBadge(icon: androidx.compose.ui.graphics.vector.ImageVector, value: String, label: String, color: Color) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun StatBadge(icon: androidx.compose.ui.graphics.vector.ImageVector, value: String, label: String, color: Color, delay: Int = 0) {
+    var isVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(delay.toLong())
+        isVisible = true
+    }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0.8f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+        label = "BadgeScale"
+    )
+    val alpha by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f,
+        animationSpec = tween(400),
+        label = "BadgeAlpha"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .graphicsLayer(scaleX = scale, scaleY = scale, alpha = alpha)
+    ) {
         Box(
             modifier = Modifier
                 .size(56.dp)
@@ -126,6 +150,6 @@ fun StatBadge(icon: androidx.compose.ui.graphics.vector.ImageVector, value: Stri
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = value, fontWeight = FontWeight.Black, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
-        Text(text = label, fontWeight = FontWeight.Medium, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(text = label, fontWeight = FontWeight.Medium, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }
 }

@@ -31,7 +31,7 @@ import kotlinx.coroutines.isActive
 
 data class TaskUiState(
     val searchQuery: String = "",
-    val selectedStatus: String = "Todas",
+    val selectedStatus: String = com.fabian.todolist.data.TaskStatus.ALL,
     val selectedCategory: String = SystemCategory.ALL_TASKS,
     val sortBy: String = SortOrder.DUE_DATE
 )
@@ -346,8 +346,8 @@ class TaskViewModel @Inject constructor(
             // Phase 2: User filters (Search & Status)
             if (!isTrash) {
                 val statusMatch = when (state.selectedStatus) {
-                    "Pendientes" -> !task.isCompleted
-                    "Completadas" -> task.isCompleted
+                    com.fabian.todolist.data.TaskStatus.PENDING -> !task.isCompleted
+                    com.fabian.todolist.data.TaskStatus.COMPLETED -> task.isCompleted
                     else -> true
                 }
                 if (!statusMatch) return@filter false
@@ -546,13 +546,13 @@ class TaskViewModel @Inject constructor(
     }
 
     private fun computeNextRepeatTrigger(task: Task): Long? {
-        if (!task.isRepeat || task.repeatType == "Ninguno") return null
+        if (!task.isRepeat || task.repeatType == com.fabian.todolist.data.RepeatType.NONE) return null
         val baseline = task.dueDate ?: task.reminderTime ?: System.currentTimeMillis()
         val cal = Calendar.getInstance().apply { timeInMillis = baseline }
         when (task.repeatType) {
-            "Diario" -> cal.add(Calendar.DAY_OF_YEAR, 1)
-            "Semanal" -> cal.add(Calendar.WEEK_OF_YEAR, 1)
-            "Mensual" -> cal.add(Calendar.MONTH, 1)
+            com.fabian.todolist.data.RepeatType.DAILY -> cal.add(Calendar.DAY_OF_YEAR, 1)
+            com.fabian.todolist.data.RepeatType.WEEKLY -> cal.add(Calendar.WEEK_OF_YEAR, 1)
+            com.fabian.todolist.data.RepeatType.MONTHLY -> cal.add(Calendar.MONTH, 1)
             else -> return null
         }
         return cal.timeInMillis
@@ -562,7 +562,7 @@ class TaskViewModel @Inject constructor(
         // Prevent completing tasks that are in the trash
         if (task.isDeleted) return
 
-        if (!task.isCompleted && task.isRepeat && task.repeatType != "Ninguno") {
+        if (!task.isCompleted && task.isRepeat && task.repeatType != com.fabian.todolist.data.RepeatType.NONE) {
             val nextDueDate = computeNextRepeatTrigger(task)
             if (nextDueDate != null) {
                 val updatedTask = task.copy(
@@ -810,7 +810,7 @@ class TaskViewModel @Inject constructor(
                             var priority = TaskPriority.MEDIUM
                             var reminderTime: Long? = null
                             var isRepeat = false
-                            var repeatType = "Ninguno"
+                            var repeatType = com.fabian.todolist.data.RepeatType.NONE
                             var isDeleted = false
                             var displayOrder = 0
                             val subtasks = mutableListOf<Subtask>()

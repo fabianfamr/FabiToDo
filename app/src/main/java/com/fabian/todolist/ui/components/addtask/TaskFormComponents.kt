@@ -148,14 +148,21 @@ fun PrioritySelectionRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val priorities = listOf(
-                Triple(com.fabian.todolist.data.TaskPriority.LOW, R.drawable.ic_priority_low, Color(0xFF34A853)),
-                Triple(com.fabian.todolist.data.TaskPriority.MEDIUM, R.drawable.ic_priority_medium, Color(0xFFFBBC05)),
-                Triple(com.fabian.todolist.data.TaskPriority.HIGH, R.drawable.ic_priority_high, Color(0xFFEA4335)),
-                Triple(com.fabian.todolist.data.TaskPriority.CRITICAL, R.drawable.ic_priority_urgent, Color(0xFFB3261E))
+                Triple(com.fabian.todolist.data.TaskPriority.LOW, R.drawable.ic_priority_low, com.fabian.todolist.ui.theme.AppColors.PriorityLow),
+                Triple(com.fabian.todolist.data.TaskPriority.MEDIUM, R.drawable.ic_priority_medium, com.fabian.todolist.ui.theme.AppColors.PriorityMedium),
+                Triple(com.fabian.todolist.data.TaskPriority.HIGH, R.drawable.ic_priority_high, com.fabian.todolist.ui.theme.AppColors.PriorityHigh),
+                Triple(com.fabian.todolist.data.TaskPriority.CRITICAL, R.drawable.ic_priority_urgent, com.fabian.todolist.ui.theme.AppColors.PriorityCritical)
             )
 
             priorities.forEach { (pName, pDrawable, baseColor) ->
                 val isSelected = selectedPriority == pName
+                val pLabel = when(pName) {
+                    com.fabian.todolist.data.TaskPriority.CRITICAL -> stringResource(R.string.priority_critical)
+                    com.fabian.todolist.data.TaskPriority.HIGH -> stringResource(R.string.priority_high)
+                    com.fabian.todolist.data.TaskPriority.MEDIUM -> stringResource(R.string.priority_medium)
+                    com.fabian.todolist.data.TaskPriority.LOW -> stringResource(R.string.priority_low)
+                    else -> pName
+                }
                 Card(
                     onClick = { onPrioritySelected(pName) },
                     modifier = Modifier.weight(1f).height(48.dp),
@@ -178,7 +185,7 @@ fun PrioritySelectionRow(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = pName,
+                                text = pLabel,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = if (isSelected) baseColor else MaterialTheme.colorScheme.onSurfaceVariant,

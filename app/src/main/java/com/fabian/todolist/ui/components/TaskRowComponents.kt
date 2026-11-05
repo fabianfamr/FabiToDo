@@ -261,7 +261,12 @@ fun TaskBadges(
                     modifier = Modifier.size(12.dp)
                 )
                 
-                val dateAndRepeatText = remember(dateText, task.dueTime, task.isRepeat, task.repeatType) {
+                val dailyLabel = stringResource(R.string.repeat_daily)
+                val weeklyLabel = stringResource(R.string.repeat_weekly)
+                val monthlyLabel = stringResource(R.string.repeat_monthly)
+                val repeatLabel = stringResource(R.string.repeat_label)
+                
+                val dateAndRepeatText = remember(dateText, task.dueTime, task.isRepeat, task.repeatType, dailyLabel, weeklyLabel, monthlyLabel, repeatLabel) {
                     buildString {
                         append(dateText)
                         if (!task.dueTime.isNullOrBlank()) {
@@ -271,10 +276,10 @@ fun TaskBadges(
                         if (task.isRepeat) {
                             append(" (")
                             append(when (task.repeatType) {
-                                "Diario" -> "Diario" // Should use string resources in real usage but keeping it simple for now
-                                "Semanal" -> "Semanal"
-                                "Mensual" -> "Mensual"
-                                else -> "Repetir"
+                                com.fabian.todolist.data.RepeatType.DAILY -> dailyLabel
+                                com.fabian.todolist.data.RepeatType.WEEKLY -> weeklyLabel
+                                com.fabian.todolist.data.RepeatType.MONTHLY -> monthlyLabel
+                                else -> repeatLabel
                             })
                             append(")")
                         }

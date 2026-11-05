@@ -99,25 +99,25 @@ fun EisenhowerMatrixView(
         QuadrantInfo(
             title = stringResource(R.string.matrix_q1),
             description = stringResource(R.string.matrix_q1_desc),
-            color = Color(0xFFEA4335),
+            color = com.fabian.todolist.ui.theme.AppColors.QuadrantDo,
             tasks = q1
         ),
         QuadrantInfo(
             title = stringResource(R.string.matrix_q2),
             description = stringResource(R.string.matrix_q2_desc),
-            color = Color(0xFF4285F4),
+            color = com.fabian.todolist.ui.theme.AppColors.QuadrantSchedule,
             tasks = q2
         ),
         QuadrantInfo(
             title = stringResource(R.string.matrix_q3),
             description = stringResource(R.string.matrix_q3_desc),
-            color = Color(0xFFFBBC05),
+            color = com.fabian.todolist.ui.theme.AppColors.QuadrantDelegate,
             tasks = q3
         ),
         QuadrantInfo(
             title = stringResource(R.string.matrix_q4),
             description = stringResource(R.string.matrix_q4_desc),
-            color = Color(0xFF9E9E9E),
+            color = com.fabian.todolist.ui.theme.AppColors.QuadrantEliminate,
             tasks = q4
         )
     )
@@ -205,13 +205,13 @@ fun EisenhowerMatrixView(
                     QuadrantSummaryChip(
                         title = stringResource(R.string.matrix_q1_short),
                         count = q1.size,
-                        color = Color(0xFFEA4335),
+                        color = com.fabian.todolist.ui.theme.AppColors.QuadrantDo,
                         modifier = Modifier.weight(1f)
                     )
                     QuadrantSummaryChip(
                         title = stringResource(R.string.matrix_q2_short),
                         count = q2.size,
-                        color = Color(0xFF4285F4),
+                        color = com.fabian.todolist.ui.theme.AppColors.QuadrantSchedule,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -223,13 +223,13 @@ fun EisenhowerMatrixView(
                     QuadrantSummaryChip(
                         title = stringResource(R.string.matrix_q3_short),
                         count = q3.size,
-                        color = Color(0xFFFBBC05),
+                        color = com.fabian.todolist.ui.theme.AppColors.QuadrantDelegate,
                         modifier = Modifier.weight(1f)
                     )
                     QuadrantSummaryChip(
                         title = stringResource(R.string.matrix_q4_short),
                         count = q4.size,
-                        color = Color(0xFF9E9E9E),
+                        color = com.fabian.todolist.ui.theme.AppColors.QuadrantEliminate,
                         modifier = Modifier.weight(1f)
                     )
                 }

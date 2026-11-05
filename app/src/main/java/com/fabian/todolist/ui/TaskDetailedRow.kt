@@ -187,10 +187,10 @@ fun TaskDetailedRow(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         val priorityColor = when (task.priority) {
-                            com.fabian.todolist.data.TaskPriority.CRITICAL -> Color(0xFFB3261E)
-                            com.fabian.todolist.data.TaskPriority.HIGH -> Color(0xFFEA4335)
-                            com.fabian.todolist.data.TaskPriority.MEDIUM -> Color(0xFFFBBC05)
-                            com.fabian.todolist.data.TaskPriority.LOW -> Color(0xFF34A853)
+                            com.fabian.todolist.data.TaskPriority.CRITICAL -> com.fabian.todolist.ui.theme.AppColors.PriorityCritical
+                            com.fabian.todolist.data.TaskPriority.HIGH -> com.fabian.todolist.ui.theme.AppColors.PriorityHigh
+                            com.fabian.todolist.data.TaskPriority.MEDIUM -> com.fabian.todolist.ui.theme.AppColors.PriorityMedium
+                            com.fabian.todolist.data.TaskPriority.LOW -> com.fabian.todolist.ui.theme.AppColors.PriorityLow
                             else -> Color.Transparent
                         }
 

@@ -77,7 +77,7 @@ fun DateTimeSection(
                             onDateChanged(null)
                             onTimeChanged(null)
                             onRepeatChanged(false)
-                            onRepeatTypeChanged("Ninguno")
+                            onRepeatTypeChanged(com.fabian.todolist.data.RepeatType.NONE)
                         }
                     )
                 }
@@ -230,10 +230,10 @@ fun DateTimeSection(
                                     )
                                     Text(
                                         text = when (repeatType) {
-                                            "Diario" -> stringResource(R.string.repeat_daily)
-                                            "Semanal" -> stringResource(R.string.repeat_weekly)
-                                            "Mensual" -> stringResource(R.string.repeat_monthly)
-                                            else -> stringResource(R.string.repeat_none)
+                                        com.fabian.todolist.data.RepeatType.DAILY -> stringResource(R.string.repeat_daily)
+                                        com.fabian.todolist.data.RepeatType.WEEKLY -> stringResource(R.string.repeat_weekly)
+                                        com.fabian.todolist.data.RepeatType.MONTHLY -> stringResource(R.string.repeat_monthly)
+                                        else -> stringResource(R.string.repeat_none)
                                         },
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
@@ -259,12 +259,17 @@ fun DateTimeSection(
                                 )
                                 .background(MaterialTheme.colorScheme.surface)
                         ) {
-                            val repeatOptions = listOf("Ninguno", "Diario", "Semanal", "Mensual")
+                            val repeatOptions = listOf(
+                                com.fabian.todolist.data.RepeatType.NONE,
+                                com.fabian.todolist.data.RepeatType.DAILY,
+                                com.fabian.todolist.data.RepeatType.WEEKLY,
+                                com.fabian.todolist.data.RepeatType.MONTHLY
+                            )
                             repeatOptions.forEach { opt ->
                                 val label = when(opt) {
-                                    "Diario" -> stringResource(R.string.repeat_daily)
-                                    "Semanal" -> stringResource(R.string.repeat_weekly)
-                                    "Mensual" -> stringResource(R.string.repeat_monthly)
+                                    com.fabian.todolist.data.RepeatType.DAILY -> stringResource(R.string.repeat_daily)
+                                    com.fabian.todolist.data.RepeatType.WEEKLY -> stringResource(R.string.repeat_weekly)
+                                    com.fabian.todolist.data.RepeatType.MONTHLY -> stringResource(R.string.repeat_monthly)
                                     else -> stringResource(R.string.repeat_none)
                                 }
                                 DropdownMenuItem(
@@ -278,7 +283,7 @@ fun DateTimeSection(
                                     },
                                     onClick = {
                                         onRepeatTypeChanged(opt)
-                                        onRepeatChanged(opt != "Ninguno")
+                                        onRepeatChanged(opt != com.fabian.todolist.data.RepeatType.NONE)
                                         showRepeatMenu = false
                                     }
                                 )

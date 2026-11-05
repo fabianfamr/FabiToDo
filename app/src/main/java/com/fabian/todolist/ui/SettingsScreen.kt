@@ -303,7 +303,7 @@ fun SettingsPreferencesDialog(
                                 title = if (currentUser != null) (currentUser?.displayName?.ifBlank { null } ?: titleAccount) else titleAccount,
                                 subtitle = descAccount,
                                 icon = Icons.Rounded.AccountCircle,
-                                iconContainerColor = Color(0xFF4285F4),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsAccount,
                                 onClick = { currentDestination = SettingsDestinations.ACCOUNT }
                             )
                         }
@@ -335,7 +335,7 @@ fun SettingsPreferencesDialog(
                                 title = titleAppearance,
                                 subtitle = descAppearance,
                                 icon = Icons.Rounded.Palette,
-                                iconContainerColor = Color(0xFF915C6D),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsAppearance,
                                 onClick = { currentDestination = SettingsDestinations.THEME }
                             )
                             HorizontalDivider(
@@ -346,7 +346,7 @@ fun SettingsPreferencesDialog(
                                 title = titleLang,
                                 subtitle = descLang,
                                 icon = Icons.Rounded.Language,
-                                iconContainerColor = Color(0xFF1E6370),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsLanguage,
                                 onClick = { currentDestination = SettingsDestinations.LANGUAGE }
                             )
                             HorizontalDivider(
@@ -357,7 +357,7 @@ fun SettingsPreferencesDialog(
                                 title = titleDateTime,
                                 subtitle = descDateTime,
                                 icon = Icons.Default.DateRange,
-                                iconContainerColor = Color(0xFF448AFF),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsDateTime,
                                 onClick = { currentDestination = SettingsDestinations.DATETIME_FORMAT }
                             )
                             HorizontalDivider(
@@ -368,7 +368,7 @@ fun SettingsPreferencesDialog(
                                 title = titleBehavior,
                                 subtitle = descBehavior,
                                 icon = Icons.Rounded.TouchApp,
-                                iconContainerColor = Color(0xFF673AB7),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsBehavior,
                                 onClick = { currentDestination = SettingsDestinations.BEHAVIOR }
                             )
                         }
@@ -400,7 +400,7 @@ fun SettingsPreferencesDialog(
                                 title = titleAI,
                                 subtitle = descAI,
                                 icon = Icons.Rounded.AutoAwesome,
-                                iconContainerColor = Color(0xFF6366F1),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsAI,
                                 onClick = { currentDestination = SettingsDestinations.AI }
                             )
                         }
@@ -432,7 +432,7 @@ fun SettingsPreferencesDialog(
                                 title = titleCategories,
                                 subtitle = descCategories,
                                 icon = Icons.AutoMirrored.Rounded.List,
-                                iconContainerColor = Color(0xFF5E4856),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsCategories,
                                 onClick = { currentDestination = SettingsDestinations.CATEGORIES }
                             )
                             HorizontalDivider(
@@ -443,7 +443,7 @@ fun SettingsPreferencesDialog(
                                 title = titleNotifications,
                                 subtitle = descNotifications,
                                 icon = Icons.Rounded.Notifications,
-                                iconContainerColor = Color(0xFFD4823B),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsNotifications,
                                 onClick = { currentDestination = SettingsDestinations.NOTIFICATIONS }
                             )
                         }
@@ -475,7 +475,7 @@ fun SettingsPreferencesDialog(
                                 title = titleSync,
                                 subtitle = descSync,
                                 icon = Icons.Filled.CloudSync,
-                                iconContainerColor = Color(0xFF455A64),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsBackup,
                                 onClick = { currentDestination = SettingsDestinations.BACKUP }
                             )
                         }
@@ -507,7 +507,7 @@ fun SettingsPreferencesDialog(
                                 title = titleSecurity,
                                 subtitle = descSecurity,
                                 icon = Icons.Default.Lock,
-                                iconContainerColor = Color(0xFFE53935),
+                                iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsSecurity,
                                 onClick = { currentDestination = SettingsDestinations.SECURITY }
                             )
                         }

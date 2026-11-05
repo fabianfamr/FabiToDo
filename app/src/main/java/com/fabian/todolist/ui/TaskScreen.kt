@@ -400,7 +400,7 @@ fun TaskScreen(
                         }
                     },
                     floatingActionButton = {
-                        if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH && selectedCategory != com.fabian.todolist.data.SystemCategory.CALENDAR) {
+                        if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
                             val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
                             ExtendedFloatingActionButton(
                                 text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },

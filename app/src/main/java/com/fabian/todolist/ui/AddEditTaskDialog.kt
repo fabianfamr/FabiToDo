@@ -112,7 +112,7 @@ fun AddEditTaskDialog(
     var selectedTimeStr by remember { mutableStateOf(task?.dueTime) }
     var setupReminder by remember { mutableStateOf(true) }
     var isRepeat by remember { mutableStateOf(task?.isRepeat ?: false) }
-    var repeatType by remember { mutableStateOf(task?.repeatType ?: "Ninguno") }
+    var repeatType by remember { mutableStateOf(task?.repeatType ?: com.fabian.todolist.data.RepeatType.NONE) }
 
     var selectedOffsetMinutes by remember {
         mutableStateOf(
@@ -150,7 +150,7 @@ fun AddEditTaskDialog(
             title.isNotBlank() || description.isNotBlank() || localSubtasks.isNotEmpty() ||
             selectedDateInMillis != null || selectedTimeStr != null || attachedImageUri != null ||
             selectedCategory != (initialCategory.ifBlank { "General" }) || selectedPriority != com.fabian.todolist.data.TaskPriority.MEDIUM ||
-            isRepeat || repeatType != "Ninguno"
+            isRepeat || repeatType != com.fabian.todolist.data.RepeatType.NONE
         } else {
             val originalTitle = task.title
             val originalDescription = task.description

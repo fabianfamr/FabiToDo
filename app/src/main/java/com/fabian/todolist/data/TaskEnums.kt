@@ -41,3 +41,16 @@ object SortOrder {
     const val PRIORITY = "Prioridad"
     const val ALPHABETICAL = "Alfabético"
 }
+
+object RepeatType {
+    const val NONE = "Ninguno"
+    const val DAILY = "Diario"
+    const val WEEKLY = "Semanal"
+    const val MONTHLY = "Mensual"
+}
+
+object TaskStatus {
+    const val ALL = "Todas"
+    const val PENDING = "Pendientes"
+    const val COMPLETED = "Completadas"
+}

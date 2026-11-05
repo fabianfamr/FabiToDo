@@ -194,10 +194,10 @@ class ReminderReceiver : BroadcastReceiver() {
 
         // Set Priority Label in notification
         val priorityTag = when (priority) {
-            "Critica" -> context.getString(R.string.priority_critical_label) + ": "
-            "Alta" -> context.getString(R.string.priority_high_label) + ": "
-            "Media" -> context.getString(R.string.priority_medium_label) + ": "
-            "Baja" -> context.getString(R.string.priority_low_label) + ": "
+            com.fabian.todolist.data.TaskPriority.CRITICAL -> context.getString(R.string.priority_critical_label) + ": "
+            com.fabian.todolist.data.TaskPriority.HIGH -> context.getString(R.string.priority_high_label) + ": "
+            com.fabian.todolist.data.TaskPriority.MEDIUM -> context.getString(R.string.priority_medium_label) + ": "
+            com.fabian.todolist.data.TaskPriority.LOW -> context.getString(R.string.priority_low_label) + ": "
             else -> ""
         }
 
@@ -272,9 +272,9 @@ class ReminderReceiver : BroadcastReceiver() {
         val cal = Calendar.getInstance()
         cal.timeInMillis = timestamp
         return when (repeatType) {
-            "Diario" -> { cal.add(Calendar.DAY_OF_YEAR, 1); cal.timeInMillis }
-            "Semanal" -> { cal.add(Calendar.WEEK_OF_YEAR, 1); cal.timeInMillis }
-            "Mensual" -> { cal.add(Calendar.MONTH, 1); cal.timeInMillis }
+            com.fabian.todolist.data.RepeatType.DAILY -> { cal.add(Calendar.DAY_OF_YEAR, 1); cal.timeInMillis }
+            com.fabian.todolist.data.RepeatType.WEEKLY -> { cal.add(Calendar.WEEK_OF_YEAR, 1); cal.timeInMillis }
+            com.fabian.todolist.data.RepeatType.MONTHLY -> { cal.add(Calendar.MONTH, 1); cal.timeInMillis }
             else -> null
         }
     }
