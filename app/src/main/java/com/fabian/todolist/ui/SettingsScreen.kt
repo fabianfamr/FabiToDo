@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.AccessTime
@@ -112,6 +113,7 @@ object SettingsDestinations {
     const val BEHAVIOR = "behavior"
     const val SECURITY = "security"
     const val AI = "ai"
+    const val ABOUT = "about"
 }
 
 object SettingsDimens {
@@ -513,7 +515,39 @@ fun SettingsPreferencesDialog(
                         }
                     }
 
-                    // --- Designer Brand Brand Footer ---
+                    // --- Grupo 6: Información de la Aplicación ---
+                    item {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp, 6.dp)
+                                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(3.dp))
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = stringResource(R.string.about_screen_title),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary,
+                                letterSpacing = 1.sp
+                            )
+                        }
+                        SettingsSectionCard {
+                            SettingsPreferenceItem(
+                                title = stringResource(R.string.settings_about_title),
+                                subtitle = stringResource(R.string.settings_about_desc),
+                                icon = Icons.Default.Info,
+                                iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                onClick = { currentDestination = SettingsDestinations.ABOUT }
+                            )
+                        }
+                    }
+
+                    // --- Designer Brand Footer ---
                     item {
                         Spacer(modifier = Modifier.height(32.dp))
                         Column(

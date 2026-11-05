@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_screen_title">À propos de FabiToDo</string>
+    <string name="about_maintainer_title">Développement principal</string>
+    <string name="about_maintainer_subtitle">Créateur et développeur de FabiToDo</string>
+    <string name="about_spotlight_title">Fonctionnalités et technologie</string>
+    <string name="about_spotlight_subtitle">Architecture et design intégrés</string>
+    <string name="about_version_format">Version %1$s</string>
+    <string name="about_open_source_licenses">Licences open source</string>
+    <string name="about_open_source_licenses_subtitle">Notice de composants tiers et logiciels libres</string>
+    <string name="settings_about_title">À propos de FabiToDo</string>
+    <string name="settings_about_desc">Infos sur l\'application, créateur et licences</string>
     <string name="account_guest">Vous êtes connecté en tant qu\'invité</string>
     <string name="account_guest_desc">Vous n\'êtes connecté à aucun compte.</string>
     <string name="accounts_active">Actif</string>

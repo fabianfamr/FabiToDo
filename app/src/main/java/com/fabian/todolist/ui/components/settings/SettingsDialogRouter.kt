@@ -118,4 +118,10 @@ fun SettingsDialogRouter(
             onDismiss = { onDestinationChanged(SettingsDestinations.NONE) }
         )
     }
+
+    if (currentDestination == SettingsDestinations.ABOUT) {
+        com.fabian.todolist.ui.AboutScreen(
+            onBackClick = { onDestinationChanged(SettingsDestinations.NONE) }
+        )
+    }
 }
