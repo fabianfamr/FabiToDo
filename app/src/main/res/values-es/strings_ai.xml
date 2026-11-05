@@ -27,7 +27,7 @@
     <string name="ai_center_hero_chip">Productividad Estructurada</string>
     <string name="ai_center_hero_title">Asistente de Organización</string>
     <string name="ai_center_sec_config">Configuración de Gemini</string>
-    <string name="ai_center_sec_config_desc">Conexión directa mediante Firebase AI Logic para un funcionamiento seguro y confiable.</string>
+    <string name="ai_center_sec_config_desc">Conexión directa mediante Google AI para un funcionamiento seguro y confiable.</string>
     <string name="ai_center_sec_features">Capacidades activas</string>
     <string name="ai_center_sec_features_desc">Funcionalidades proporcionadas por el modelo Gemini.</string>
     <string name="ai_center_sec_status">Estado de la conexión</string>
@@ -36,7 +36,7 @@
     <string name="ai_desc_breakdown">Descompone cualquier objetivo en pasos ordenados y alcanzables.</string>
     <string name="ai_desc_smart_cat">Sugiere la categoría más pertinente según el contexto de tu tarea.</string>
     <string name="ai_desc_smart_prio">Evalúa la urgencia e importancia conforme a criterios de gestión del tiempo.</string>
-    <string name="ai_diag_cloud_ok">Servicios de Firebase y Gemini disponibles</string>
+    <string name="ai_diag_cloud_ok">Servicios de Google Cloud y Gemini disponibles</string>
     <string name="ai_diag_key_valid">Conexión activa y validada</string>
     <string name="ai_diag_model_ready">Modelo Gemini listo para su uso</string>
     <string name="ai_diag_title">Diagnóstico del sistema</string>
@@ -51,8 +51,8 @@
     <string name="ai_key_custom">Clave personalizada activa</string>
     <string name="ai_key_dialog_title">Configuración de clave de Gemini</string>
     <string name="ai_key_hint">AIzaSy…</string>
-    <string name="ai_key_missing">Predeterminada (Firebase)</string>
-    <string name="ai_key_server">Autenticación Firebase activa</string>
+    <string name="ai_key_missing">Predeterminada (Google AI)</string>
+    <string name="ai_key_server">Autenticación de Google activa</string>
     <string name="ai_loading_steps">Analizando tarea con Gemini…</string>
     <string name="ai_prompt_prefix">Analiza esta tarea y desglosa sus subtareas, categoría y prioridad: </string>
     <string name="ai_result_category">Categoría sugerida</string>
@@ -71,7 +71,7 @@
     <string name="settings_ai_desc">Configura el modelo Gemini, la velocidad de respuesta y el desglose de tareas.</string>
     <string name="subtasks_generating">Procesando…</string>
     <string name="subtasks_generate_magic">Desglosar con Gemini</string>
-    <string name="ai_key_req_gemini">Integrado directamente mediante Firebase AI Logic. No requiere configuración manual de clave.</string>
+    <string name="ai_key_req_gemini">Integrado directamente mediante Google AI. No requiere configuración manual de clave.</string>
     <string name="ai_section_model">Modelo de Gemini</string>
     <string name="ai_select_motor_title">Seleccionar modelo</string>
     <string name="ai_select_motor_desc">Elige la versión de Gemini con la que deseas procesar la organización de tus tareas.</string>
@@ -83,7 +83,7 @@
     <string name="ai_key_icon_desc">Icono de credencial</string>
     <string name="ai_key_show">Mostrar clave</string>
     <string name="ai_security_desc">Seguridad y privacidad</string>
-    <string name="ai_security_body">Tus tareas se procesan de forma privada y protegida mediante Firebase AI Logic.</string>
+    <string name="ai_security_body">Tus tareas se procesan de forma privada y protegida mediante Google AI.</string>
     <string name="ai_subtasks_settings">Parámetros de desglose</string>
     <string name="ai_subtasks_amount">Cantidad de subtareas</string>
     <string name="ai_subtasks_count">%1$d pasos sugeridos</string>

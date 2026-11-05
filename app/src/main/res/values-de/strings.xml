@@ -622,7 +622,7 @@
     <string name="account_sign_out">Abmelden</string>
     <string name="account_connected_as">Angemeldet als</string>
     <string name="account_cloud_sync_active">Cloud-Synchronisierung aktiv</string>
-    <string name="account_cloud_sync_desc">Ihre Aufgaben und Kategorien werden mit Firebase synchronisiert</string>
+    <string name="account_cloud_sync_desc">Ihre Aufgaben und Kategorien werden mit Google Cloud synchronisiert</string>
     <string name="account_not_signed_in">Nicht angemeldet</string>
     <string name="account_not_signed_in_desc">Melden Sie sich mit Google an, um Aufgaben zu sichern</string>
     <string name="account_sign_out_confirm_title">Abmelden?</string>

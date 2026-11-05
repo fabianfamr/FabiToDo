@@ -3,6 +3,7 @@ package com.fabian.todolist.data.sync
 import android.content.Context
 import android.util.Log
 import com.fabian.todolist.data.Subtask
+import com.fabian.todolist.data.SystemCategory
 import com.fabian.todolist.data.Task
 import com.fabian.todolist.data.TaskDao
 import com.fabian.todolist.data.subtasksToJson
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
+import org.json.JSONObject
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -234,6 +236,9 @@ class FirestoreSyncManager @Inject constructor(
         if (userId.isBlank()) return@withContext
         try {
             val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+            val now = System.currentTimeMillis()
+            val localUpdate = prefs.getLong("last_settings_local_update", now)
+            val updatedAt = maxOf(now, localUpdate)
             val settingsMap = mapOf(
                 "customCategories" to (prefs.getString("custom_categories", "[]") ?: "[]"),
                 "categoryColors" to (prefs.getString("category_colors", "{}") ?: "{}"),
@@ -248,10 +253,15 @@ class FirestoreSyncManager @Inject constructor(
                 "aiLowLatencyMode" to prefs.getBoolean("ai_low_latency_mode", true),
                 "aiSubtaskCount" to prefs.getInt("ai_subtask_count", 5),
                 "trashRetentionDays" to prefs.getInt("trash_retention_days", 30),
-                "updatedAt" to System.currentTimeMillis()
+                "updatedAt" to updatedAt
             )
             firestore.collection("users").document(userId).collection("settings").document("preferences")
                 .set(settingsMap, SetOptions.merge()).await()
+
+            prefs.edit()
+                .putLong("last_settings_cloud_sync", updatedAt)
+                .putLong("last_settings_local_update", updatedAt)
+                .apply()
         } catch (e: Exception) {
             Log.e("FirestoreSyncManager", "Error pushing user settings", e)
         }
@@ -261,15 +271,41 @@ class FirestoreSyncManager @Inject constructor(
         try {
             val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
             val remoteUpdatedAt = doc.getLong("updatedAt") ?: 0L
+            val localLastUpdate = prefs.getLong("last_settings_local_update", 0L)
             val localLastSync = prefs.getLong("last_settings_cloud_sync", 0L)
 
-            if (remoteUpdatedAt <= localLastSync) return
+            if (localLastUpdate > remoteUpdatedAt) {
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                if (currentUserId.isNotBlank()) {
+                    syncScope.launch {
+                        pushUserSettings(currentUserId)
+                    }
+                }
+                return
+            }
+
+            if (remoteUpdatedAt <= localLastSync && localLastSync > 0) return
 
             val editor = prefs.edit()
 
-            doc.getString("customCategories")?.let { editor.putString("custom_categories", it) }
-            doc.getString("categoryColors")?.let { editor.putString("category_colors", it) }
-            doc.getString("categoryIcons")?.let { editor.putString("category_icons", it) }
+            doc.getString("customCategories")?.let { remoteCats ->
+                val localCats = prefs.getString("custom_categories", "[]") ?: "[]"
+                val mergedCats = mergeCategoriesJson(localCats, remoteCats)
+                editor.putString("custom_categories", mergedCats)
+            }
+
+            doc.getString("categoryColors")?.let { remoteColors ->
+                val localColors = prefs.getString("category_colors", "{}") ?: "{}"
+                val mergedColors = mergeJsonObjectStrings(localColors, remoteColors)
+                editor.putString("category_colors", mergedColors)
+            }
+
+            doc.getString("categoryIcons")?.let { remoteIcons ->
+                val localIcons = prefs.getString("category_icons", "{}") ?: "{}"
+                val mergedIcons = mergeJsonObjectStrings(localIcons, remoteIcons)
+                editor.putString("category_icons", mergedIcons)
+            }
+
             doc.getString("themeAccent")?.let { editor.putString("accent_color", it) }
             doc.getString("themeDark")?.let { editor.putString("theme_mode", it) }
             doc.getString("languageCode")?.let { editor.putString("app_locale", it) }
@@ -281,10 +317,76 @@ class FirestoreSyncManager @Inject constructor(
             doc.getLong("aiSubtaskCount")?.let { editor.putInt("ai_subtask_count", it.toInt()) }
             doc.getLong("trashRetentionDays")?.let { editor.putInt("trash_retention_days", it.toInt()) }
 
-            editor.putLong("last_settings_cloud_sync", remoteUpdatedAt)
+            val newSyncTime = maxOf(remoteUpdatedAt, System.currentTimeMillis())
+            editor.putLong("last_settings_cloud_sync", newSyncTime)
+            editor.putLong("last_settings_local_update", newSyncTime)
             editor.apply()
         } catch (e: Exception) {
             Log.e("FirestoreSyncManager", "Error applying remote settings", e)
+        }
+    }
+
+    private fun mergeCategoriesJson(localJson: String, remoteJson: String): String {
+        try {
+            val localList = parseCategoryList(localJson)
+            val remoteList = parseCategoryList(remoteJson)
+            val combinedUserCats = (localList + remoteList).filter {
+                it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED &&
+                it != "Completed" && it != "Todas" && it != SystemCategory.TRASH &&
+                it != SystemCategory.CALENDAR && it != SystemCategory.EISENHOWER
+            }.distinct()
+
+            val mergedList = mutableListOf<String>()
+            mergedList.add(SystemCategory.ALL_TASKS)
+            mergedList.addAll(combinedUserCats)
+            mergedList.add(SystemCategory.COMPLETED)
+
+            val array = JSONArray()
+            mergedList.forEach { array.put(it) }
+            return array.toString()
+        } catch (_: Exception) {
+            return if (remoteJson.isNotBlank()) remoteJson else localJson
+        }
+    }
+
+    private fun parseCategoryList(jsonStr: String): List<String> {
+        if (jsonStr.isBlank()) return emptyList()
+        return try {
+            val array = JSONArray(jsonStr)
+            val list = mutableListOf<String>()
+            for (i in 0 until array.length()) {
+                val item = array.getString(i).trim()
+                if (item.isNotEmpty() && !list.contains(item)) {
+                    list.add(item)
+                }
+            }
+            list
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun mergeJsonObjectStrings(localJson: String, remoteJson: String): String {
+        try {
+            val localObj = JSONObject(if (localJson.isBlank()) "{}" else localJson)
+            val remoteObj = JSONObject(if (remoteJson.isBlank()) "{}" else remoteJson)
+            val merged = JSONObject()
+
+            val localKeys = localObj.keys()
+            while (localKeys.hasNext()) {
+                val k = localKeys.next()
+                merged.put(k, localObj.get(k))
+            }
+
+            val remoteKeys = remoteObj.keys()
+            while (remoteKeys.hasNext()) {
+                val k = remoteKeys.next()
+                merged.put(k, remoteObj.get(k))
+            }
+
+            return merged.toString()
+        } catch (_: Exception) {
+            return if (remoteJson.isNotBlank()) remoteJson else localJson
         }
     }
 

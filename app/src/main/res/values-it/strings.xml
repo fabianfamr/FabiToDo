@@ -622,7 +622,7 @@
     <string name="account_sign_out">Disconnetti</string>
     <string name="account_connected_as">Connesso come</string>
     <string name="account_cloud_sync_active">Sincronizzazione cloud attiva</string>
-    <string name="account_cloud_sync_desc">Le tue attività e categorie sono sincronizzate con Firebase</string>
+    <string name="account_cloud_sync_desc">Le tue attività e categorie sono sincronizzate con Google Cloud</string>
     <string name="account_not_signed_in">Non connesso</string>
     <string name="account_not_signed_in_desc">Accedi con il tuo account Google per eseguire il backup delle attività</string>
     <string name="account_sign_out_confirm_title">Disconnettersi?</string>

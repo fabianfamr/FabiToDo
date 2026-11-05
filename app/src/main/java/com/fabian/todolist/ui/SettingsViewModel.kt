@@ -29,6 +29,7 @@ class SettingsViewModel @Inject constructor(
     private val prefs = application.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
 
     private fun triggerSettingsCloudPush() {
+        prefs.edit().putLong("last_settings_local_update", System.currentTimeMillis()).apply()
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             firestoreSyncManager.pushUserSettings()
         }

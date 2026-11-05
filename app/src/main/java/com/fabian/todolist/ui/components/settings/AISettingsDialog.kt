@@ -346,7 +346,7 @@ fun AISettingsDialog(
                                     shape = RoundedCornerShape(6.dp)
                                 ) {
                                     Text(
-                                        text = if (aiModel.startsWith("gemini")) "Firebase AI Logic" else stringResource(R.string.ai_badge_required),
+                                        text = if (aiModel.startsWith("gemini")) "Google AI" else stringResource(R.string.ai_badge_required),
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),

@@ -622,7 +622,7 @@
     <string name="account_sign_out">Sair da conta</string>
     <string name="account_connected_as">Conectado como</string>
     <string name="account_cloud_sync_active">Sincronização em nuvem ativa</string>
-    <string name="account_cloud_sync_desc">Suas tarefas e categorias estão sincronizadas com o Firebase</string>
+    <string name="account_cloud_sync_desc">Suas tarefas e categorias estão sincronizadas com o Google Cloud</string>
     <string name="account_not_signed_in">Não conectado</string>
     <string name="account_not_signed_in_desc">Faça login com sua conta Google para fazer backup de suas tarefas</string>
     <string name="account_sign_out_confirm_title">Sair da conta?</string>
