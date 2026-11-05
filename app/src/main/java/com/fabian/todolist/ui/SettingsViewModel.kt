@@ -57,6 +57,38 @@ class SettingsViewModel @Inject constructor(
 
     init {
         prefs.registerOnSharedPreferenceChangeListener(prefListener)
+        
+        // Auto-recuperación continua: si existen tareas creadas con categorías (como "Escuela" o "Personal"),
+        // asegurarse de que siempre estén presentes y visibles en la lista de categorías.
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            repository.allTasks.collect { taskList ->
+                val taskCategories = taskList.map { it.category.trim() }
+                    .filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) }
+                    .distinct()
+
+                val currentCats = _categories.value
+                val currentUserCats = currentCats.filter { !SystemCategory.isSystemCategory(it) }
+                val mergedUserCats = (currentUserCats + taskCategories).distinct()
+
+                val finalUserCats = if (mergedUserCats.isNotEmpty()) {
+                    mergedUserCats
+                } else {
+                    listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+                }
+
+                if (finalUserCats != currentUserCats || currentUserCats.isEmpty()) {
+                    val fullList = mutableListOf<String>()
+                    fullList.add(SystemCategory.ALL_TASKS)
+                    fullList.addAll(finalUserCats)
+                    fullList.add(SystemCategory.COMPLETED)
+
+                    val jsonArray = JSONArray()
+                    fullList.forEach { jsonArray.put(it) }
+                    prefs.edit().putString("custom_categories", jsonArray.toString()).apply()
+                    _categories.value = fullList
+                }
+            }
+        }
     }
 
     override fun onCleared() {
@@ -178,24 +210,21 @@ class SettingsViewModel @Inject constructor(
             }
         } else emptyList()
 
-        val defaultList = listOf(SystemCategory.ALL_TASKS, "Personal", "Trabajo", "Compras", "Hogar", "Salud", SystemCategory.COMPLETED)
-        val baseList = if (rawList.isNotEmpty()) rawList else defaultList
+        val defaultUserList = listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+        val baseList = if (rawList.isNotEmpty()) rawList else (listOf(SystemCategory.ALL_TASKS) + defaultUserList + listOf(SystemCategory.COMPLETED))
 
-        // Separate system categories from custom user categories so that ALL custom categories
-        // are placed strictly between SystemCategory.ALL_TASKS and SystemCategory.COMPLETED.
-        val hasAllTasks = baseList.contains(SystemCategory.ALL_TASKS)
-        val hasCompleted = baseList.contains(SystemCategory.COMPLETED)
+        val userCats = baseList.filter { !SystemCategory.isSystemCategory(it) }
 
-        val userCats = baseList.filter {
-            it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED &&
-            it != "Completed" && it != "Todas" && it != SystemCategory.TRASH &&
-            it != SystemCategory.CALENDAR && it != SystemCategory.EISENHOWER
+        val resolvedUserCats = if (userCats.isNotEmpty()) {
+            userCats
+        } else {
+            defaultUserList
         }
 
         val result = mutableListOf<String>()
-        if (hasAllTasks) result.add(SystemCategory.ALL_TASKS)
-        result.addAll(userCats)
-        if (hasCompleted) result.add(SystemCategory.COMPLETED)
+        result.add(SystemCategory.ALL_TASKS)
+        result.addAll(resolvedUserCats)
+        result.add(SystemCategory.COMPLETED)
         return result
     }
 
@@ -398,15 +427,17 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun saveCategories(list: List<String>) {
-        val userCats = list.filter {
-            it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED &&
-            it != "Completed" && it != "Todas" && it != SystemCategory.TRASH &&
-            it != SystemCategory.CALENDAR && it != SystemCategory.EISENHOWER
-        }.distinct()
+        val userCats = list.filter { !SystemCategory.isSystemCategory(it) }.distinct()
+
+        val resolvedUserCats = if (userCats.isNotEmpty()) {
+            userCats
+        } else {
+            listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+        }
 
         val fullList = mutableListOf<String>()
         fullList.add(SystemCategory.ALL_TASKS)
-        fullList.addAll(userCats)
+        fullList.addAll(resolvedUserCats)
         fullList.add(SystemCategory.COMPLETED)
 
         val jsonArray = JSONArray()
@@ -418,7 +449,7 @@ class SettingsViewModel @Inject constructor(
 
     fun addCategory(categoryName: String, color: Int? = null, iconName: String? = null) {
         val trimmed = categoryName.trim()
-        if (trimmed.isBlank() || _categories.value.contains(trimmed)) return
+        if (trimmed.isBlank() || _categories.value.contains(trimmed) || SystemCategory.isSystemCategory(trimmed)) return
         val currentList = _categories.value.toMutableList()
         val completedIndex = currentList.indexOf(SystemCategory.COMPLETED)
         if (completedIndex != -1) {
@@ -440,7 +471,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun deleteCategory(categoryName: String) {
-        if (categoryName == SystemCategory.ALL_TASKS || categoryName == SystemCategory.COMPLETED) return
+        if (SystemCategory.isSystemCategory(categoryName)) return
         saveCategories(_categories.value.filter { it != categoryName })
         
         // Move tasks to "General" or some default category
@@ -455,7 +486,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun renameCategory(oldName: String, newName: String) {
-        if (oldName == SystemCategory.ALL_TASKS || oldName == SystemCategory.COMPLETED) return
+        if (SystemCategory.isSystemCategory(oldName) || SystemCategory.isSystemCategory(newName)) return
         if (newName.isBlank() || _categories.value.contains(newName)) return
         
         saveCategories(_categories.value.map { if (it == oldName) newName else it })
@@ -483,12 +514,7 @@ class SettingsViewModel @Inject constructor(
 
     fun moveUserCategory(category: String, direction: Int) {
         val currentList = _categories.value.toMutableList()
-        val isSystem: (String) -> Boolean = {
-            it == SystemCategory.ALL_TASKS || it == SystemCategory.COMPLETED ||
-            it == "Completed" || it == "Todas" || it == SystemCategory.TRASH ||
-            it == SystemCategory.CALENDAR || it == SystemCategory.EISENHOWER
-        }
-        val userCats = currentList.filter { !isSystem(it) }.toMutableList()
+        val userCats = currentList.filter { !SystemCategory.isSystemCategory(it) }.toMutableList()
         val userIndex = userCats.indexOf(category)
         if (userIndex == -1) return
 

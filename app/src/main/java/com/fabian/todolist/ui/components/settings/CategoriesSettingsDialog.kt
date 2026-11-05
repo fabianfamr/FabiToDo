@@ -59,11 +59,7 @@ fun CategoriesSettingsDialog(
     val haptic = LocalHapticFeedback.current
 
     val userCategories = remember(categories) {
-        categories.filter {
-            it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED &&
-            it != "Completed" && it != "Todas" && it != SystemCategory.TRASH &&
-            it != SystemCategory.CALENDAR && it != SystemCategory.EISENHOWER
-        }
+        categories.filter { !SystemCategory.isSystemCategory(it) }
     }
 
     SettingsSubmenuScaffold(
@@ -142,8 +138,7 @@ fun CategoriesSettingsDialog(
                     }
 
                     items(categories, key = { it }) { category ->
-                        val isImmutable = category == SystemCategory.ALL_TASKS || category == SystemCategory.COMPLETED ||
-                                category == "Completed" || category == "Todas" || category == SystemCategory.TRASH
+                        val isImmutable = SystemCategory.isSystemCategory(category)
 
                         val userIndex = userCategories.indexOf(category)
                         val canMoveUp = !isImmutable && userIndex > 0

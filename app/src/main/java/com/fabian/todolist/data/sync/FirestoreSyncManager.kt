@@ -239,8 +239,30 @@ class FirestoreSyncManager @Inject constructor(
             val now = System.currentTimeMillis()
             val localUpdate = prefs.getLong("last_settings_local_update", now)
             val updatedAt = maxOf(now, localUpdate)
+
+            // Asegurar que las categorías nunca queden vacías al enviar a la nube
+            val rawCatsJson = prefs.getString("custom_categories", null)
+            val parsedList = parseCategoryList(rawCatsJson ?: "")
+            val userCats = parsedList.filter { !SystemCategory.isSystemCategory(it) }
+            val taskCats = try {
+                taskDao.getAllTasksSync().map { it.category.trim() }.filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) }.distinct()
+            } catch (_: Exception) { emptyList() }
+
+            val mergedUserCats = (userCats + taskCats).distinct()
+            val finalUserCats = if (mergedUserCats.isNotEmpty()) {
+                mergedUserCats
+            } else {
+                listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+            }
+
+            val safeCategoriesList = listOf(SystemCategory.ALL_TASKS) + finalUserCats + listOf(SystemCategory.COMPLETED)
+            val jsonArray = JSONArray()
+            safeCategoriesList.forEach { jsonArray.put(it) }
+            val finalCatsJson = jsonArray.toString()
+            prefs.edit().putString("custom_categories", finalCatsJson).apply()
+
             val settingsMap = mapOf(
-                "customCategories" to (prefs.getString("custom_categories", "[]") ?: "[]"),
+                "customCategories" to finalCatsJson,
                 "categoryColors" to (prefs.getString("category_colors", "{}") ?: "{}"),
                 "categoryIcons" to (prefs.getString("category_icons", "{}") ?: "{}"),
                 "themeAccent" to (prefs.getString("accent_color", "system") ?: "system"),
@@ -268,7 +290,7 @@ class FirestoreSyncManager @Inject constructor(
         }
     }
 
-    private fun applyRemoteSettings(doc: DocumentSnapshot) {
+    private suspend fun applyRemoteSettings(doc: DocumentSnapshot) {
         try {
             val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
             val remoteUpdatedAt = doc.getLong("updatedAt") ?: 0L
@@ -328,19 +350,26 @@ class FirestoreSyncManager @Inject constructor(
         }
     }
 
-    private fun mergeCategoriesJson(localJson: String, remoteJson: String): String {
+    private suspend fun mergeCategoriesJson(localJson: String, remoteJson: String): String {
         try {
             val localList = parseCategoryList(localJson)
             val remoteList = parseCategoryList(remoteJson)
-            val combinedUserCats = (localList + remoteList).filter {
-                it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED &&
-                it != "Completed" && it != "Todas" && it != SystemCategory.TRASH &&
-                it != SystemCategory.CALENDAR && it != SystemCategory.EISENHOWER
-            }.distinct()
+            val combinedUserCats = (localList + remoteList).filter { !SystemCategory.isSystemCategory(it) }.distinct()
+
+            val fromTasks = try {
+                taskDao.getAllTasksSync().map { it.category.trim() }.filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) }.distinct()
+            } catch (_: Exception) { emptyList() }
+
+            val allUserCats = (combinedUserCats + fromTasks).distinct()
+            val finalUserCats = if (allUserCats.isNotEmpty()) {
+                allUserCats
+            } else {
+                listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+            }
 
             val mergedList = mutableListOf<String>()
             mergedList.add(SystemCategory.ALL_TASKS)
-            mergedList.addAll(combinedUserCats)
+            mergedList.addAll(finalUserCats)
             mergedList.add(SystemCategory.COMPLETED)
 
             val array = JSONArray()
