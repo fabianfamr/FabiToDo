@@ -99,7 +99,7 @@
     <string name="biometric_lock_desc">Requerir huella o rostro para abrir</string>
     <string name="biometric_lock_title">Bloqueo Biométrico</string>
     <string name="biometric_prompt_subtitle">Usa tu método de seguridad para abrir la app</string>
-    <string name="biometric_prompt_title">Desbloquear ToDo List</string>
+    <string name="biometric_prompt_title">Desbloquear FabiToDo</string>
     <string name="cancel">Cancelar</string>
     <string name="category_all">Todas</string>
     <string name="category_color">Cor da Categoria</string>

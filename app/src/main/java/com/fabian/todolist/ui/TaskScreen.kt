@@ -425,9 +425,25 @@ fun TaskScreen(
                             .padding(paddingValues),
                         contentAlignment = Alignment.TopCenter
                     ) {
-                        // Task statistics details
-                        val totalCount = tasks.size
-                        val completedCount = tasks.count { it.isCompleted }
+                        // Task statistics details with accurate active and completed counts
+                        val (categoryTotalCount, categoryCompletedCount) = remember(allTasksListState, selectedCategory) {
+                            val activeTasks = allTasksListState.filter { !it.isDeleted }
+                            when (selectedCategory) {
+                                com.fabian.todolist.data.SystemCategory.ALL_TASKS,
+                                com.fabian.todolist.data.SystemCategory.COMPLETED,
+                                com.fabian.todolist.data.SystemCategory.EISENHOWER,
+                                com.fabian.todolist.data.SystemCategory.CALENDAR -> {
+                                    activeTasks.size to activeTasks.count { it.isCompleted }
+                                }
+                                com.fabian.todolist.data.SystemCategory.TRASH -> {
+                                    allTasksListState.count { it.isDeleted } to 0
+                                }
+                                else -> {
+                                    val catTasks = activeTasks.filter { it.category == selectedCategory }
+                                    catTasks.size to catTasks.count { it.isCompleted }
+                                }
+                            }
+                        }
 
                         val eisenhowerContent: @Composable () -> Unit = {
                             com.fabian.todolist.ui.components.EisenhowerMatrixView(
@@ -482,84 +498,10 @@ fun TaskScreen(
                                 )
 
                                 if (!isTablet && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH && selectedCategory != com.fabian.todolist.data.SystemCategory.EISENHOWER) {
-                                    Surface(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 6.dp),
-                                        shape = RoundedCornerShape(14.dp),
-                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(3.dp),
-                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                        ) {
-                                            val isCal = selectedCategory == com.fabian.todolist.data.SystemCategory.CALENDAR
-                                            Surface(
-                                                onClick = {
-                                                    if (isCal) {
-                                                        viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.ALL_TASKS)
-                                                    }
-                                                },
-                                                shape = RoundedCornerShape(10.dp),
-                                                color = if (!isCal) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                                                border = if (!isCal) BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)) else null,
-                                                modifier = Modifier.weight(1f)
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.padding(vertical = 7.dp),
-                                                    horizontalArrangement = Arrangement.Center,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Checklist,
-                                                        contentDescription = null,
-                                                        tint = if (!isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        modifier = Modifier.size(16.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(6.dp))
-                                                    Text(
-                                                        text = stringResource(R.string.calendar_switch_tasks),
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        fontWeight = if (!isCal) FontWeight.Bold else FontWeight.Medium,
-                                                        color = if (!isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                            }
-
-                                            Surface(
-                                                onClick = {
-                                                    viewModel.setSelectedCategory(com.fabian.todolist.data.SystemCategory.CALENDAR)
-                                                },
-                                                shape = RoundedCornerShape(10.dp),
-                                                color = if (isCal) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                                                border = if (isCal) BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)) else null,
-                                                modifier = Modifier.weight(1f)
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.padding(vertical = 7.dp),
-                                                    horizontalArrangement = Arrangement.Center,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.CalendarToday,
-                                                        contentDescription = null,
-                                                        tint = if (isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        modifier = Modifier.size(16.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(6.dp))
-                                                    Text(
-                                                        text = stringResource(R.string.calendar_switch_calendar),
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        fontWeight = if (isCal) FontWeight.Bold else FontWeight.Medium,
-                                                        color = if (isCal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
+                                    com.fabian.todolist.ui.components.TaskViewToggle(
+                                        selectedCategory = selectedCategory,
+                                        onViewChange = { viewModel.setSelectedCategory(it) }
+                                    )
                                 }
 
                     LazyColumn(
@@ -572,89 +514,15 @@ fun TaskScreen(
                     ) {
                         item {
                             if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH) {
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    shape = RoundedCornerShape(16.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f)
-                                    )
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp)
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                modifier = Modifier.weight(1f)
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.DeleteForever,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.error,
-                                                    modifier = Modifier.size(24.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(10.dp))
-                                                Text(
-                                                    text = stringResource(R.string.trash_banner_title),
-                                                    style = MaterialTheme.typography.titleMedium,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = MaterialTheme.colorScheme.onErrorContainer
-                                                )
-                                            }
-                                            if (tasks.isNotEmpty()) {
-                                                Button(
-                                                    onClick = { showEmptyTrashDialog = true },
-                                                    colors = ButtonDefaults.buttonColors(
-                                                        containerColor = MaterialTheme.colorScheme.error,
-                                                        contentColor = MaterialTheme.colorScheme.onError
-                                                    ),
-                                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
-                                                    shape = RoundedCornerShape(12.dp),
-                                                    modifier = Modifier
-                                                        .padding(start = 8.dp)
-                                                        .testTag("empty_trash_button")
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.DeleteForever,
-                                                        contentDescription = null,
-                                                        modifier = Modifier.size(16.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(6.dp))
-                                                    Text(
-                                                        text = stringResource(R.string.empty_trash_action),
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        fontWeight = FontWeight.Bold,
-                                                        maxLines = 1,
-                                                        softWrap = false
-                                                    )
-                                                }
-                                            }
-                                        }
-                                        Spacer(modifier = Modifier.height(6.dp))
-                                        Text(
-                                            text = stringResource(R.string.trash_banner_desc),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f)
-                                        )
-                                    }
-                                }
+                                com.fabian.todolist.ui.components.TrashBanner(
+                                    hasTasks = tasks.isNotEmpty(),
+                                    onEmptyTrash = { showEmptyTrashDialog = true }
+                                )
                             } else {
-                                AnimatedVisibility(
-                                    visible = isProgressVisible,
-                                    enter = expandVertically() + fadeIn(),
-                                    exit = shrinkVertically() + fadeOut()
-                                ) {
+                                if (categoryTotalCount > 0) {
                                     com.fabian.todolist.ui.components.TaskProgressHeaderCard(
-                                        totalCount = totalCount,
-                                        completedCount = completedCount,
+                                        totalCount = categoryTotalCount,
+                                        completedCount = categoryCompletedCount,
                                         categoryName = selectedCategory,
                                         modifier = Modifier.padding(bottom = 8.dp)
                                     )
@@ -664,42 +532,7 @@ fun TaskScreen(
 
                         if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH && tasks.isEmpty()) {
                             item {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 56.dp, horizontal = 24.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(72.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.DeleteSweep,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                            modifier = Modifier.size(36.dp)
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(
-                                        text = stringResource(R.string.empty_state_trash),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    Text(
-                                        text = stringResource(R.string.empty_state_trash_tip),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                                    )
-                                }
+                                com.fabian.todolist.ui.components.EmptyTrashState()
                             }
                         }
 
@@ -708,25 +541,7 @@ fun TaskScreen(
                                 val tasksInGroup = groupedTasks[groupKey] ?: emptyMap()
                                 if (tasksInGroup.isNotEmpty()) {
                                     item {
-                                        val groupTitle = when (groupKey) {
-                                            "group_vencidos" -> stringResource(R.string.group_vencidos)
-                                            "group_hoy" -> stringResource(R.string.group_hoy)
-                                            "group_manana" -> stringResource(R.string.group_manana)
-                                            "group_pasado_manana" -> stringResource(R.string.group_pasado_manana)
-                                            "group_esta_semana" -> stringResource(R.string.group_esta_semana)
-                                            "group_este_mes" -> stringResource(R.string.group_este_mes)
-                                            "group_next_month" -> stringResource(R.string.group_next_month)
-                                            "group_futuro" -> stringResource(R.string.group_futuro)
-                                            "group_not_set" -> stringResource(R.string.group_not_set)
-                                            else -> ""
-                                        }
-                                        Text(
-                                            text = groupTitle,
-                                            style = MaterialTheme.typography.headlineMedium,
-                                            fontWeight = FontWeight.ExtraBold,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)
-                                        )
+                                        com.fabian.todolist.ui.components.TaskGroupHeader(groupKey = groupKey)
                                     }
 
                                     val priorityKeys = listOf(com.fabian.todolist.data.TaskPriority.CRITICAL, com.fabian.todolist.data.TaskPriority.HIGH, com.fabian.todolist.data.TaskPriority.MEDIUM, com.fabian.todolist.data.TaskPriority.LOW, com.fabian.todolist.data.TaskPriority.NONE)
@@ -734,32 +549,7 @@ fun TaskScreen(
                                         val tasksOfPrio = tasksInGroup[prio] ?: emptyList()
                                         if (tasksOfPrio.isNotEmpty()) {
                                             item {
-                                                Row(
-                                                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    val (dotColor, labelText) = when (prio) {
-                                                        com.fabian.todolist.data.TaskPriority.CRITICAL -> Color(0xFFB3261E) to stringResource(R.string.priority_critical_label)
-                                                        com.fabian.todolist.data.TaskPriority.HIGH -> Color(0xFFEA4335) to stringResource(R.string.priority_high_label)
-                                                        com.fabian.todolist.data.TaskPriority.MEDIUM -> Color(0xFFFBBC05) to stringResource(R.string.priority_medium_label)
-                                                        com.fabian.todolist.data.TaskPriority.LOW -> Color(0xFF34A853) to stringResource(R.string.priority_low_label)
-                                                        else -> Color.Gray to stringResource(R.string.priority_none_label)
-                                                    }
-                                                    Box(
-                                                        modifier = Modifier
-                                                            .size(8.dp)
-                                                            .clip(CircleShape)
-                                                            .background(dotColor)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(8.dp))
-                                                    Text(
-                                                        text = labelText,
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
-                                                        letterSpacing = 0.8.sp
-                                                    )
-                                                }
+                                                com.fabian.todolist.ui.components.TaskPriorityHeader(priority = prio)
                                             }
 
                                             itemsIndexed(tasksOfPrio, key = { _, it -> it.id }) { index, task ->
