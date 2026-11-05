@@ -78,7 +78,12 @@
     <string name="ai_ultra_low_latency_title">Modo de respuesta ágil</string>
     <string name="ai_ultra_low_latency_desc">Prioriza la inmediatez y la eficiencia en la generación de subtareas.</string>
     <string name="ai_section_access">Credenciales de acceso</string>
-    <string name="ai_provider_key_label">Clave opcional de Google AI Studio</string>
+    <string name="ai_key_type_label">Modo de clave Gemini</string>
+    <string name="ai_key_type_desc">Selecciona si prefieres usar la llave pública integrada o tu propia clave personal.</string>
+    <string name="ai_key_type_public">Llave Pública (Google AI / Firebase)</string>
+    <string name="ai_key_type_custom">Llave Personalizada (Custom API Key)</string>
+    <string name="ai_key_public_notice">Llave Pública activa: Las funciones de Gemini operan automáticamente mediante la nube de Google AI. No requieres ingresar una clave manual.</string>
+    <string name="ai_provider_key_label">Clave personalizada de Google AI Studio</string>
     <string name="ai_key_placeholder">Ingresa una clave de Gemini si deseas anular la predeterminada…</string>
     <string name="ai_key_icon_desc">Icono de credencial</string>
     <string name="ai_key_show">Mostrar clave</string>

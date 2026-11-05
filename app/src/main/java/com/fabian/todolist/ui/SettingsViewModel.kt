@@ -49,6 +49,7 @@ class SettingsViewModel @Inject constructor(
             "ai_model" -> _aiModel.value = p.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash"
             "ai_low_latency_mode" -> _aiLowLatencyMode.value = p.getBoolean("ai_low_latency_mode", true)
             "ai_subtask_count" -> _aiSubtaskCount.value = p.getInt("ai_subtask_count", 5)
+            "ai_key_type" -> _aiKeyType.value = p.getString("ai_key_type", "public") ?: "public"
             "trash_retention_days" -> _trashRetentionDays.value = p.getInt("trash_retention_days", 30)
             "user_display_name" -> _userName.value = p.getString("user_display_name", "") ?: ""
         }
@@ -131,6 +132,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _aiApiKey = MutableStateFlow(prefs.getString("ai_api_key", "") ?: "")
     val aiApiKey: StateFlow<String> = _aiApiKey.asStateFlow()
+
+    private val _aiKeyType = MutableStateFlow(prefs.getString("ai_key_type", "public") ?: "public")
+    val aiKeyType: StateFlow<String> = _aiKeyType.asStateFlow()
 
     private val _aiSubtaskCount = MutableStateFlow(prefs.getInt("ai_subtask_count", 5))
     val aiSubtaskCount: StateFlow<Int> = _aiSubtaskCount.asStateFlow()
@@ -359,6 +363,13 @@ class SettingsViewModel @Inject constructor(
     fun setAiApiKey(key: String) {
         _aiApiKey.value = key
         prefs.edit().putString("ai_api_key", key).apply()
+        triggerSettingsCloudPush()
+    }
+
+    fun setAiKeyType(type: String) {
+        _aiKeyType.value = type
+        prefs.edit().putString("ai_key_type", type).apply()
+        triggerSettingsCloudPush()
     }
 
     fun setAiSubtaskCount(count: Int) {

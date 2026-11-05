@@ -55,17 +55,14 @@ fun AISettingsDialog(
     val aiModel by viewModel.aiModel.collectAsStateWithLifecycle()
     val aiLowLatencyMode by viewModel.aiLowLatencyMode.collectAsStateWithLifecycle()
     val aiApiKey by viewModel.aiApiKey.collectAsStateWithLifecycle()
+    val aiKeyType by viewModel.aiKeyType.collectAsStateWithLifecycle()
     val aiSubtaskCount by viewModel.aiSubtaskCount.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val showAiBanner by viewModel.showAiBanner.collectAsStateWithLifecycle()
     val currentLangCode by viewModel.languageCode.collectAsStateWithLifecycle()
-    // Need showAiBanner in SettingsViewModel or keep in TaskViewModel? 
-    // Usually banner vis is a preference. Moving it to SettingsViewModel soon.
-    // For now, let's assume it's moved or accessible via settingsViewModel.
-    
-    // I need to add showAiBanner to SettingsViewModel if I want to remove it from TaskViewModel.
     
     var showModelDropdown by remember { mutableStateOf(false) }
+    var showKeyTypeDropdown by remember { mutableStateOf(false) }
     var keyVisible by remember { mutableStateOf(false) }
     
     // Testing states
@@ -328,72 +325,175 @@ fun AISettingsDialog(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                            Text(
+                                text = stringResource(R.string.ai_key_type_label),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = stringResource(R.string.ai_key_type_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
+                            )
+
+                            // Mini menú desplegable para elegir tipo de clave
+                            ExposedDropdownMenuBox(
+                                expanded = showKeyTypeDropdown,
+                                onExpandedChange = { showKeyTypeDropdown = !showKeyTypeDropdown }
                             ) {
+                                OutlinedTextField(
+                                    value = if (aiKeyType == "public") stringResource(R.string.ai_key_type_public) else stringResource(R.string.ai_key_type_custom),
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showKeyTypeDropdown) },
+                                    modifier = Modifier
+                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
+                                        .fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                                    ),
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = if (aiKeyType == "public") Icons.Default.Public else Icons.Default.VpnKey,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = showKeyTypeDropdown,
+                                    onDismissRequest = { showKeyTypeDropdown = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        leadingIcon = { Icon(Icons.Default.Public, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                                        text = {
+                                            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                                Text(
+                                                    text = stringResource(R.string.ai_key_type_public),
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                                Text(
+                                                    text = "Infraestructura Google AI / Firebase integrada",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            viewModel.setAiKeyType("public")
+                                            showKeyTypeDropdown = false
+                                        },
+                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                                    )
+                                    DropdownMenuItem(
+                                        leadingIcon = { Icon(Icons.Default.VpnKey, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                                        text = {
+                                            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                                Text(
+                                                    text = stringResource(R.string.ai_key_type_custom),
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                                Text(
+                                                    text = "Usar API Key personalizada de Google AI Studio",
+                                                    fontSize = 11.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            viewModel.setAiKeyType("custom")
+                                            showKeyTypeDropdown = false
+                                        },
+                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            if (aiKeyType == "public") {
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f))
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.CloudDone,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text(
+                                            text = stringResource(R.string.ai_key_public_notice),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            lineHeight = 16.sp
+                                        )
+                                    }
+                                }
+                            } else {
                                 Text(
                                     text = stringResource(R.string.ai_provider_key_label),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(bottom = 6.dp)
                                 )
-                                Card(
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = if (aiModel.startsWith("gemini")) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
-                                    ),
-                                    shape = RoundedCornerShape(6.dp)
-                                ) {
-                                    Text(
-                                        text = if (aiModel.startsWith("gemini")) "Google AI" else stringResource(R.string.ai_badge_required),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                        color = if (aiModel.startsWith("gemini")) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                }
-                            }
-                            
-                            Spacer(modifier = Modifier.height(4.dp))
-                            
-                            Text(
-                                text = keyRequirementText,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(bottom = 12.dp)
-                            )
-
-                            OutlinedTextField(
-                                value = aiApiKey,
-                                onValueChange = { viewModel.setAiApiKey(it) },
-                                modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text(stringResource(R.string.ai_key_placeholder)) },
-                                singleLine = true,
-                                shape = RoundedCornerShape(12.dp),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                                visualTransformation = if (keyVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.VpnKey,
-                                        contentDescription = stringResource(R.string.ai_key_icon_desc),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                },
-                                trailingIcon = {
-                                    IconButton(onClick = { keyVisible = !keyVisible }) {
+                                OutlinedTextField(
+                                    value = aiApiKey,
+                                    onValueChange = { viewModel.setAiApiKey(it) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    placeholder = { Text(stringResource(R.string.ai_key_placeholder)) },
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(12.dp),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                    visualTransformation = if (keyVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                                    leadingIcon = {
                                         Icon(
-                                            imageVector = if (keyVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                            contentDescription = if (keyVisible) stringResource(R.string.ai_banner_hide) else stringResource(R.string.ai_key_show),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            imageVector = Icons.Default.VpnKey,
+                                            contentDescription = stringResource(R.string.ai_key_icon_desc),
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
-                                    }
-                                },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                                    },
+                                    trailingIcon = {
+                                        IconButton(onClick = { keyVisible = !keyVisible }) {
+                                            Icon(
+                                                imageVector = if (keyVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                                contentDescription = if (keyVisible) stringResource(R.string.ai_banner_hide) else stringResource(R.string.ai_key_show),
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                                    )
                                 )
-                            )
+                            }
 
                             Spacer(modifier = Modifier.height(10.dp))
                             
@@ -536,7 +636,7 @@ fun AISettingsDialog(
                                         existingSubtasksText = null,
                                         categories = categories.filter { it != SystemCategory.ALL_TASKS && it != SystemCategory.COMPLETED },
                                         model = aiModel,
-                                        apiKey = aiApiKey,
+                                        apiKey = if (aiKeyType == "public") "" else aiApiKey,
                                         subtaskCount = aiSubtaskCount,
                                         langCode = currentLangCode,
                                         onSuccess = { desc, cat, prio, subs ->

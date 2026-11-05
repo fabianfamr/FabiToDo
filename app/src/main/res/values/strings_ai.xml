@@ -78,7 +78,12 @@
     <string name="ai_ultra_low_latency_title">Low Latency Mode</string>
     <string name="ai_ultra_low_latency_desc">Optimizes request routing for fast and immediate responses.</string>
     <string name="ai_section_access">Access Credentials</string>
-    <string name="ai_provider_key_label">Optional Google AI Studio Key</string>
+    <string name="ai_key_type_label">Gemini Key Mode</string>
+    <string name="ai_key_type_desc">Choose whether to use the built-in public key or your custom API key.</string>
+    <string name="ai_key_type_public">Public Key (Google AI / Firebase)</string>
+    <string name="ai_key_type_custom">Custom Key (Custom API Key)</string>
+    <string name="ai_key_public_notice">Public Key active: Gemini features operate automatically using Google AI cloud services. No manual key entry required.</string>
+    <string name="ai_provider_key_label">Custom Google AI Studio Key</string>
     <string name="ai_key_placeholder">Enter an optional Gemini key to override defaults…</string>
     <string name="ai_key_icon_desc">Credential icon</string>
     <string name="ai_key_show">Show key</string>

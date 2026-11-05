@@ -119,6 +119,7 @@ fun TaskScreen(
     val languageCode by settingsViewModel.languageCode.collectAsStateWithLifecycle()
     val aiModel by settingsViewModel.aiModel.collectAsStateWithLifecycle()
     val aiApiKey by settingsViewModel.aiApiKey.collectAsStateWithLifecycle()
+    val aiKeyType by settingsViewModel.aiKeyType.collectAsStateWithLifecycle()
     val aiSubtaskCount by settingsViewModel.aiSubtaskCount.collectAsStateWithLifecycle()
 
     var showAddEditDialog by remember { mutableStateOf(false) }
@@ -1171,7 +1172,7 @@ fun TaskScreen(
             onGenerateSubtasksWithAI = { title, desc, existing, cats, onSuccess, onError ->
                 viewModel.generateSubtasksWithAI(
                     title, desc, existing, cats,
-                    aiModel, aiApiKey, aiSubtaskCount, languageCode,
+                    aiModel, if (aiKeyType == "public") "" else aiApiKey, aiSubtaskCount, languageCode,
                     onSuccess, onError
                 )
             },

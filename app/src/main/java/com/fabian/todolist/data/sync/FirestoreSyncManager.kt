@@ -252,6 +252,7 @@ class FirestoreSyncManager @Inject constructor(
                 "aiModel" to (prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash"),
                 "aiLowLatencyMode" to prefs.getBoolean("ai_low_latency_mode", true),
                 "aiSubtaskCount" to prefs.getInt("ai_subtask_count", 5),
+                "aiKeyType" to (prefs.getString("ai_key_type", "public") ?: "public"),
                 "trashRetentionDays" to prefs.getInt("trash_retention_days", 30),
                 "updatedAt" to updatedAt
             )
@@ -315,6 +316,7 @@ class FirestoreSyncManager @Inject constructor(
             doc.getString("aiModel")?.let { editor.putString("ai_model", it) }
             doc.getBoolean("aiLowLatencyMode")?.let { editor.putBoolean("ai_low_latency_mode", it) }
             doc.getLong("aiSubtaskCount")?.let { editor.putInt("ai_subtask_count", it.toInt()) }
+            doc.getString("aiKeyType")?.let { editor.putString("ai_key_type", it) }
             doc.getLong("trashRetentionDays")?.let { editor.putInt("trash_retention_days", it.toInt()) }
 
             val newSyncTime = maxOf(remoteUpdatedAt, System.currentTimeMillis())
