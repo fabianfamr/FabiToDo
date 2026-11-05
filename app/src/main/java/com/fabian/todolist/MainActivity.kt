@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity() {
       val description = intent.getStringExtra("description")
 
       if (!title.isNullOrEmpty()) {
-         viewModel?.insertTask(
+         viewModel?.setPrefilledTask(
            Task(
              title = title,
              description = description ?: "",
@@ -275,7 +275,7 @@ class MainActivity : AppCompatActivity() {
 
     if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
       intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
-        viewModel?.insertTask(
+        viewModel?.setPrefilledTask(
           Task(
             title = sharedText.take(50),
             description = if (sharedText.length > 50) sharedText else "",

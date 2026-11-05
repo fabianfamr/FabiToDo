@@ -114,6 +114,21 @@ class TaskViewModel @Inject constructor(
         _pendingTaskIdFromNotification.value = null
     }
 
+    // Support for prefilled tasks from external intents (like sharing text)
+    private val _prefilledTask = MutableStateFlow<Task?>(null)
+    val prefilledTask: StateFlow<Task?> = _prefilledTask.asStateFlow()
+
+    fun setPrefilledTask(task: Task?) {
+        _prefilledTask.value = task
+        if (task != null) {
+            _shouldShowAddDialog.value = true
+        }
+    }
+
+    fun consumePrefilledTask() {
+        _prefilledTask.value = null
+    }
+
     // Synchronization
     private val _unsyncedTasksCount = MutableStateFlow(prefs.getInt("unsynced_tasks_count", 0))
     val unsyncedTasksCount: StateFlow<Int> = _unsyncedTasksCount.asStateFlow()

@@ -26,22 +26,8 @@ object QuickAddNotificationHelper {
     private const val NOTIFICATION_ID = 9999
     private const val UNIQUE_WORK_NAME = "fabitodo_quick_add_periodic_work"
 
-    // Spanish and English UX suggestions to prompt task logging
-    private val suggestionsEs = listOf(
-        "¿Qué tienes en mente para hoy? Agrega una tarea nueva.",
-        "Un paso a la vez. ¡Anota tu pendiente de una vez!",
-        "¿Alguna gran idea hoy? Captúrala rápido aquí.",
-        "Mente organizada, día productivo. Añade una tarea.",
-        "¿Cómo vas con tus metas? Añade un nuevo objetivo hoy."
-    )
+    // Dynamic suggestions are now pulled from strings.xml (quick_add_suggestions)
 
-    private val suggestionsEn = listOf(
-        "What's on your mind today? Register a new task.",
-        "One step at a time! Record your pending tasks.",
-        "Had a brilliant idea? Quick-write it here.",
-        "Clear mind, productive day. Add a new task.",
-        "How are your goals going? Add a daily task."
-    )
 
     /**
      * Fetches a friendly, dynamic, highly motivating prompt for recording tasks from Gemini API.
@@ -168,11 +154,11 @@ object QuickAddNotificationHelper {
         )
 
         // Choose a random dynamic suggestion based on app language context if no custom AI message is provided
-        val currentLocaleCode = context.resources.configuration.locales.get(0).language
-        val randomSuggestion = customMessage ?: if (currentLocaleCode.startsWith("es")) {
-            suggestionsEs[Random.nextInt(suggestionsEs.size)]
+        val suggestions = context.resources.getStringArray(R.array.quick_add_suggestions)
+        val randomSuggestion = customMessage ?: if (suggestions.isNotEmpty()) {
+            suggestions[Random.nextInt(suggestions.size)]
         } else {
-            suggestionsEn[Random.nextInt(suggestionsEn.size)]
+            "Organize your day with FabiToDo"
         }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)

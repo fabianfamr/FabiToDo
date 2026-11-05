@@ -1,6 +1,6 @@
 {
   "name": "FabiToDo",
-  "description": "Gestión inteligente de tareas: organiza tus pendientes con IA, recordatorios, prioridades personalizables y un diseño fluido estilo Material You.",
+  "description": "Tu compañero inteligente para la gestión de tareas. Organiza tu día con ayuda de IA, recordatorios precisos y una interfaz moderna y fluida.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

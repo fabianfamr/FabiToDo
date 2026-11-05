@@ -154,11 +154,13 @@ fun TaskScreen(
         }
     }
 
-    LaunchedEffect(shouldShowAddDialog) {
+    val prefilledTask by viewModel.prefilledTask.collectAsStateWithLifecycle()
+    LaunchedEffect(shouldShowAddDialog, prefilledTask) {
         if (shouldShowAddDialog) {
-            taskToEdit = null
+            taskToEdit = prefilledTask
             showAddEditDialog = true
             viewModel.setShouldShowAddDialog(false)
+            viewModel.consumePrefilledTask()
         }
     }
 
