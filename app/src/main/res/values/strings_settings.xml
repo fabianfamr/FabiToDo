@@ -10,6 +10,8 @@
     <string name="about_open_source_licenses_subtitle">Third-party components and free software notice</string>
     <string name="settings_about_title">About FabiToDo</string>
     <string name="settings_about_desc">App information, creator details, and software licenses</string>
+    <string name="about_contributors_section_title">Contributors &amp; Community</string>
+    <string name="about_contributors_section_subtitle">Prepared space for future open source contributors</string>
     <string name="account_guest">You are signed in as Guest</string>
     <string name="account_guest_desc">You are not signed in with any account.</string>
     <string name="accounts_active">Active</string>

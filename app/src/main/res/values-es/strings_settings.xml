@@ -10,6 +10,8 @@
     <string name="about_open_source_licenses_subtitle">Aviso de software libre y bibliotecas de terceros</string>
     <string name="settings_about_title">Acerca de FabiToDo</string>
     <string name="settings_about_desc">Información de la app, créditos del creador y licencias</string>
+    <string name="about_contributors_section_title">Colaboradores del Proyecto</string>
+    <string name="about_contributors_section_subtitle">Espacio preparado para futuros desarrolladores y colaboradores</string>
     <string name="account_guest">Estás como Invitado</string>
     <string name="account_guest_desc">No has iniciado sesión con ninguna cuenta.</string>
     <string name="accounts_active">Activa</string>

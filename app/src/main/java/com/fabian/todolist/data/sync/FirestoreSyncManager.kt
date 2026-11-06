@@ -244,7 +244,7 @@ class FirestoreSyncManager @Inject constructor(
             val rawCatsJson = prefs.getString("custom_categories", null)
             val parsedList = parseCategoryList(rawCatsJson ?: "")
             val userCats = parsedList.filter { !SystemCategory.isSystemCategory(it) }
-            val finalUserCats = if (userCats.isNotEmpty()) {
+            val finalUserCats = if (rawCatsJson != null) {
                 userCats
             } else {
                 listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")

@@ -308,6 +308,17 @@ fun SettingsPreferencesDialog(
                                 iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsAccount,
                                 onClick = { currentDestination = SettingsDestinations.ACCOUNT }
                             )
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                            )
+                            SettingsPreferenceItem(
+                                title = stringResource(R.string.settings_about_title),
+                                subtitle = stringResource(R.string.settings_about_desc),
+                                icon = Icons.Default.Info,
+                                iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                onClick = { currentDestination = SettingsDestinations.ABOUT }
+                            )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                     }
@@ -511,38 +522,6 @@ fun SettingsPreferencesDialog(
                                 icon = Icons.Default.Lock,
                                 iconContainerColor = com.fabian.todolist.ui.theme.AppColors.SettingsSecurity,
                                 onClick = { currentDestination = SettingsDestinations.SECURITY }
-                            )
-                        }
-                    }
-
-                    // --- Grupo 6: Información de la Aplicación ---
-                    item {
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(16.dp, 6.dp)
-                                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(3.dp))
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = stringResource(R.string.about_screen_title),
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Black,
-                                color = MaterialTheme.colorScheme.primary,
-                                letterSpacing = 1.sp
-                            )
-                        }
-                        SettingsSectionCard {
-                            SettingsPreferenceItem(
-                                title = stringResource(R.string.settings_about_title),
-                                subtitle = stringResource(R.string.settings_about_desc),
-                                icon = Icons.Default.Info,
-                                iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                onClick = { currentDestination = SettingsDestinations.ABOUT }
                             )
                         }
                     }

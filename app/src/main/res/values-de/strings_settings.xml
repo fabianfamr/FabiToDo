@@ -10,6 +10,8 @@
     <string name="about_open_source_licenses_subtitle">Drittanbieter-Komponenten und Freie Software</string>
     <string name="settings_about_title">Über FabiToDo</string>
     <string name="settings_about_desc">App-Informationen, Entwickler und Lizenzen</string>
+    <string name="about_contributors_section_title">Mitwirkende &amp; Community</string>
+    <string name="about_contributors_section_subtitle">Vorbereiteter Bereich für zukünftige Entwickler</string>
     <string name="account_guest">Als Gast angemeldet</string>
     <string name="account_guest_desc">Sie sind mit keinem Konto angemeldet.</string>
     <string name="accounts_active">Aktiv</string>

@@ -3,7 +3,6 @@ package com.fabian.todolist.ui
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -13,7 +12,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.*
@@ -22,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.fabian.todolist.R
+import com.fabian.todolist.ui.components.settings.SettingsSubmenuScaffold
 
 data class AppContributor(
     val id: String,
@@ -45,14 +43,24 @@ data class AppContributor(
     val url: String? = null
 )
 
-private val MainDeveloper = AppContributor(
-    id = "fabian",
+private val OwnerAndDeveloper = AppContributor(
+    id = "fabian_owner",
     displayName = "Fabián",
-    role = "Creador y Desarrollador Principal",
-    detail = "Diseño de experiencia de usuario, sincronización Firestore y arquitectura Jetpack Compose.",
-    badge = "Desarrollador",
+    role = "Dueño y Desarrollador Principal",
+    detail = "Creador, propietario exclusivo y arquitecto de la aplicación FabiToDo.",
+    badge = "Dueño y Creador",
     iconVector = Icons.Rounded.Code,
-    url = "https://github.com"
+    url = "https://github.com/fabianfamr"
+)
+
+private val FutureContributorsPlaceholder = AppContributor(
+    id = "future_contributors",
+    displayName = "Futuros Colaboradores",
+    role = "Comunidad & Código Abierto",
+    detail = "Espacio preparado para integrar y reconocer a los desarrolladores que colaboren en el futuro.",
+    badge = "Abierto a Colaborar",
+    iconVector = Icons.Rounded.GroupAdd,
+    url = "https://github.com/fabianfamr"
 )
 
 private val AppFeaturesList = listOf(
@@ -82,7 +90,6 @@ private val AppFeaturesList = listOf(
     )
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     onBackClick: () -> Unit,
@@ -92,106 +99,99 @@ fun AboutScreen(
     val versionName: String = remember {
         try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            packageInfo.versionName ?: "1.35.0"
+            packageInfo.versionName ?: "1.35.2"
         } catch (_: Exception) {
-            "1.35.0"
+            "1.35.2"
         }
     }
 
     val lazyListState = rememberLazyListState()
 
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    SettingsSubmenuScaffold(
+        title = stringResource(R.string.about_screen_title),
+        onBack = onBackClick,
+        modifier = modifier
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // Top App Bar
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.about_screen_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.nav_back)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+        LazyColumn(
+            state = lazyListState,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Hero Banner Card
+            item(key = "about_hero") {
+                AboutHeroCard(
+                    versionName = versionName,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            )
+            }
 
-            LazyColumn(
-                state = lazyListState,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Hero Banner Card
-                item(key = "about_hero") {
-                    AboutHeroCard(
-                        versionName = versionName,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+            // Owner & Lead Developer Header & Card
+            item(key = "maintainer_header") {
+                AboutSectionHeader(
+                    title = stringResource(R.string.about_maintainer_title),
+                    subtitle = stringResource(R.string.about_maintainer_subtitle)
+                )
+            }
 
-                // Maintainer Header & Card
-                item(key = "maintainer_header") {
-                    AboutSectionHeader(
-                        title = stringResource(R.string.about_maintainer_title),
-                        subtitle = stringResource(R.string.about_maintainer_subtitle)
-                    )
-                }
+            item(key = "maintainer_card") {
+                ContributorCard(
+                    contributor = OwnerAndDeveloper,
+                    modifier = Modifier.fillMaxWidth(),
+                    onCardClick = OwnerAndDeveloper.url?.let { url -> { openUrl(context, url) } }
+                )
+            }
 
-                item(key = "maintainer_card") {
-                    ContributorCard(
-                        contributor = MainDeveloper,
-                        modifier = Modifier.fillMaxWidth(),
-                        onCardClick = MainDeveloper.url?.let { url -> { openUrl(context, url) } }
-                    )
-                }
+            // Future Contributors Section
+            item(key = "future_contributors_header") {
+                AboutSectionHeader(
+                    title = stringResource(R.string.about_contributors_section_title),
+                    subtitle = stringResource(R.string.about_contributors_section_subtitle)
+                )
+            }
 
-                // Features Header & Items
-                item(key = "features_header") {
-                    AboutSectionHeader(
-                        title = stringResource(R.string.about_spotlight_title),
-                        subtitle = stringResource(R.string.about_spotlight_subtitle)
-                    )
-                }
+            item(key = "future_contributors_card") {
+                ContributorCard(
+                    contributor = FutureContributorsPlaceholder,
+                    modifier = Modifier.fillMaxWidth(),
+                    onCardClick = FutureContributorsPlaceholder.url?.let { url -> { openUrl(context, url) } }
+                )
+            }
 
-                itemsIndexed(
-                    items = AppFeaturesList,
-                    key = { _, feature -> "feature_${feature.id}" }
-                ) { _, feature ->
-                    ContributorCard(
-                        contributor = feature,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+            // Features Header & Items
+            item(key = "features_header") {
+                AboutSectionHeader(
+                    title = stringResource(R.string.about_spotlight_title),
+                    subtitle = stringResource(R.string.about_spotlight_subtitle)
+                )
+            }
 
-                // Open Source Licenses Header & Card
-                item(key = "licenses_header") {
-                    AboutSectionHeader(
-                        title = stringResource(R.string.about_open_source_licenses),
-                        subtitle = stringResource(R.string.about_open_source_licenses_subtitle)
-                    )
-                }
+            itemsIndexed(
+                items = AppFeaturesList,
+                key = { _, feature -> "feature_${feature.id}" }
+            ) { _, feature ->
+                ContributorCard(
+                    contributor = feature,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
-                item(key = "licenses_card") {
-                    OpenSourceLicensesCard(
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+            // Open Source Licenses Header & Card
+            item(key = "licenses_header") {
+                AboutSectionHeader(
+                    title = stringResource(R.string.about_open_source_licenses),
+                    subtitle = stringResource(R.string.about_open_source_licenses_subtitle)
+                )
+            }
 
-                item(key = "bottom_spacer") {
-                    Spacer(modifier = Modifier.height(32.dp))
-                }
+            item(key = "licenses_card") {
+                OpenSourceLicensesCard(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item(key = "bottom_spacer") {
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
@@ -206,10 +206,10 @@ private fun AboutHeroCard(
 
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        tonalElevation = 2.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+        shape = RoundedCornerShape(26.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+        tonalElevation = 1.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
     ) {
         Column(
             modifier = Modifier

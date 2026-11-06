@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     private val prefs = application.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
 
     private fun triggerSettingsCloudPush() {
-        prefs.edit().putLong("last_settings_local_update", System.currentTimeMillis()).apply()
+        prefs.edit().putLong("last_settings_local_update", System.currentTimeMillis()).commit()
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             firestoreSyncManager.pushUserSettings()
         }
@@ -447,7 +447,7 @@ class SettingsViewModel @Inject constructor(
 
         val jsonArray = JSONArray()
         fullList.forEach { jsonArray.put(it) }
-        prefs.edit().putString("custom_categories", jsonArray.toString()).apply()
+        prefs.edit().putString("custom_categories", jsonArray.toString()).commit()
         _categories.value = fullList
         triggerSettingsCloudPush()
     }
@@ -495,7 +495,7 @@ class SettingsViewModel @Inject constructor(
             _categoryColors.value = colorMap
             val jsonObject = JSONObject()
             colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+            prefs.edit().putString("category_colors", jsonObject.toString()).commit()
         }
 
         val iconMap = _categoryIcons.value.toMutableMap()
@@ -504,7 +504,7 @@ class SettingsViewModel @Inject constructor(
             _categoryIcons.value = iconMap
             val jsonObject = JSONObject()
             iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+            prefs.edit().putString("category_icons", jsonObject.toString()).commit()
         }
 
         // 3. Save remaining categories and push to cloud
@@ -534,7 +534,7 @@ class SettingsViewModel @Inject constructor(
             _categoryColors.value = colorMap
             val jsonObject = JSONObject()
             colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+            prefs.edit().putString("category_colors", jsonObject.toString()).commit()
         }
 
         val iconMap = _categoryIcons.value.toMutableMap()
@@ -544,7 +544,7 @@ class SettingsViewModel @Inject constructor(
             _categoryIcons.value = iconMap
             val jsonObject = JSONObject()
             iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+            prefs.edit().putString("category_icons", jsonObject.toString()).commit()
         }
 
         // 3. Update category list and push to cloud
@@ -592,7 +592,7 @@ class SettingsViewModel @Inject constructor(
         _categoryColors.value = newMap
         val jsonObject = JSONObject()
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
-        prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+        prefs.edit().putString("category_colors", jsonObject.toString()).commit()
         triggerSettingsCloudPush()
     }
 
@@ -602,7 +602,7 @@ class SettingsViewModel @Inject constructor(
         _categoryIcons.value = newMap
         val jsonObject = JSONObject()
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
-        prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+        prefs.edit().putString("category_icons", jsonObject.toString()).commit()
         triggerSettingsCloudPush()
     }
 

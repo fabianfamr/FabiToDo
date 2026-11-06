@@ -136,14 +136,6 @@ fun getLocalizedCategoryName(context: Context, category: String): String {
         SystemCategory.TRASH, "Trash" -> context.getString(R.string.trash_title)
         SystemCategory.CALENDAR, "Calendar" -> context.getString(R.string.calendar_nav_title)
         SystemCategory.EISENHOWER, "Eisenhower" -> context.getString(R.string.priority_matrix)
-        "Personal", "Personnel" -> context.getString(R.string.category_personal)
-        "Trabajo", "Work", "Travail", "Arbeit" -> context.getString(R.string.category_work)
-        "Compras", "Shopping", "Achats", "Einkaufen" -> context.getString(R.string.category_shopping)
-        "Hogar", "Home", "Maison", "Casa", "Zuhause" -> context.getString(R.string.category_home)
-        "Salud", "Health", "Santé", "Saúde", "Gesundheit" -> context.getString(R.string.category_health)
-        "Estudios", "Education", "Studies", "Escuela" -> context.getString(R.string.category_studies)
-        "Matriz de Eisenhower", "Matriz de Prioridades" -> context.getString(R.string.priority_matrix)
-        "Calendario", "Calendar", "Agenda" -> context.getString(R.string.calendar_nav_title)
         else -> category
     }
 }
