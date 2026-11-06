@@ -66,7 +66,10 @@ fun AISettingsDialog(
     var keyVisible by remember { mutableStateOf(false) }
     
     // Testing states
-    var testTaskTitle by remember { mutableStateOf(stringResource(R.string.ai_test_task_default)) }
+    // CORRECCIÓN: stringResource() no puede llamarse dentro del lambda de
+    // remember{} (no es componible). Se resuelve antes y se captura el valor.
+    val defaultTestTaskTitle = stringResource(R.string.ai_test_task_default)
+    var testTaskTitle by remember { mutableStateOf(defaultTestTaskTitle) }
     var testInProgress by remember { mutableStateOf(false) }
     var testSuccess by remember { mutableStateOf<Boolean?>(null) }
     var testErrorMsg by remember { mutableStateOf<String?>(null) }

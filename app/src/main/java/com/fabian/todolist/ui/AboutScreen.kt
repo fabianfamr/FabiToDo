@@ -114,6 +114,10 @@ fun AboutScreen(
 
     val lazyListState = rememberLazyListState()
 
+    // CORRECCIÓN: resolver los datos componibles aquí (contexto @Composable),
+    // no dentro del scope de LazyColumn (LazyListScope no es componible).
+    val features = appFeaturesList()
+
     SettingsSubmenuScaffold(
         title = stringResource(R.string.about_screen_title),
         onBack = onBackClick,
@@ -141,8 +145,10 @@ fun AboutScreen(
                 )
             }
 
-            val owner = ownerAndDeveloper()
             item(key = "maintainer_card") {
+                // CORRECCIÓN: ownerAndDeveloper() es @Composable; debe llamarse
+                // dentro del lambda item{} (contexto componible), no en LazyListScope.
+                val owner = ownerAndDeveloper()
                 ContributorCard(
                     contributor = owner,
                     modifier = Modifier.fillMaxWidth(),
@@ -176,7 +182,7 @@ fun AboutScreen(
             }
 
             itemsIndexed(
-                items = appFeaturesList(),
+                items = features,
                 key = { _, feature -> "feature_${feature.id}" }
             ) { _, feature ->
                 ContributorCard(
