@@ -46,50 +46,53 @@ data class AppContributor(
     val url: String? = null
 )
 
-private val OwnerAndDeveloper = AppContributor(
+@Composable
+private fun ownerAndDeveloper(): AppContributor = AppContributor(
     id = "fabian_owner",
     displayName = "Fabián",
-    role = "Dueño y Desarrollador Principal",
-    detail = "Creador, propietario exclusivo y arquitecto de la aplicación FabiToDo.",
-    badge = "Dueño y Creador",
+    role = stringResource(R.string.about_owner_role),
+    detail = stringResource(R.string.about_owner_detail),
+    badge = stringResource(R.string.about_owner_badge),
     iconVector = Icons.Rounded.Code,
     avatarUrl = "https://github.com/fabianfamr.png",
     url = "https://github.com/fabianfamr"
 )
 
-private val FutureContributorsPlaceholder = AppContributor(
+@Composable
+private fun futureContributorsPlaceholder(): AppContributor = AppContributor(
     id = "future_contributors",
-    displayName = "Futuros Colaboradores",
-    role = "Comunidad & Código Abierto",
-    detail = "Espacio preparado para integrar y reconocer a los desarrolladores que colaboren en el futuro.",
-    badge = "Abierto a Colaborar",
+    displayName = stringResource(R.string.about_future_contributors_name),
+    role = stringResource(R.string.about_future_contributors_role),
+    detail = stringResource(R.string.about_future_contributors_detail),
+    badge = stringResource(R.string.about_future_contributors_badge),
     iconVector = Icons.Rounded.GroupAdd,
     url = "https://github.com/fabianfamr"
 )
 
-private val AppFeaturesList = listOf(
+@Composable
+private fun appFeaturesList(): List<AppContributor> = listOf(
     AppContributor(
         id = "cloud_sync",
-        displayName = "Sincronización en la Nube",
-        role = "Google Cloud Firestore",
-        detail = "Copia de seguridad en tiempo real y sincronización en múltiples dispositivos.",
-        badge = "Firestore",
+        displayName = stringResource(R.string.about_feature_cloud_name),
+        role = stringResource(R.string.about_feature_cloud_role),
+        detail = stringResource(R.string.about_feature_cloud_detail),
+        badge = stringResource(R.string.about_feature_cloud_badge),
         iconVector = Icons.Rounded.CloudSync
     ),
     AppContributor(
         id = "ai_gemini",
-        displayName = "Inteligencia Artificial Gemini",
-        role = "Firebase AI Logic",
-        detail = "Desglose automático de tareas en pasos estructurados e intuitivos.",
-        badge = "IA Gemini",
+        displayName = stringResource(R.string.about_feature_ai_name),
+        role = stringResource(R.string.about_feature_ai_role),
+        detail = stringResource(R.string.about_feature_ai_detail),
+        badge = stringResource(R.string.about_feature_ai_badge),
         iconVector = Icons.Rounded.AutoAwesome
     ),
     AppContributor(
         id = "m3_design",
-        displayName = "Material Design 3",
-        role = "Jetpack Compose Expressive",
-        detail = "Interfaz adaptable con colores dinámicos, modo oscuro y animaciones fluidas.",
-        badge = "Material 3",
+        displayName = stringResource(R.string.about_feature_design_name),
+        role = stringResource(R.string.about_feature_design_role),
+        detail = stringResource(R.string.about_feature_design_detail),
+        badge = stringResource(R.string.about_feature_design_badge),
         iconVector = Icons.Rounded.Palette
     )
 )
@@ -138,11 +141,12 @@ fun AboutScreen(
                 )
             }
 
+            val owner = ownerAndDeveloper()
             item(key = "maintainer_card") {
                 ContributorCard(
-                    contributor = OwnerAndDeveloper,
+                    contributor = owner,
                     modifier = Modifier.fillMaxWidth(),
-                    onCardClick = OwnerAndDeveloper.url?.let { url -> { openUrl(context, url) } }
+                    onCardClick = owner.url?.let { url -> { openUrl(context, url) } }
                 )
             }
 
@@ -155,10 +159,11 @@ fun AboutScreen(
             }
 
             item(key = "future_contributors_card") {
+                val futureContributors = futureContributorsPlaceholder()
                 ContributorCard(
-                    contributor = FutureContributorsPlaceholder,
+                    contributor = futureContributors,
                     modifier = Modifier.fillMaxWidth(),
-                    onCardClick = FutureContributorsPlaceholder.url?.let { url -> { openUrl(context, url) } }
+                    onCardClick = futureContributors.url?.let { url -> { openUrl(context, url) } }
                 )
             }
 
@@ -171,7 +176,7 @@ fun AboutScreen(
             }
 
             itemsIndexed(
-                items = AppFeaturesList,
+                items = appFeaturesList(),
                 key = { _, feature -> "feature_${feature.id}" }
             ) { _, feature ->
                 ContributorCard(
@@ -226,7 +231,7 @@ private fun AboutHeroCard(
             ) {
                 AsyncImage(
                     model = R.drawable.ic_app_icon_foreground,
-                    contentDescription = "FabiToDo App Icon",
+                    contentDescription = stringResource(R.string.desc_app_icon),
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape)
@@ -238,7 +243,7 @@ private fun AboutHeroCard(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "FabiToDo",
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.onSurface
@@ -284,9 +289,9 @@ private fun AboutHeroCard(
 @Composable
 private fun CommunitySignalsRow() {
     val signals = listOf(
-        "100% Android Native" to Icons.Rounded.Android,
-        "Jetpack Compose" to Icons.Rounded.Code,
-        "Google Cloud" to Icons.Rounded.Cloud
+        stringResource(R.string.about_signal_native) to Icons.Rounded.Android,
+        stringResource(R.string.about_signal_compose) to Icons.Rounded.Code,
+        stringResource(R.string.about_signal_cloud) to Icons.Rounded.Cloud
     )
 
     FlowRow(

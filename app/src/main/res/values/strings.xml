@@ -657,6 +657,45 @@
     <string name="toast_signed_out">Signed out successfully</string>
     <string name="toast_signed_in">Signed in successfully</string>
 
+    <!-- ===== Texto extraído de pantallas (antes hardcodeado en Kotlin) ===== -->
+    <string name="desc_app_icon">FabiToDo app icon</string>
+    <string name="about_owner_role">Owner &amp; Lead Developer</string>
+    <string name="about_owner_detail">Creator, sole owner and architect of the FabiToDo application.</string>
+    <string name="about_owner_badge">Owner &amp; Creator</string>
+    <string name="about_future_contributors_name">Future Contributors</string>
+    <string name="about_future_contributors_role">Community &amp; Open Source</string>
+    <string name="about_future_contributors_detail">Reserved space to recognize the developers who collaborate in the future.</string>
+    <string name="about_future_contributors_badge">Open to Collaborate</string>
+    <string name="about_feature_cloud_name">Cloud Sync</string>
+    <string name="about_feature_cloud_role" translatable="false">Google Cloud Firestore</string>
+    <string name="about_feature_cloud_detail">Real-time backup and synchronization across multiple devices.</string>
+    <string name="about_feature_cloud_badge" translatable="false">Firestore</string>
+    <string name="about_feature_ai_name">Gemini Artificial Intelligence</string>
+    <string name="about_feature_ai_role" translatable="false">Firebase AI Logic</string>
+    <string name="about_feature_ai_detail">Automatic breakdown of tasks into structured, intuitive steps.</string>
+    <string name="about_feature_ai_badge">Gemini AI</string>
+    <string name="about_feature_design_name" translatable="false">Material Design 3</string>
+    <string name="about_feature_design_role" translatable="false">Jetpack Compose Expressive</string>
+    <string name="about_feature_design_detail">Adaptive interface with dynamic colors, dark mode and smooth animations.</string>
+    <string name="about_feature_design_badge" translatable="false">Material 3</string>
+    <string name="about_signal_native">100% Android Native</string>
+    <string name="about_signal_compose" translatable="false">Jetpack Compose</string>
+    <string name="about_signal_cloud" translatable="false">Google Cloud</string>
+    <string name="date_format_dmy_desc">Day / Month / Year (e.g. 30/05/26)</string>
+    <string name="date_format_mdy_desc">Month / Day / Year (e.g. 05/30/26)</string>
+    <string name="date_format_ymd_desc">Year / Month / Day (e.g. 26/05/30)</string>
+    <string name="time_format_12h_desc">12-hour - AM/PM (e.g. 02:30 PM)</string>
+    <string name="time_format_24h_desc">24-hour (e.g. 14:30)</string>
+    <string name="account_last_sync_value">Last sync: %1$s</string>
+    <string name="auth_error_unsupported_credential">Unsupported credential type</string>
+    <string name="quick_add_fallback_message">Organize your day with FabiToDo</string>
+    <string name="category_icon_count">%1$s (%2$d)</string>
+
+    <plurals name="scheduled_tasks_count">
+        <item quantity="one">%d scheduled task</item>
+        <item quantity="other">%d scheduled tasks</item>
+    </plurals>
+
     <string-array name="quick_add_suggestions">
         <item>What\'s on your mind today? Register a new task.</item>
         <item>One step at a time! Record your pending tasks.</item>

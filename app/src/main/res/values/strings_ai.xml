@@ -109,4 +109,18 @@
     <string name="ai_result_error_title">Communication Issue</string>
     <string name="ai_result_error_generic">Unable to establish communication with the Gemini model.</string>
     <string name="ai_result_error_tips">Please check your internet connection and try again.</string>
+
+    <!-- ===== Texto extraído de Kotlin (antes hardcodeado) ===== -->
+    <string name="ai_test_task_default">Prepare an important presentation</string>
+    <string name="ai_key_type_public_desc">Built-in Google AI / Firebase infrastructure</string>
+    <string name="ai_key_type_custom_desc">Use a custom Google AI Studio API key</string>
+    <string name="ai_model_desc_fast">Gemini 3.5 • High speed and low consumption</string>
+    <string name="ai_model_desc_advanced">Gemini 4 • Advanced reasoning and depth</string>
+    <string name="ai_model_desc_balanced">Gemini 3.8 • Optimal balance of accuracy and fluency</string>
+    <string name="ai_error_invalid_format">Invalid response format from AI</string>
+    <string name="ai_error_no_response">No response from AI</string>
+    <string name="ai_error_unknown">Unknown error</string>
+    <string name="ai_error_with_reason">Error: %1$s</string>
+    <string name="ai_error_empty_response">Model returned an empty response.</string>
+    <string name="ai_error_timeout">Generation timed out. Please try again.</string>
 </resources>

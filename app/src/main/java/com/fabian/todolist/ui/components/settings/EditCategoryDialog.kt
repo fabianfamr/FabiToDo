@@ -171,7 +171,7 @@ fun EditCategoryDialog(
 
                 // Icon Selector with Search (100 icons)
                 Text(
-                    text = stringResource(R.string.category_icon) + " (100)",
+                    text = stringResource(R.string.category_icon_count, stringResource(R.string.category_icon), 100),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

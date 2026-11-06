@@ -40,32 +40,31 @@ object QuickAddNotificationHelper {
         val model = prefs.getString("ai_model", "gemini-3.5-flash-lite") ?: "gemini-3.5-flash-lite"
         
         val currentLocaleCode = context.resources.configuration.locales.get(0).language
-        val languageName = if (currentLocaleCode.startsWith("es")) "Spanish" else "English"
+        val isSpanish = currentLocaleCode.startsWith("es")
+        // Nombre del idioma activo (en inglés) para pedirle al modelo que responda
+        // en el idioma del usuario: funciona con todos los idiomas soportados.
+        val responseLanguageName = context.resources.configuration.locales.get(0)
+            .getDisplayName(java.util.Locale.ENGLISH).ifBlank { "English" }
 
         val calendar = java.util.Calendar.getInstance()
         val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
-        val dayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
-        
-        val dayOfWeekName = when (dayOfWeek) {
-            java.util.Calendar.SUNDAY -> "Domingo"
-            java.util.Calendar.MONDAY -> "Lunes"
-            java.util.Calendar.TUESDAY -> "Martes"
-            java.util.Calendar.WEDNESDAY -> "Miércoles"
-            java.util.Calendar.THURSDAY -> "Jueves"
-            java.util.Calendar.FRIDAY -> "Viernes"
-            java.util.Calendar.SATURDAY -> "Sábado"
-            else -> "Today"
-        }
-        
+
+        // Nombre del día calculado con el locale del prompt (no hardcodeado),
+        // de modo que funciona igual con cualquiera de los 16 idiomas.
+        val dayOfWeekName = java.text.SimpleDateFormat(
+            "EEEE",
+            if (isSpanish) java.util.Locale("es") else java.util.Locale.ENGLISH
+        ).format(calendar.time)
+
         val timeOfDaySegment = when {
-            hour in 6..11 -> "Mañana"
-            hour in 12..17 -> "Tarde"
-            hour in 18..22 -> "Noche"
-            else -> "Madrugada"
+            hour in 6..11 -> if (isSpanish) "Mañana" else "Morning"
+            hour in 12..17 -> if (isSpanish) "Tarde" else "Afternoon"
+            hour in 18..22 -> if (isSpanish) "Noche" else "Evening"
+            else -> if (isSpanish) "Madrugada" else "Late night"
         }
 
         // Construct context-aware motivational dynamically tailored prompt
-        val prompt = if (languageName == "Spanish") {
+        val prompt = if (isSpanish) {
             """
             Estamos a día $dayOfWeekName y el reloj marca las $hour:00 h ($timeOfDaySegment).
             Escribe una sola frase fresquísima, empática, alegre, muy creativa y corta (máximo 85 caracteres) que me inspire a abrir la app FabiToDo y registrar mis tareas.
@@ -77,6 +76,7 @@ object QuickAddNotificationHelper {
             Today is $dayOfWeekName and the current local hour is $hour:00 ($timeOfDaySegment).
             Write a single fresh, friendly, encouraging, and brief reminder sentence (maximum 85 characters) to motivate me to open FabiToDo and write my pending tasks of today.
             Tailor the energy to the time of day and the week (e.g., active morning starter, focused afternoon boost, cozy evening wrap-up, or relaxed weekend vibe).
+            IMPORTANT: Write your answer in $responseLanguageName.
             No hashtags, no quotes, and no markdown format.
             """.trimIndent()
         }
@@ -88,7 +88,8 @@ object QuickAddNotificationHelper {
                     prompt = prompt,
                     systemInstructionText = "You are a context-aware, highly empathetic and charismatic task companion. Always write exactly one brief line, strictly under 85 characters, with absolutely no formatting, quotes, or markdown.",
                     lowLatency = true,
-                    timeoutMs = 15_000L
+                    timeoutMs = 15_000L,
+                    userContext = context
                 )
                 text.replace("\"", "").replace("'", "").trim()
             } else if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
@@ -158,7 +159,7 @@ object QuickAddNotificationHelper {
         val randomSuggestion = customMessage ?: if (suggestions.isNotEmpty()) {
             suggestions[Random.nextInt(suggestions.size)]
         } else {
-            "Organize your day with FabiToDo"
+            context.getString(R.string.quick_add_fallback_message)
         }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)

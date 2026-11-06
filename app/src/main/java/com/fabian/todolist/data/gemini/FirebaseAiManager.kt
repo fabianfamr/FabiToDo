@@ -1,6 +1,8 @@
 package com.fabian.todolist.data.gemini
 
+import android.content.Context
 import android.util.Log
+import com.fabian.todolist.R
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.content
@@ -32,7 +34,8 @@ object FirebaseAiManager {
         prompt: String,
         systemInstructionText: String? = null,
         lowLatency: Boolean = false,
-        timeoutMs: Long = 60_000L
+        timeoutMs: Long = 60_000L,
+        userContext: Context? = null
     ): String {
         val targetModelName = mapToSupportedModel(modelName, lowLatency)
         Log.d(TAG, "Initializing Firebase AI model: $targetModelName")
@@ -49,12 +52,18 @@ object FirebaseAiManager {
                 if (!text.isNullOrBlank()) {
                     text
                 } else {
-                    throw IllegalStateException("Model returned an empty response.")
+                    throw IllegalStateException(
+                        userContext?.getString(R.string.ai_error_empty_response)
+                            ?: "Model returned an empty response."
+                    )
                 }
             }
         } catch (e: TimeoutCancellationException) {
             Log.e(TAG, "Gemini generation timed out after ${timeoutMs}ms", e)
-            throw IllegalStateException("Generation timed out. Please try again.")
+            throw IllegalStateException(
+                userContext?.getString(R.string.ai_error_timeout)
+                    ?: "Generation timed out. Please try again."
+            )
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

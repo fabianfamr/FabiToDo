@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Kontua egiaztatzen…</string>
+    <string name="auth_state_error">Autentifikazio-errorea: %s</string>
+    <string name="auth_state_success">Saioa arrakastaz hasi da</string>
+    <string name="desc_error">Errorea</string>
+    <string name="desc_priority">Lehentasuna</string>
+    <string name="desc_safe_storage">Babestutako biltegiratzea</string>
+    <string name="desc_success">Arrakasta</string>
+    <string name="desc_task_done">Ataza osatuta</string>
+    <string name="error_empty_credentials">Idatzi helbide elektronikoa eta pasahitza.</string>
+    <string name="error_google_login">Ezin izan dira Google kontuak eskuratu</string>
+    <string name="error_login_canceled">Saioa hastea bertan behera utzi da</string>
+    <string name="error_no_accounts">Ez da Google konturik antzeman. Modu lokalean jarraitu dezakezu edo web bidez hasi saioa.</string>
+    <string name="error_password_too_short">Pasahitzak 6 karaktere izan behar ditu gutxienez.</string>
+    <string name="google_btn_loading">Konektatzen…</string>
+    <string name="google_feat_backup">Hodeiko babeskopia automatikoak</string>
+    <string name="google_feat_secure">Hodeiko biltegiratze segurua</string>
+    <string name="google_feat_sync">Zure atazak gailu guztietan</string>
+    <string name="google_login_button">Hasi saioa Google ID-arekin</string>
+    <string name="google_login_desc">Sinkronizatu zure atazak modu seguruan gailu guztietan hodeiko babeskopia automatikoekin.</string>
+    <string name="google_login_footer">Autentifikazio segurua Google-ren bidez</string>
+    <string name="google_login_guest_fallback_button">Jarraitu modu lokalean</string>
+    <string name="google_login_guest_fallback_desc">Ez da kontu aktiborik aurkitu gailu honetan. Modu lokalean jarraitu dezakezu zure atazak gailu honetan gordetzeko edo web nabigatzailearen bidez hasi saioa.</string>
+    <string name="google_login_guest_fallback_title">Ez da Google konturik antzeman</string>
+    <string name="google_login_title">Sarbide segurua</string>
+    <string name="google_login_web_desc">Ireki nabigatzaile segurua Google kontuarekin saioa hasteko.</string>
+    <string name="google_login_web_option">Saioa hastea web nabigatzailearen bidez</string>
+    <string name="guest_user">Gonbidatua</string>
+    <string name="login_button_google">Jarraitu Google-rekin</string>
+    <string name="login_button_guest">Jarraitu gonbidatu gisa</string>
+    <string name="login_desc_main">Antolatu zure eguneroko atazak, antolatu oroigarriak eta kudeatu zure ekoiztasuna argitasunez.</string>
+    <string name="login_description">Hasi saioa Google kontuarekin zure atazak modu seguruan gailu guztietan sinkronizatzeko.</string>
+    <string name="login_footer_text">Zure atazak modu pribatu eta seguruan gordetzen dira zure gailuan.</string>
+    <string name="login_google_btn">Jarraitu Google-rekin</string>
+    <string name="login_guest_btn">Jarraitu modu lokalean</string>
+    <string name="login_perks_title">Zergatik hasi saioa?</string>
+    <string name="login_start_btn">Hasi</string>
+    <string name="login_subtitle">Zure egunerko jardueretarako planifikazio egituratua.</string>
+    <string name="login_tagline">Antolakuntza egituratua eta argia</string>
+    <string name="login_title">Ongi etorri FabiToDo-ra</string>
+    <string name="login_welcome">Ataza- eta ordutegi-kudeaketa</string>
+</resources>

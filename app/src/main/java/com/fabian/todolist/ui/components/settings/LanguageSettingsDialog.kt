@@ -70,7 +70,17 @@ fun LanguageSettingsDialog(
                         "pt" to (null to "🇧🇷"),
                         "fr" to (null to "🇫🇷"),
                         "de" to (null to "🇩🇪"),
-                        "it" to (null to "🇮🇹")
+                        "it" to (null to "🇮🇹"),
+                        "ca" to (null to "🇪🇸"),
+                        "gl" to (null to "🇪🇸"),
+                        "eu" to (null to "🇪🇸"),
+                        "nl" to (null to "🇳🇱"),
+                        "pl" to (null to "🇵🇱"),
+                        "ru" to (null to "🇷🇺"),
+                        "tr" to (null to "🇹🇷"),
+                        "ar" to (null to "🇸🇦"),
+                        "zh" to (null to "🇨🇳"),
+                        "ja" to (null to "🇯🇵")
                     )
 
                     items(languagesList, key = { it.first }) { (code, pair) ->
@@ -82,6 +92,16 @@ fun LanguageSettingsDialog(
                             "fr" -> "Français"
                             "de" -> "Deutsch"
                             "it" -> "Italiano"
+                            "ca" -> "Català"
+                            "gl" -> "Galego"
+                            "eu" -> "Euskara"
+                            "nl" -> "Nederlands"
+                            "pl" -> "Polski"
+                            "ru" -> "Русский"
+                            "tr" -> "Türkçe"
+                            "ar" -> "العربية"
+                            "zh" -> "中文"
+                            "ja" -> "日本語"
                             else -> stringResource(rawResString ?: R.string.lang_system)
                         }
 
@@ -92,6 +112,16 @@ fun LanguageSettingsDialog(
                             "fr" -> stringResource(R.string.lang_fr_sub)
                             "de" -> stringResource(R.string.lang_de_sub)
                             "it" -> stringResource(R.string.lang_it_sub)
+                            "ca" -> stringResource(R.string.lang_ca_sub)
+                            "gl" -> stringResource(R.string.lang_gl_sub)
+                            "eu" -> stringResource(R.string.lang_eu_sub)
+                            "nl" -> stringResource(R.string.lang_nl_sub)
+                            "pl" -> stringResource(R.string.lang_pl_sub)
+                            "ru" -> stringResource(R.string.lang_ru_sub)
+                            "tr" -> stringResource(R.string.lang_tr_sub)
+                            "ar" -> stringResource(R.string.lang_ar_sub)
+                            "zh" -> stringResource(R.string.lang_zh_sub)
+                            "ja" -> stringResource(R.string.lang_ja_sub)
                             else -> stringResource(R.string.lang_system_sub)
                         }
 

@@ -118,6 +118,30 @@ class MainActivity : AppCompatActivity() {
       val accentColor by settingsViewModel.themeAccent.collectAsStateWithLifecycle()
       val themeDark by settingsViewModel.themeDark.collectAsStateWithLifecycle()
 
+      // CORRECCIÓN: aplicar el idioma en caliente también cuando llega por
+      // sincronización remota. Antes solo se aplicaba al cambiarlo localmente o al
+      // reiniciar la app, así que el idioma sincronizado "parecía no sincronizar".
+      val languageCode by settingsViewModel.languageCode.collectAsStateWithLifecycle()
+      LaunchedEffect(languageCode) {
+        val appLocale = if (languageCode == "system") {
+          androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+        } else {
+          androidx.core.os.LocaleListCompat.forLanguageTags(languageCode)
+        }
+        if (androidx.appcompat.app.AppCompatDelegate.getApplicationLocales() != appLocale) {
+          androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(appLocale)
+        }
+      }
+
+      // CORRECCIÓN: reprogramar el recordatorio rápido cuando cambia el intervalo
+      // (local o remotamente). Antes solo se reprogramaba al reiniciar la app.
+      val quickAddInterval by settingsViewModel.quickAddNotificationInterval.collectAsStateWithLifecycle()
+      LaunchedEffect(quickAddInterval) {
+        com.fabian.todolist.util.QuickAddNotificationHelper.schedulePeriodicReminders(
+          this@MainActivity, quickAddInterval
+        )
+      }
+
       FabiToDoTheme(
         selectedColor = accentColor,
         selectedDarkTheme = themeDark

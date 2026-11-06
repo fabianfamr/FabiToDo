@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">正在检查账号…</string>
+    <string name="auth_state_error">认证错误：%s</string>
+    <string name="auth_state_success">登录成功</string>
+    <string name="desc_error">错误</string>
+    <string name="desc_priority">优先级</string>
+    <string name="desc_safe_storage">安全存储</string>
+    <string name="desc_success">成功</string>
+    <string name="desc_task_done">任务已完成</string>
+    <string name="error_empty_credentials">请输入电子邮件和密码。</string>
+    <string name="error_google_login">无法获取 Google 账号</string>
+    <string name="error_login_canceled">登录已取消</string>
+    <string name="error_no_accounts">未检测到 Google 账号。您可以继续使用本地模式，或通过网页登录。</string>
+    <string name="error_password_too_short">密码至少需要 6 个字符。</string>
+    <string name="google_btn_loading">正在连接…</string>
+    <string name="google_feat_backup">自动云端备份</string>
+    <string name="google_feat_secure">安全的云存储</string>
+    <string name="google_feat_sync">任务同步到您的所有设备</string>
+    <string name="google_login_button">使用 Google ID 登录</string>
+    <string name="google_login_desc">通过自动云端备份，在您的所有设备间安全同步任务。</string>
+    <string name="google_login_footer">通过 Google 进行安全认证</string>
+    <string name="google_login_guest_fallback_button">以本地模式继续</string>
+    <string name="google_login_guest_fallback_desc">未在此设备上找到活跃账号。您可以继续使用本地模式将任务存储在此设备上，或通过网页浏览器登录。</string>
+    <string name="google_login_guest_fallback_title">未检测到 Google 账号</string>
+    <string name="google_login_title">安全访问</string>
+    <string name="google_login_web_desc">打开安全浏览器，使用您的 Google 账号登录。</string>
+    <string name="google_login_web_option">网页浏览器登录</string>
+    <string name="guest_user">访客</string>
+    <string name="login_button_google">使用 Google 继续</string>
+    <string name="login_button_guest">以访客身份继续</string>
+    <string name="login_desc_main">整理每日任务、安排提醒，清晰管理您的生产力。</string>
+    <string name="login_description">使用您的 Google 账号登录，在所有设备间安全同步任务。</string>
+    <string name="login_footer_text">您的任务以私密且安全的方式存储在设备上。</string>
+    <string name="login_google_btn">使用 Google 继续</string>
+    <string name="login_guest_btn">以本地模式继续</string>
+    <string name="login_perks_title">为什么登录？</string>
+    <string name="login_start_btn">开始使用</string>
+    <string name="login_subtitle">为您的日常活动进行结构化规划。</string>
+    <string name="login_tagline">结构清晰的组织管理</string>
+    <string name="login_title">欢迎使用 FabiToDo</string>
+    <string name="login_welcome">任务与日程管理</string>
+</resources>

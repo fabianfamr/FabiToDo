@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Sprawdzanie konta…</string>
+    <string name="auth_state_error">Błąd uwierzytelniania: %s</string>
+    <string name="auth_state_success">Zalogowano pomyślnie</string>
+    <string name="desc_error">Błąd</string>
+    <string name="desc_priority">Priorytet</string>
+    <string name="desc_safe_storage">Bezpieczna pamięć</string>
+    <string name="desc_success">Powodzenie</string>
+    <string name="desc_task_done">Zadanie ukończone</string>
+    <string name="error_empty_credentials">Wpisz adres e-mail i hasło.</string>
+    <string name="error_google_login">Nie udało się pobrać kont Google</string>
+    <string name="error_login_canceled">Anulowano logowanie</string>
+    <string name="error_no_accounts">Nie wykryto kont Google. Możesz kontynuować w trybie lokalnym lub zalogować się przez przeglądarkę.</string>
+    <string name="error_password_too_short">Hasło musi mieć co najmniej 6 znaków.</string>
+    <string name="google_btn_loading">Łączenie…</string>
+    <string name="google_feat_backup">Automatyczne kopie zapasowe w chmurze</string>
+    <string name="google_feat_secure">Bezpieczny magazyn w chmurze</string>
+    <string name="google_feat_sync">Twoje zadania na wszystkich urządzeniach</string>
+    <string name="google_login_button">Zaloguj się przez Google ID</string>
+    <string name="google_login_desc">Synchronizuj zadania bezpiecznie na wszystkich urządzeniach z automatycznymi kopiami zapasowymi w chmurze.</string>
+    <string name="google_login_footer">Bezpieczne logowanie przez Google</string>
+    <string name="google_login_guest_fallback_button">Kontynuuj w trybie lokalnym</string>
+    <string name="google_login_guest_fallback_desc">Nie znaleziono aktywnego konta na tym urządzeniu. Możesz kontynuować w trybie lokalnym, aby zapisywać zadania na tym urządzeniu, lub zalogować się przez przeglądarkę.</string>
+    <string name="google_login_guest_fallback_title">Nie wykryto konta Google</string>
+    <string name="google_login_title">Bezpieczny dostęp</string>
+    <string name="google_login_web_desc">Otwórz bezpieczną przeglądarkę, aby zalogować się kontem Google.</string>
+    <string name="google_login_web_option">Logowanie przez przeglądarkę</string>
+    <string name="guest_user">Gość</string>
+    <string name="login_button_google">Kontynuuj z Google</string>
+    <string name="login_button_guest">Kontynuuj jako gość</string>
+    <string name="login_desc_main">Uporządkuj codzienne zadania, planuj przypomnienia i jasno zarządzaj swoją produktywnością.</string>
+    <string name="login_description">Zaloguj się kontem Google, aby bezpiecznie synchronizować zadania na wszystkich urządzeniach.</string>
+    <string name="login_footer_text">Twoje zadania są przechowywane prywatnie i bezpiecznie na Twoim urządzeniu.</string>
+    <string name="login_google_btn">Kontynuuj z Google</string>
+    <string name="login_guest_btn">Kontynuuj w trybie lokalnym</string>
+    <string name="login_perks_title">Dlaczego warto się zalogować?</string>
+    <string name="login_start_btn">Rozpocznij</string>
+    <string name="login_subtitle">Uporządkowane planowanie codziennych czynności.</string>
+    <string name="login_tagline">Uporządkowana i przejrzysta organizacja</string>
+    <string name="login_title">Witamy w FabiToDo</string>
+    <string name="login_welcome">Zarządzanie zadaniami i harmonogramem</string>
+</resources>

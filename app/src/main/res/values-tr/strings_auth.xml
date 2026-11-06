@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Hesap kontrol ediliyor…</string>
+    <string name="auth_state_error">Kimlik doğrulama hatası: %s</string>
+    <string name="auth_state_success">Oturum başarıyla açıldı</string>
+    <string name="desc_error">Hata</string>
+    <string name="desc_priority">Öncelik</string>
+    <string name="desc_safe_storage">Güvenli Depolama</string>
+    <string name="desc_success">Başarılı</string>
+    <string name="desc_task_done">Görev tamamlandı</string>
+    <string name="error_empty_credentials">Lütfen hem e-posta hem de şifreyi girin.</string>
+    <string name="error_google_login">Google hesapları alınamadı</string>
+    <string name="error_login_canceled">Oturum açma iptal edildi</string>
+    <string name="error_no_accounts">Google hesabı bulunamadı. Yerel modda devam edebilir veya web üzerinden oturum açabilirsiniz.</string>
+    <string name="error_password_too_short">Şifre en az 6 karakter olmalıdır.</string>
+    <string name="google_btn_loading">Bağlanıyor…</string>
+    <string name="google_feat_backup">Otomatik bulut yedekleri</string>
+    <string name="google_feat_secure">Güvenli bulut depolama</string>
+    <string name="google_feat_sync">Görevleriniz tüm cihazlarınızda</string>
+    <string name="google_login_button">Google Kimliği ile oturum aç</string>
+    <string name="google_login_desc">Görevlerinizi otomatik bulut yedekleriyle tüm cihazlarınızda güvenle eşitleyin.</string>
+    <string name="google_login_footer">Google üzerinden güvenli kimlik doğrulama</string>
+    <string name="google_login_guest_fallback_button">Yerel Modda Devam Et</string>
+    <string name="google_login_guest_fallback_desc">Bu cihazda etkin hesap bulunamadı. Görevlerinizi bu cihazda saklamak için yerel modda devam edebilir veya web tarayıcısı üzerinden oturum açabilirsiniz.</string>
+    <string name="google_login_guest_fallback_title">Google Hesabı Bulunamadı</string>
+    <string name="google_login_title">Güvenli Erişim</string>
+    <string name="google_login_web_desc">Google hesabınızla oturum açmak için güvenli tarayıcıyı açın.</string>
+    <string name="google_login_web_option">Web Tarayıcı ile Oturum Açma</string>
+    <string name="guest_user">Konuk</string>
+    <string name="login_button_google">Google ile devam et</string>
+    <string name="login_button_guest">Konuk olarak devam et</string>
+    <string name="login_desc_main">Günlük görevlerinizi düzenleyin, hatırlatıcı planlayın ve verimliliğinizi net biçimde yönetin.</string>
+    <string name="login_description">Görevlerinizi tüm cihazlarınızda güvenle eşitlemek için Google hesabınızla oturum açın.</string>
+    <string name="login_footer_text">Görevleriniz cihazınızda gizli ve güvenli şekilde saklanır.</string>
+    <string name="login_google_btn">Google ile devam et</string>
+    <string name="login_guest_btn">Yerel Modda Devam Et</string>
+    <string name="login_perks_title">Neden oturum açmalısınız?</string>
+    <string name="login_start_btn">Başlayın</string>
+    <string name="login_subtitle">Günlük etkinlikleriniz için yapılandırılmış planlama.</string>
+    <string name="login_tagline">Yapılandırılmış ve net organizasyon</string>
+    <string name="login_title">FabiToDo\'ya Hoş Geldiniz</string>
+    <string name="login_welcome">Görev ve Ajanda Yönetimi</string>
+</resources>

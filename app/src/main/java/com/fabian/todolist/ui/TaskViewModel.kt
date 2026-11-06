@@ -39,7 +39,10 @@ data class TaskUiState(
 @HiltViewModel
 class TaskViewModel @Inject constructor(
     application: Application,
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    // CORRECCIÓN: acceso al sincronizador para marcar ajustes restaurados de un
+    // backup como "pendientes de subir" y propagarlos a la nube.
+    private val firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager
 ) : AndroidViewModel(application) {
 
     private val allTasks: Flow<List<Task>> = repository.allTasks
@@ -260,16 +263,18 @@ class TaskViewModel @Inject constructor(
                     if (parsedData != null) {
                         onSuccess(parsedData.first, parsedData.second, parsedData.third.first, parsedData.third.second)
                     } else {
-                        onError("Invalid response format from AI")
+                        onError(getApplication<Application>().getString(com.fabian.todolist.R.string.ai_error_invalid_format))
                     }
                 } else {
-                    onError("No response from AI")
+                    onError(getApplication<Application>().getString(com.fabian.todolist.R.string.ai_error_no_response))
                 }
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: Exception) {
                 Log.e("TaskViewModel", "AI Generation Error", e)
-                onError("Error: ${e.localizedMessage ?: "Unknown error"}")
+                val app = getApplication<Application>()
+                val reason = e.localizedMessage ?: app.getString(com.fabian.todolist.R.string.ai_error_unknown)
+                onError(app.getString(com.fabian.todolist.R.string.ai_error_with_reason, reason))
             } finally {
                 _isGeneratingAI.value = false
             }
@@ -283,7 +288,8 @@ class TaskViewModel @Inject constructor(
                 modelName = geminiModel,
                 prompt = prompt,
                 systemInstructionText = "You are a professional, helpful, and empathetic personal productivity strategist. You must output ONLY a valid RAW JSON object.",
-                timeoutMs = 60_000L
+                timeoutMs = 60_000L,
+                userContext = getApplication()
             )
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
@@ -697,6 +703,8 @@ class TaskViewModel @Inject constructor(
             writer.name("categoryIcons").value(prefs.getString("category_icons", "{}") ?: "{}")
 
             // 3. Settings & Preferences
+            // CORRECCIÓN: mapa COMPLETO de ajustes (antes solo se exportaban 10 de
+            // ~28; restaurar un backup perdía el resto de ajustes).
             writer.name("settings")
             writer.beginObject()
             writer.name("themeAccent").value(prefs.getString("accent_color", "system") ?: "system")
@@ -704,10 +712,28 @@ class TaskViewModel @Inject constructor(
             writer.name("languageCode").value(prefs.getString("app_locale", "system") ?: "system")
             writer.name("dateFormat").value(prefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA")
             writer.name("timeFormat").value(prefs.getString("time_format", "24h") ?: "24h")
+            writer.name("longPressAction").value(prefs.getString("long_press_action", "select") ?: "select")
+            writer.name("confirmOnDelete").value(prefs.getBoolean("confirm_on_delete", true))
+            writer.name("hapticFeedbackOnComplete").value(prefs.getBoolean("haptic_feedback_on_complete", true))
+            writer.name("requireBiometrics").value(prefs.getBoolean("require_biometrics", false))
+            writer.name("secureScreenMode").value(prefs.getBoolean("secure_screen_mode", false))
+            writer.name("encryptBackups").value(prefs.getBoolean("encrypt_backups", false))
             writer.name("globalNotificationsEnabled").value(prefs.getBoolean("global_notifications_enabled", true))
+            writer.name("quickAddNotificationEnabled").value(prefs.getBoolean("quick_add_notification_enabled", false))
+            writer.name("quickAddNotificationInterval").value(prefs.getString("quick_add_notification_interval", "off") ?: "off")
+            writer.name("quickAddQuietHoursEnabled").value(prefs.getBoolean("quick_add_quiet_hours_enabled", true))
+            writer.name("notificationsSound").value(prefs.getBoolean("notifications_sound", true))
+            writer.name("notificationsVibrate").value(prefs.getBoolean("notifications_vibrate", true))
+            writer.name("reminderOffsetMinutes").value(prefs.getInt("reminder_offset_minutes", 0))
+            writer.name("snoozeDurationMinutes").value(prefs.getInt("snooze_duration_minutes", 10))
             writer.name("aiModel").value(prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash")
             writer.name("aiLowLatencyMode").value(prefs.getBoolean("ai_low_latency_mode", true))
             writer.name("aiSubtaskCount").value(prefs.getInt("ai_subtask_count", 5))
+            writer.name("aiKeyType").value(prefs.getString("ai_key_type", "public") ?: "public")
+            writer.name("aiApiKey").value(prefs.getString("ai_api_key", "") ?: "")
+            writer.name("showAiBanner").value(prefs.getBoolean("show_ai_banner", true))
+            writer.name("showBackupCard").value(prefs.getBoolean("show_backup_card", true))
+            writer.name("userDisplayName").value(prefs.getString("user_display_name", "") ?: "")
             writer.name("trashRetentionDays").value(prefs.getInt("trash_retention_days", 30))
             writer.endObject()
 
@@ -798,16 +824,34 @@ class TaskViewModel @Inject constructor(
                         reader.beginObject()
                         while (reader.hasNext()) {
                             when (reader.nextName()) {
-                                "themeAccent", "accent_color" -> editor.putString("accent_color", reader.nextString())
-                                "themeDark", "theme_mode" -> editor.putString("theme_mode", reader.nextString())
-                                "languageCode", "app_locale" -> editor.putString("app_locale", reader.nextString())
-                                "dateFormat", "date_format" -> editor.putString("date_format", reader.nextString())
-                                "timeFormat", "time_format" -> editor.putString("time_format", reader.nextString())
-                                "globalNotificationsEnabled", "global_notifications_enabled" -> editor.putBoolean("global_notifications_enabled", reader.nextBoolean())
-                                "aiModel", "ai_model" -> editor.putString("ai_model", reader.nextString())
-                                "aiLowLatencyMode", "ai_low_latency_mode" -> editor.putBoolean("ai_low_latency_mode", reader.nextBoolean())
-                                "aiSubtaskCount", "ai_subtask_count" -> editor.putInt("ai_subtask_count", reader.nextInt())
-                                "trashRetentionDays", "trash_retention_days" -> editor.putInt("trash_retention_days", reader.nextInt())
+                                "themeAccent", "accent_color" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("accent_color", reader.nextString()) else reader.skipValue()
+                                "themeDark", "theme_mode" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("theme_mode", reader.nextString()) else reader.skipValue()
+                                "languageCode", "app_locale" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("app_locale", reader.nextString()) else reader.skipValue()
+                                "dateFormat", "date_format" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("date_format", reader.nextString()) else reader.skipValue()
+                                "timeFormat", "time_format" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("time_format", reader.nextString()) else reader.skipValue()
+                                "longPressAction", "long_press_action" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("long_press_action", reader.nextString()) else reader.skipValue()
+                                "confirmOnDelete", "confirm_on_delete" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("confirm_on_delete", reader.nextBoolean()) else reader.skipValue()
+                                "hapticFeedbackOnComplete", "haptic_feedback_on_complete" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("haptic_feedback_on_complete", reader.nextBoolean()) else reader.skipValue()
+                                "requireBiometrics", "require_biometrics" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("require_biometrics", reader.nextBoolean()) else reader.skipValue()
+                                "secureScreenMode", "secure_screen_mode" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("secure_screen_mode", reader.nextBoolean()) else reader.skipValue()
+                                "encryptBackups", "encrypt_backups" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("encrypt_backups", reader.nextBoolean()) else reader.skipValue()
+                                "globalNotificationsEnabled", "global_notifications_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("global_notifications_enabled", reader.nextBoolean()) else reader.skipValue()
+                                "quickAddNotificationEnabled", "quick_add_notification_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("quick_add_notification_enabled", reader.nextBoolean()) else reader.skipValue()
+                                "quickAddNotificationInterval", "quick_add_notification_interval" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("quick_add_notification_interval", reader.nextString()) else reader.skipValue()
+                                "quickAddQuietHoursEnabled", "quick_add_quiet_hours_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("quick_add_quiet_hours_enabled", reader.nextBoolean()) else reader.skipValue()
+                                "notificationsSound", "notifications_sound" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("notifications_sound", reader.nextBoolean()) else reader.skipValue()
+                                "notificationsVibrate", "notifications_vibrate" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("notifications_vibrate", reader.nextBoolean()) else reader.skipValue()
+                                "reminderOffsetMinutes", "reminder_offset_minutes" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("reminder_offset_minutes", reader.nextInt()) else reader.skipValue()
+                                "snoozeDurationMinutes", "snooze_duration_minutes" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("snooze_duration_minutes", reader.nextInt()) else reader.skipValue()
+                                "aiModel", "ai_model" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_model", reader.nextString()) else reader.skipValue()
+                                "aiLowLatencyMode", "ai_low_latency_mode" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("ai_low_latency_mode", reader.nextBoolean()) else reader.skipValue()
+                                "aiSubtaskCount", "ai_subtask_count" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("ai_subtask_count", reader.nextInt()) else reader.skipValue()
+                                "aiKeyType", "ai_key_type" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_key_type", reader.nextString()) else reader.skipValue()
+                                "aiApiKey", "ai_api_key" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_api_key", reader.nextString()) else reader.skipValue()
+                                "showAiBanner", "show_ai_banner" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("show_ai_banner", reader.nextBoolean()) else reader.skipValue()
+                                "showBackupCard", "show_backup_card" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("show_backup_card", reader.nextBoolean()) else reader.skipValue()
+                                "userDisplayName", "user_display_name" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("user_display_name", reader.nextString()) else reader.skipValue()
+                                "trashRetentionDays", "trash_retention_days" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("trash_retention_days", reader.nextInt()) else reader.skipValue()
                                 else -> reader.skipValue()
                             }
                         }
@@ -917,6 +961,11 @@ class TaskViewModel @Inject constructor(
             }
             reader.endObject()
             editor.apply()
+
+            // CORRECCIÓN: los ajustes restaurados del backup quedan marcados como
+            // "pendientes de subir" para propagarse a la nube y al resto de
+            // dispositivos (si hay sesión iniciada).
+            firestoreSyncManager.scheduleSettingsPush()
 
             if (importedCategories.isNotEmpty()) {
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {

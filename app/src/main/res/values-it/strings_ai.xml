@@ -109,4 +109,16 @@
     <string name="ai_result_error_title">Problema di Comunicazione</string>
     <string name="ai_result_error_generic">Impossibile stabilire la comunicazione con il modello Gemini.</string>
     <string name="ai_result_error_tips">Controlla la tua connessione internet e riprova.</string>
+    <string name="ai_test_task_default">Preparare una presentazione importante</string>
+    <string name="ai_key_type_public_desc">Infrastruttura Google AI / Firebase integrata</string>
+    <string name="ai_key_type_custom_desc">Usa una API Key personalizzata di Google AI Studio</string>
+    <string name="ai_model_desc_fast">Gemini 3.5 • Alta velocità e basso consumo</string>
+    <string name="ai_model_desc_advanced">Gemini 4 • Ragionamento avanzato e profondità</string>
+    <string name="ai_model_desc_balanced">Gemini 3.8 • Equilibrio ottimale di precisione e fluidità</string>
+    <string name="ai_error_invalid_format">Formato di risposta dell\'IA non valido</string>
+    <string name="ai_error_no_response">Nessuna risposta dall\'IA</string>
+    <string name="ai_error_unknown">Errore sconosciuto</string>
+    <string name="ai_error_with_reason">Errore: %1$s</string>
+    <string name="ai_error_empty_response">Il modello ha restituito una risposta vuota.</string>
+    <string name="ai_error_timeout">Generazione scaduta. Riprova.</string>
 </resources>

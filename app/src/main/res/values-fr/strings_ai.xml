@@ -97,7 +97,6 @@
     <string name="ai_lab_title">Vérification Gemini</string>
     <string name="ai_lab_desc">Entrez un exemple de titre de tâche pour tester les réponses structurées en direct de Gemini.</string>
     <string name="ai_lab_field_label">Exemple de titre de tâche</string>
-    <string name="ai_lab_user_placeholder">Exemple de titre de tâche</string>
     <string name="ai_lab_err_empty">Veuillez entrer un exemple de titre de tâche pour continuer.</string>
     <string name="ai_lab_test_desc_default">Exemple de décomposition de tâche pour vérifier la connectivité Gemini et l\'analyse structurée.</string>
     <string name="ai_btn_test_desc">Exécuter le test de connectivité avec Gemini</string>
@@ -110,4 +109,16 @@
     <string name="ai_result_error_title">Problème de communication</string>
     <string name="ai_result_error_generic">Impossible d\'établir la communication avec le modèle Gemini.</string>
     <string name="ai_result_error_tips">Veuillez vérifier votre connexion Internet et réessayer.</string>
+    <string name="ai_test_task_default">Préparer une présentation importante</string>
+    <string name="ai_key_type_public_desc">Infrastructure Google AI / Firebase intégrée</string>
+    <string name="ai_key_type_custom_desc">Utiliser une API Key personnalisée de Google AI Studio</string>
+    <string name="ai_model_desc_fast">Gemini 3.5 • Grande vitesse et faible consommation</string>
+    <string name="ai_model_desc_advanced">Gemini 4 • Raisonnement avancé et profondeur</string>
+    <string name="ai_model_desc_balanced">Gemini 3.8 • Équilibre optimal entre précision et fluidité</string>
+    <string name="ai_error_invalid_format">Format de réponse de l\'IA invalide</string>
+    <string name="ai_error_no_response">Aucune réponse de l\'IA</string>
+    <string name="ai_error_unknown">Erreur inconnue</string>
+    <string name="ai_error_with_reason">Erreur : %1$s</string>
+    <string name="ai_error_empty_response">Le modèle a renvoyé une réponse vide.</string>
+    <string name="ai_error_timeout">La génération a expiré. Veuillez réessayer.</string>
 </resources>

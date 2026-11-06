@@ -66,7 +66,7 @@ fun AISettingsDialog(
     var keyVisible by remember { mutableStateOf(false) }
     
     // Testing states
-    var testTaskTitle by remember { mutableStateOf("Preparar presentación importante") }
+    var testTaskTitle by remember { mutableStateOf(stringResource(R.string.ai_test_task_default)) }
     var testInProgress by remember { mutableStateOf(false) }
     var testSuccess by remember { mutableStateOf<Boolean?>(null) }
     var testErrorMsg by remember { mutableStateOf<String?>(null) }
@@ -381,7 +381,7 @@ fun AISettingsDialog(
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 )
                                                 Text(
-                                                    text = "Infraestructura Google AI / Firebase integrada",
+                                                    text = stringResource(R.string.ai_key_type_public_desc),
                                                     fontSize = 11.sp,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
@@ -404,7 +404,7 @@ fun AISettingsDialog(
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 )
                                                 Text(
-                                                    text = "Usar API Key personalizada de Google AI Studio",
+                                                    text = stringResource(R.string.ai_key_type_custom_desc),
                                                     fontSize = 11.sp,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
@@ -938,10 +938,11 @@ fun ModelBrandBadge(model: String, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
 fun getModelCreator(model: String): String {
     return when {
-        model.contains("flash-lite", ignoreCase = true) -> "Gemini 3.5 • Alta velocidad y bajo consumo"
-        model.contains("argon", ignoreCase = true) -> "Gemini 4 • Razonamiento avanzado y profundidad"
-        else -> "Gemini 3.8 • Equilibrio óptimo de precisión y fluidez"
+        model.contains("flash-lite", ignoreCase = true) -> stringResource(R.string.ai_model_desc_fast)
+        model.contains("argon", ignoreCase = true) -> stringResource(R.string.ai_model_desc_advanced)
+        else -> stringResource(R.string.ai_model_desc_balanced)
     }
 }

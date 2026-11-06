@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">جارٍ التحقق من الحساب…</string>
+    <string name="auth_state_error">خطأ في المصادقة: %s</string>
+    <string name="auth_state_success">تم تسجيل الدخول بنجاح</string>
+    <string name="desc_error">خطأ</string>
+    <string name="desc_priority">الأولوية</string>
+    <string name="desc_safe_storage">تخزين آمن</string>
+    <string name="desc_success">تم بنجاح</string>
+    <string name="desc_task_done">اكتملت المهمة</string>
+    <string name="error_empty_credentials">يُرجى إدخال البريد الإلكتروني وكلمة المرور معًا.</string>
+    <string name="error_google_login">تعذّر استرداد حسابات Google</string>
+    <string name="error_login_canceled">تم إلغاء تسجيل الدخول</string>
+    <string name="error_no_accounts">لم يتم العثور على حسابات Google. يمكنك المتابعة في الوضع المحلي أو تسجيل الدخول عبر الويب.</string>
+    <string name="error_password_too_short">يجب ألا تقل كلمة المرور عن 6 أحرف.</string>
+    <string name="google_btn_loading">جارٍ الاتصال…</string>
+    <string name="google_feat_backup">نسخ احتياطية سحابية تلقائية</string>
+    <string name="google_feat_secure">تخزين سحابي آمن</string>
+    <string name="google_feat_sync">مهامك على جميع أجهزتك</string>
+    <string name="google_login_button">تسجيل الدخول بمعرّف Google</string>
+    <string name="google_login_desc">زامن مهامك بأمان عبر جميع أجهزتك مع نسخ احتياطية سحابية تلقائية.</string>
+    <string name="google_login_footer">مصادقة آمنة عبر Google</string>
+    <string name="google_login_guest_fallback_button">المتابعة في الوضع المحلي</string>
+    <string name="google_login_guest_fallback_desc">لم يتم العثور على حساب نشط على هذا الجهاز. يمكنك المتابعة في الوضع المحلي لتخزين مهامك على هذا الجهاز أو تسجيل الدخول عبر متصفح الويب.</string>
+    <string name="google_login_guest_fallback_title">لم يتم العثور على حساب Google</string>
+    <string name="google_login_title">وصول آمن</string>
+    <string name="google_login_web_desc">افتح المتصفح الآمن لتسجيل الدخول بحسابك في Google.</string>
+    <string name="google_login_web_option">تسجيل الدخول عبر المتصفح</string>
+    <string name="guest_user">ضيف</string>
+    <string name="login_button_google">المتابعة مع Google</string>
+    <string name="login_button_guest">المتابعة كضيف</string>
+    <string name="login_desc_main">نظّم مهامك اليومية، وجدوِل التذكيرات، وأدر إنتاجيتك بوضوح.</string>
+    <string name="login_description">سجّل الدخول بحسابك في Google لمزامنة مهامك بأمان عبر جميع أجهزتك.</string>
+    <string name="login_footer_text">تُخزَّن مهامك بخصوصية وأمان على جهازك.</string>
+    <string name="login_google_btn">المتابعة مع Google</string>
+    <string name="login_guest_btn">المتابعة في الوضع المحلي</string>
+    <string name="login_perks_title">لماذا تسجّل الدخول؟</string>
+    <string name="login_start_btn">البدء</string>
+    <string name="login_subtitle">تخطيط منظّم لأنشطتك اليومية.</string>
+    <string name="login_tagline">تنظيم منظّم وواضح</string>
+    <string name="login_title">مرحبًا بك في FabiToDo</string>
+    <string name="login_welcome">إدارة المهام والجدولة</string>
+</resources>

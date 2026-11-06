@@ -60,9 +60,9 @@ fun DateTimeFormatSettingsDialog(
                             description = stringResource(R.string.settings_date_format_desc),
                             icon = Icons.Default.CalendarToday,
                             options = listOf(
-                                FormatOption("DD/MM/AA", "DD/MM/AA", "Día / Mes / Año (Ej: 30/05/26)"),
-                                FormatOption("MM/DD/AA", "MM/DD/AA", "Mes / Día / Año (Ej: 05/30/26)"),
-                                FormatOption("AA/MM/DD", "AA/MM/DD", "Año / Mes / Día (Ej: 26/05/30)")
+                                FormatOption("DD/MM/AA", "DD/MM/AA", stringResource(R.string.date_format_dmy_desc)),
+                                FormatOption("MM/DD/AA", "MM/DD/AA", stringResource(R.string.date_format_mdy_desc)),
+                                FormatOption("AA/MM/DD", "AA/MM/DD", stringResource(R.string.date_format_ymd_desc))
                             ),
                             selectedOption = currentDateFormat,
                             onOptionSelected = { viewModel.setDateFormat(it) }
@@ -76,8 +76,8 @@ fun DateTimeFormatSettingsDialog(
                             description = stringResource(R.string.settings_time_format_desc),
                             icon = Icons.Default.Schedule,
                             options = listOf(
-                                FormatOption("12h", "12h", "12 horas - AM/PM (Ej: 02:30 PM)"),
-                                FormatOption("24h", "24h", "24 horas (Ej: 14:30)")
+                                FormatOption("12h", "12h", stringResource(R.string.time_format_12h_desc)),
+                                FormatOption("24h", "24h", stringResource(R.string.time_format_24h_desc))
                             ),
                             selectedOption = currentTimeFormat,
                             onOptionSelected = { viewModel.setTimeFormat(it) }

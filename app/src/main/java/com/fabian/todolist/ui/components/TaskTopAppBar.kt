@@ -46,8 +46,8 @@ fun TaskTopAppBar(
                 modifier = Modifier.padding(vertical = 16.dp)
             ) {
                 Text(
-                    text = "FabiToDo", 
-                    fontSize = 24.sp, 
+                    text = stringResource(R.string.app_name),
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Black,
                     color = MaterialTheme.colorScheme.onSurface,
                     letterSpacing = (-0.5).sp

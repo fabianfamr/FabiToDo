@@ -254,7 +254,7 @@ fun TaskAddCategoryDialog(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = stringResource(R.string.category_icon) + " (100)",
+                            text = stringResource(R.string.category_icon_count, stringResource(R.string.category_icon), 100),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary

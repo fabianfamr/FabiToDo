@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -84,11 +85,13 @@ fun TaskCalendarPane(
     val monthFormat = remember { SimpleDateFormat("MMMM yyyy", Locale.getDefault()) }
     val dayHeaderFormat = remember {
         val currentLocale = Locale.getDefault()
-        if (currentLocale.language.equals("es", ignoreCase = true)) {
-            SimpleDateFormat("EEEE, d 'de' MMMM", currentLocale)
-        } else {
-            SimpleDateFormat("EEEE, MMMM d", currentLocale)
-        }
+        // Patrón localizado por idioma (es: "EEEE, d 'de' MMMM", en: "EEEE, MMMM d", ...)
+        // getBestDateTimePattern elige el orden y los separadores correctos para
+        // cada uno de los idiomas soportados por la app.
+        SimpleDateFormat(
+            android.text.format.DateFormat.getBestDateTimePattern(currentLocale, "EEEE d MMMM"),
+            currentLocale
+        )
     }
 
     // Pre-index tasks with due dates
@@ -478,15 +481,12 @@ fun TaskCalendarPane(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
-                            val countSubtitle = remember(tasksForSelectedDay.size) {
-                                val count = tasksForSelectedDay.size
-                                val isSpanish = Locale.getDefault().language.equals("es", ignoreCase = true)
-                                if (isSpanish) {
-                                    if (count == 1) "1 tarea programada" else "$count tareas programadas"
-                                } else {
-                                    if (count == 1) "1 scheduled task" else "$count scheduled tasks"
-                                }
-                            }
+                            val taskCount = tasksForSelectedDay.size
+                            val countSubtitle = pluralStringResource(
+                                R.plurals.scheduled_tasks_count,
+                                taskCount,
+                                taskCount
+                            )
                             Text(
                                 text = countSubtitle,
                                 style = MaterialTheme.typography.bodySmall,

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Account controleren…</string>
+    <string name="auth_state_error">Authenticatiefout: %s</string>
+    <string name="auth_state_success">Succesvol ingelogd</string>
+    <string name="desc_error">Fout</string>
+    <string name="desc_priority">Prioriteit</string>
+    <string name="desc_safe_storage">Veilige opslag</string>
+    <string name="desc_success">Succes</string>
+    <string name="desc_task_done">Taak voltooid</string>
+    <string name="error_empty_credentials">Voer zowel je e-mailadres als je wachtwoord in.</string>
+    <string name="error_google_login">Kon de Google-accounts niet ophalen</string>
+    <string name="error_login_canceled">Inloggen geannuleerd</string>
+    <string name="error_no_accounts">Geen Google-accounts gevonden. Je kunt verdergaan in de lokale modus of via het web inloggen.</string>
+    <string name="error_password_too_short">Het wachtwoord moet minstens 6 tekens bevatten.</string>
+    <string name="google_btn_loading">Verbinden…</string>
+    <string name="google_feat_backup">Automatische cloudback-ups</string>
+    <string name="google_feat_secure">Veilige cloudopslag</string>
+    <string name="google_feat_sync">Je taken op al je apparaten</string>
+    <string name="google_login_button">Inloggen met Google ID</string>
+    <string name="google_login_desc">Synchroniseer je taken veilig op al je apparaten met automatische cloudback-ups.</string>
+    <string name="google_login_footer">Veilige authenticatie via Google</string>
+    <string name="google_login_guest_fallback_button">Doorgaan in de lokale modus</string>
+    <string name="google_login_guest_fallback_desc">Er is geen actief account gevonden op dit apparaat. Je kunt verdergaan in de lokale modus om je taken op dit apparaat op te slaan, of inloggen via de webbrowser.</string>
+    <string name="google_login_guest_fallback_title">Geen Google-account gevonden</string>
+    <string name="google_login_title">Veilige toegang</string>
+    <string name="google_login_web_desc">Open de veilige browser om in te loggen met je Google-account.</string>
+    <string name="google_login_web_option">Inloggen via de webbrowser</string>
+    <string name="guest_user">Gast</string>
+    <string name="login_button_google">Doorgaan met Google</string>
+    <string name="login_button_guest">Doorgaan als gast</string>
+    <string name="login_desc_main">Organiseer je dagelijkse taken, stel herinneringen in en beheer je productiviteit met helder overzicht.</string>
+    <string name="login_description">Log in met je Google-account om je taken veilig op al je apparaten te synchroniseren.</string>
+    <string name="login_footer_text">Je taken worden privé en veilig op je apparaat opgeslagen.</string>
+    <string name="login_google_btn">Doorgaan met Google</string>
+    <string name="login_guest_btn">Doorgaan in de lokale modus</string>
+    <string name="login_perks_title">Waarom inloggen?</string>
+    <string name="login_start_btn">Aan de slag</string>
+    <string name="login_subtitle">Gestructureerde planning voor je dagelijkse activiteiten.</string>
+    <string name="login_tagline">Gestructureerde en heldere organisatie</string>
+    <string name="login_title">Welkom bij FabiToDo</string>
+    <string name="login_welcome">Taak- en agendabeheer</string>
+</resources>

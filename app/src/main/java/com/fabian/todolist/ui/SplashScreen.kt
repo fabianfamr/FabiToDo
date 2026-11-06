@@ -306,7 +306,7 @@ fun PixelSplashScene(
                 }
             ) {
                 Text(
-                    text = "FabiToDo",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 42.sp,

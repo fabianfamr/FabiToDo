@@ -240,7 +240,7 @@ fun AccountSettingsDialog(
                                                 } else null
                                             }
                                             Text(
-                                                text = if (formattedLastSync != null) "Última sincronización: $formattedLastSync" else stringResource(R.string.account_cloud_sync_desc),
+                                                text = if (formattedLastSync != null) stringResource(R.string.account_last_sync_value, formattedLastSync) else stringResource(R.string.account_cloud_sync_desc),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
                                             )

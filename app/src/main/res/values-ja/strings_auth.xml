@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">アカウントを確認中…</string>
+    <string name="auth_state_error">認証エラー：%s</string>
+    <string name="auth_state_success">サインインしました</string>
+    <string name="desc_error">エラー</string>
+    <string name="desc_priority">優先度</string>
+    <string name="desc_safe_storage">安全なストレージ</string>
+    <string name="desc_success">成功</string>
+    <string name="desc_task_done">タスクが完了しました</string>
+    <string name="error_empty_credentials">メールアドレスとパスワードの両方を入力してください。</string>
+    <string name="error_google_login">Googleアカウントを取得できませんでした</string>
+    <string name="error_login_canceled">サインインがキャンセルされました</string>
+    <string name="error_no_accounts">Googleアカウントが検出されませんでした。ローカルモードで続行するか、ウェブからサインインできます。</string>
+    <string name="error_password_too_short">パスワードは6文字以上である必要があります。</string>
+    <string name="google_btn_loading">接続中…</string>
+    <string name="google_feat_backup">自動クラウドバックアップ</string>
+    <string name="google_feat_secure">安全なクラウドストレージ</string>
+    <string name="google_feat_sync">すべてのデバイスでタスクを同期</string>
+    <string name="google_login_button">Google IDでサインイン</string>
+    <string name="google_login_desc">自動クラウドバックアップにより、すべてのデバイス間でタスクを安全に同期します。</string>
+    <string name="google_login_footer">Googleによる安全な認証</string>
+    <string name="google_login_guest_fallback_button">ローカルモードで続行</string>
+    <string name="google_login_guest_fallback_desc">このデバイスでアクティブなアカウントが見つかりませんでした。ローカルモードで続行してタスクをこのデバイスに保存するか、ウェブブラウザからサインインできます。</string>
+    <string name="google_login_guest_fallback_title">Googleアカウントが検出されません</string>
+    <string name="google_login_title">安全なアクセス</string>
+    <string name="google_login_web_desc">安全なブラウザを開いて、Googleアカウントでサインインします。</string>
+    <string name="google_login_web_option">ウェブブラウザでサインイン</string>
+    <string name="guest_user">ゲスト</string>
+    <string name="login_button_google">Googleで続行</string>
+    <string name="login_button_guest">ゲストとして続行</string>
+    <string name="login_desc_main">毎日のタスクを整理し、リマインダーをスケジュールして、生産性を明確に管理しましょう。</string>
+    <string name="login_description">Googleアカウントでサインインして、すべてのデバイス間でタスクを安全に同期しましょう。</string>
+    <string name="login_footer_text">タスクはこのデバイス上に非公開かつ安全に保存されます。</string>
+    <string name="login_google_btn">Googleで続行</string>
+    <string name="login_guest_btn">ローカルモードで続行</string>
+    <string name="login_perks_title">サインインのメリット</string>
+    <string name="login_start_btn">はじめる</string>
+    <string name="login_subtitle">毎日の活動を構造化して計画します。</string>
+    <string name="login_tagline">構造化された明快な整理</string>
+    <string name="login_title">FabiToDoへようこそ</string>
+    <string name="login_welcome">タスクとスケジュール管理</string>
+</resources>

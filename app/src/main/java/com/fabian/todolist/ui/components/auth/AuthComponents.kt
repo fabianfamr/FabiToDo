@@ -276,7 +276,7 @@ fun LogoSegment(isLoading: Boolean) {
                 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "FabiToDo",
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onSurface,

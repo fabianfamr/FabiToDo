@@ -97,7 +97,7 @@ class AuthViewModel @Inject constructor(
                     _currentUser.value = authResult.user
                     onResult(true, null)
                 } else {
-                    onResult(false, "Tipo de credencial no compatible")
+                    onResult(false, getApplication<Application>().getString(R.string.auth_error_unsupported_credential))
                 }
             } catch (e: GetCredentialCancellationException) {
                 Log.d("AuthViewModel", "Sign-in cancelled by user")
@@ -118,6 +118,9 @@ class AuthViewModel @Inject constructor(
             .remove("last_firestore_sync_time")
             .remove("last_settings_cloud_sync")
             .remove("last_settings_local_update")
+            // CORRECCIÓN: clave nueva del sincronizador (desfase reloj local vs servidor);
+            // se recalcula sola en la próxima sincronización.
+            .remove("settings_clock_offset")
             .remove("user_display_name")
             .apply()
 

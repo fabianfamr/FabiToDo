@@ -66,24 +66,24 @@ fun TaskSortBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                val sortOptions = listOf(com.fabian.todolist.data.SortOrder.MANUAL, "Fecha límite", com.fabian.todolist.data.SortOrder.PRIORITY, "Alfabético")
+                val sortOptions = listOf(com.fabian.todolist.data.SortOrder.MANUAL, com.fabian.todolist.data.SortOrder.DUE_DATE, com.fabian.todolist.data.SortOrder.PRIORITY, com.fabian.todolist.data.SortOrder.ALPHABETICAL)
                 sortOptions.forEach { opt ->
                     val isSelected = sortBy == opt
                     val sortText = when(opt) {
                         com.fabian.todolist.data.SortOrder.MANUAL -> stringResource(R.string.sort_manual)
-                        "Fecha límite" -> stringResource(R.string.sort_due_date)
+                        com.fabian.todolist.data.SortOrder.DUE_DATE -> stringResource(R.string.sort_due_date)
                         com.fabian.todolist.data.SortOrder.PRIORITY -> stringResource(R.string.sort_priority)
                         else -> stringResource(R.string.sort_alphabetical)
                     }
                     val descText = when (opt) {
                         com.fabian.todolist.data.SortOrder.MANUAL -> stringResource(R.string.sort_manual_desc)
-                        "Fecha límite" -> stringResource(R.string.sort_due_date_desc)
+                        com.fabian.todolist.data.SortOrder.DUE_DATE -> stringResource(R.string.sort_due_date_desc)
                         com.fabian.todolist.data.SortOrder.PRIORITY -> stringResource(R.string.sort_priority_desc)
                         else -> stringResource(R.string.sort_alphabetical_desc)
                     }
                     val icon = when(opt) {
                         com.fabian.todolist.data.SortOrder.MANUAL -> Icons.Default.DragHandle
-                        "Fecha límite" -> Icons.Default.CalendarToday
+                        com.fabian.todolist.data.SortOrder.DUE_DATE -> Icons.Default.CalendarToday
                         com.fabian.todolist.data.SortOrder.PRIORITY -> Icons.Default.PriorityHigh
                         else -> Icons.Default.SortByAlpha
                     }

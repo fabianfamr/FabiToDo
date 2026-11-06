@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Проверка аккаунта…</string>
+    <string name="auth_state_error">Ошибка аутентификации: %s</string>
+    <string name="auth_state_success">Вход выполнен успешно</string>
+    <string name="desc_error">Ошибка</string>
+    <string name="desc_priority">Приоритет</string>
+    <string name="desc_safe_storage">Безопасное хранилище</string>
+    <string name="desc_success">Успешно</string>
+    <string name="desc_task_done">Задача выполнена</string>
+    <string name="error_empty_credentials">Введите и email, и пароль.</string>
+    <string name="error_google_login">Не удалось получить аккаунты Google</string>
+    <string name="error_login_canceled">Вход отменён</string>
+    <string name="error_no_accounts">Аккаунты Google не найдены. Можете продолжить в локальном режиме или войти через веб.</string>
+    <string name="error_password_too_short">Пароль должен содержать не менее 6 символов.</string>
+    <string name="google_btn_loading">Подключение…</string>
+    <string name="google_feat_backup">Автоматические облачные копии</string>
+    <string name="google_feat_secure">Безопасное облачное хранилище</string>
+    <string name="google_feat_sync">Ваши задачи на всех ваших устройствах</string>
+    <string name="google_login_button">Войти с Google ID</string>
+    <string name="google_login_desc">Синхронизируйте задачи между всеми устройствами с автоматическими облачными копиями.</string>
+    <string name="google_login_footer">Безопасная аутентификация через Google</string>
+    <string name="google_login_guest_fallback_button">Продолжить в локальном режиме</string>
+    <string name="google_login_guest_fallback_desc">На этом устройстве не найден активный аккаунт. Можете продолжить в локальном режиме, храня задачи на устройстве, или войти через веб-браузер.</string>
+    <string name="google_login_guest_fallback_title">Аккаунт Google не найден</string>
+    <string name="google_login_title">Безопасный доступ</string>
+    <string name="google_login_web_desc">Откройте защищённый браузер, чтобы войти в аккаунт Google.</string>
+    <string name="google_login_web_option">Вход через веб-браузер</string>
+    <string name="guest_user">Гость</string>
+    <string name="login_button_google">Продолжить с Google</string>
+    <string name="login_button_guest">Продолжить как гость</string>
+    <string name="login_desc_main">Организуйте ежедневные задачи, планируйте напоминания и ясно управляйте своей продуктивностью.</string>
+    <string name="login_description">Войдите в аккаунт Google, чтобы безопасно синхронизировать задачи между всеми устройствами.</string>
+    <string name="login_footer_text">Ваши задачи хранятся приватно и безопасно на вашем устройстве.</string>
+    <string name="login_google_btn">Продолжить с Google</string>
+    <string name="login_guest_btn">Продолжить в локальном режиме</string>
+    <string name="login_perks_title">Зачем входить?</string>
+    <string name="login_start_btn">Начать</string>
+    <string name="login_subtitle">Структурированное планирование ваших ежедневных дел.</string>
+    <string name="login_tagline">Структурированность и ясная организация</string>
+    <string name="login_title">Добро пожаловать в FabiToDo</string>
+    <string name="login_welcome">Управление задачами и расписанием</string>
+</resources>

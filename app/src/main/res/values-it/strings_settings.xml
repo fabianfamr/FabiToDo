@@ -268,4 +268,24 @@
     <string name="toast_db_optimized">Database compattato e ottimizzato correttamente!</string>
     <string name="toast_manual_sync_success">Sincronizzazione manuale completata con successo!</string>
     <string name="understood">Capito</string>
+    <string name="lang_ar_sub">Arabo</string>
+    <string name="lang_ca">Catalano</string>
+    <string name="lang_ca_sub">Catalano (Spagna)</string>
+    <string name="lang_eu">Basco</string>
+    <string name="lang_eu_sub">Basco (Spagna)</string>
+    <string name="lang_gl">Galiziano</string>
+    <string name="lang_gl_sub">Galiziano (Spagna)</string>
+    <string name="lang_hi">Hindi</string>
+    <string name="lang_hi_sub">Hindi (India)</string>
+    <string name="lang_ja_sub">Giapponese (Giappone)</string>
+    <string name="lang_ko">Coreano</string>
+    <string name="lang_ko_sub">Coreano (Corea del Sud)</string>
+    <string name="lang_nl">Olandese</string>
+    <string name="lang_nl_sub">Olandese (Paesi Bassi)</string>
+    <string name="lang_pl">Polacco</string>
+    <string name="lang_pl_sub">Polacco (Polonia)</string>
+    <string name="lang_ru_sub">Russo (Russia)</string>
+    <string name="lang_tr">Turco</string>
+    <string name="lang_tr_sub">Turco (Turchia)</string>
+    <string name="lang_zh_sub">Cinese (semplificato, Cina)</string>
 </resources>

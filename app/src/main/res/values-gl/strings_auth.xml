@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_state_checking">Comprobando a conta…</string>
+    <string name="auth_state_error">Erro de autenticación: %s</string>
+    <string name="auth_state_success">Sesión iniciada correctamente</string>
+    <string name="desc_error">Erro</string>
+    <string name="desc_priority">Prioridade</string>
+    <string name="desc_safe_storage">Almacenamento seguro</string>
+    <string name="desc_success">Éxito</string>
+    <string name="desc_task_done">Tarefa completada</string>
+    <string name="error_empty_credentials">Introduce o correo electrónico e o contrasinal.</string>
+    <string name="error_google_login">Non se puideron recuperar as contas de Google</string>
+    <string name="error_login_canceled">Cancelouse o inicio de sesión</string>
+    <string name="error_no_accounts">Non se detectou ningunha conta de Google. Podes continuar en modo local ou iniciar sesión a través da web.</string>
+    <string name="error_password_too_short">O contrasinal debe ter polo menos 6 caracteres.</string>
+    <string name="google_btn_loading">Conectando…</string>
+    <string name="google_feat_backup">Copias de seguridade automáticas na nube</string>
+    <string name="google_feat_secure">Almacenamento seguro na nube</string>
+    <string name="google_feat_sync">As túas tarefas en todos os teus dispositivos</string>
+    <string name="google_login_button">Iniciar sesión co ID de Google</string>
+    <string name="google_login_desc">Sincroniza as túas tarefas de forma segura en todos os teus dispositivos con copias de seguridade automáticas na nube.</string>
+    <string name="google_login_footer">Autenticación segura a través de Google</string>
+    <string name="google_login_guest_fallback_button">Continuar en modo local</string>
+    <string name="google_login_guest_fallback_desc">Non se atopou ningunha conta activa neste dispositivo. Podes continuar en modo local para almacenar as tarefas neste dispositivo ou iniciar sesión mediante o navegador web.</string>
+    <string name="google_login_guest_fallback_title">Non se detectou ningunha conta de Google</string>
+    <string name="google_login_title">Acceso seguro</string>
+    <string name="google_login_web_desc">Abrir o navegador seguro para iniciar sesión coa túa conta de Google.</string>
+    <string name="google_login_web_option">Inicio de sesión mediante navegador web</string>
+    <string name="guest_user">Convidado</string>
+    <string name="login_button_google">Continuar con Google</string>
+    <string name="login_button_guest">Continuar como convidado</string>
+    <string name="login_desc_main">Organiza as túas tarefas diarias, programa recordatorios e xestiona a túa produtividade con claridade.</string>
+    <string name="login_description">Inicia sesión coa túa conta de Google para sincronizar as tarefas de forma segura en todos os teus dispositivos.</string>
+    <string name="login_footer_text">As túas tarefas almacénanse de forma privada e segura no teu dispositivo.</string>
+    <string name="login_google_btn">Continuar con Google</string>
+    <string name="login_guest_btn">Continuar en modo local</string>
+    <string name="login_perks_title">Por que iniciar sesión?</string>
+    <string name="login_start_btn">Comezar</string>
+    <string name="login_subtitle">Planificación estruturada para as túas actividades diarias.</string>
+    <string name="login_tagline">Organización estruturada e clara</string>
+    <string name="login_title">Benvido a FabiToDo</string>
+    <string name="login_welcome">Xestión de tarefas e axenda</string>
+</resources>

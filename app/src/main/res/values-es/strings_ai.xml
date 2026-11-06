@@ -109,4 +109,16 @@
     <string name="ai_result_error_title">Incidencia en la comunicación</string>
     <string name="ai_result_error_generic">No fue posible establecer comunicación con el modelo Gemini.</string>
     <string name="ai_result_error_tips">Verifica tu conexión de red e inténtalo nuevamente.</string>
+    <string name="ai_test_task_default">Preparar presentación importante</string>
+    <string name="ai_key_type_public_desc">Infraestructura Google AI / Firebase integrada</string>
+    <string name="ai_key_type_custom_desc">Usar API Key personalizada de Google AI Studio</string>
+    <string name="ai_model_desc_fast">Gemini 3.5 • Alta velocidad y bajo consumo</string>
+    <string name="ai_model_desc_advanced">Gemini 4 • Razonamiento avanzado y profundidad</string>
+    <string name="ai_model_desc_balanced">Gemini 3.8 • Equilibrio óptimo de precisión y fluidez</string>
+    <string name="ai_error_invalid_format">Formato de respuesta de la IA no válido</string>
+    <string name="ai_error_no_response">Sin respuesta de la IA</string>
+    <string name="ai_error_unknown">Error desconocido</string>
+    <string name="ai_error_with_reason">Error: %1$s</string>
+    <string name="ai_error_empty_response">El modelo devolvió una respuesta vacía.</string>
+    <string name="ai_error_timeout">La generación caducó. Inténtalo de nuevo.</string>
 </resources>

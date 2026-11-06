@@ -29,10 +29,13 @@ class SettingsViewModel @Inject constructor(
     private val prefs = application.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
 
     private fun triggerSettingsCloudPush() {
-        prefs.edit().putLong("last_settings_local_update", System.currentTimeMillis()).commit()
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            firestoreSyncManager.pushUserSettings()
-        }
+        // CORRECCIÓN: el marcador de "ediciones locales pendientes"
+        // (last_settings_local_update) y el envío con debounce los gestiona ahora el
+        // FirestoreSyncManager. Antes se lanzaba un push inmediato por cada ajuste y
+        // el marcador se sobrescribía también desde el propio sincronizador, lo que
+        // provocaba que se perdiera la noción de "cambios sin subir" y que algunos
+        // ajustes se revirtieran entre dispositivos.
+        firestoreSyncManager.scheduleSettingsPush()
     }
 
     private val prefListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { p, key ->

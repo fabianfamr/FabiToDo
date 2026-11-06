@@ -653,6 +653,39 @@
     <string name="toast_signed_out">Disconnessione riuscita</string>
     <string name="toast_signed_in">Accesso riuscito</string>
 
+    <string name="desc_task_image_attached">Immagine allegata</string>
+    <string name="action_attach_image">Allega immagine</string>
+    <string name="action_remove_image">Rimuovi immagine</string>
+    <string name="desc_app_icon">Icona dell\'app FabiToDo</string>
+    <string name="about_owner_role">Proprietario e Sviluppatore Principale</string>
+    <string name="about_owner_detail">Creatore, proprietario esclusivo e architetto dell\'applicazione FabiToDo.</string>
+    <string name="about_owner_badge">Proprietario e Creatore</string>
+    <string name="about_future_contributors_name">Futuri Collaboratori</string>
+    <string name="about_future_contributors_role">Comunità e Open Source</string>
+    <string name="about_future_contributors_detail">Spazio riservato per integrare e riconoscere gli sviluppatori che collaboreranno in futuro.</string>
+    <string name="about_future_contributors_badge">Aperto alle Collaborazioni</string>
+    <string name="about_feature_cloud_name">Sincronizzazione nel Cloud</string>
+    <string name="about_feature_cloud_detail">Backup in tempo reale e sincronizzazione su più dispositivi.</string>
+    <string name="about_feature_ai_name">Intelligenza Artificiale Gemini</string>
+    <string name="about_feature_ai_detail">Scomposizione automatica delle attività in passaggi strutturati e intuitivi.</string>
+    <string name="about_feature_ai_badge">IA Gemini</string>
+    <string name="about_feature_design_detail">Interfaccia adattiva con colori dinamici, modalità scura e animazioni fluide.</string>
+    <string name="about_signal_native">100% Android Nativo</string>
+    <string name="date_format_dmy_desc">Giorno / Mese / Anno (es. 30/05/26)</string>
+    <string name="date_format_mdy_desc">Mese / Giorno / Anno (es. 05/30/26)</string>
+    <string name="date_format_ymd_desc">Anno / Mese / Giorno (es. 26/05/30)</string>
+    <string name="time_format_12h_desc">12 ore - AM/PM (es. 02:30 PM)</string>
+    <string name="time_format_24h_desc">24 ore (es. 14:30)</string>
+    <string name="account_last_sync_value">Ultima sincronizzazione: %1$s</string>
+    <string name="auth_error_unsupported_credential">Tipo di credenziale non supportato</string>
+    <string name="quick_add_fallback_message">Organizza la tua giornata con FabiToDo</string>
+    <string name="category_icon_count">%1$s (%2$d)</string>
+
+    <plurals name="scheduled_tasks_count">
+        <item quantity="one">%d attività programmata</item>
+        <item quantity="other">%d attività programmate</item>
+    </plurals>
+
     <string-array name="quick_add_suggestions">
         <item>Cosa hai in mente oggi? Aggiungi un\'attività.</item>
         <item>Un passo alla volta. Appunta i tuoi impegni!</item>
