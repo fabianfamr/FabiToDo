@@ -28,8 +28,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 import com.fabian.todolist.R
 import com.fabian.todolist.ui.components.settings.SettingsSubmenuScaffold
 
@@ -40,6 +42,7 @@ data class AppContributor(
     val detail: String? = null,
     val badge: String? = null,
     val iconVector: ImageVector = Icons.Rounded.Person,
+    val avatarUrl: String? = null,
     val url: String? = null
 )
 
@@ -50,6 +53,7 @@ private val OwnerAndDeveloper = AppContributor(
     detail = "Creador, propietario exclusivo y arquitecto de la aplicación FabiToDo.",
     badge = "Dueño y Creador",
     iconVector = Icons.Rounded.Code,
+    avatarUrl = "https://github.com/fabianfamr.png",
     url = "https://github.com/fabianfamr"
 )
 
@@ -220,20 +224,14 @@ private fun AboutHeroCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.size(56.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                }
+                Image(
+                    painter = painterResource(R.mipmap.ic_launcher),
+                    contentDescription = "FabiToDo App Icon",
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -370,18 +368,30 @@ private fun ContributorCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(44.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = contributor.iconVector,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(24.dp)
-                    )
+            if (!contributor.avatarUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = contributor.avatarUrl,
+                    contentDescription = contributor.displayName,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = contributor.iconVector,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
 
