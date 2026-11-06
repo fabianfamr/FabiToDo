@@ -83,12 +83,18 @@ class FirestoreSyncManager @Inject constructor(
                                     taskDao.insertTask(remoteTask.copy(id = 0, isSynced = true))
                                 }
                             } else {
-                                if (remoteTask.isDeleted && !localTask.isDeleted) {
-                                    taskDao.updateTask(localTask.copy(isDeleted = true, deletedTimestamp = remoteTask.deletedTimestamp, isSynced = true))
+                                if (remoteTask.isDeleted) {
+                                    if (!localTask.isDeleted) {
+                                        taskDao.updateTask(localTask.copy(isDeleted = true, deletedTimestamp = remoteTask.deletedTimestamp, isSynced = true))
+                                    } else {
+                                        taskDao.markTasksSynced(listOf(localTask.id))
+                                    }
                                 } else if (remoteTask.updatedAt > localTask.updatedAt) {
                                     taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
                                 } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
                                     uploadTaskToFirestore(userId, localTask)
+                                } else if (!localTask.isSynced && remoteTask.updatedAt >= localTask.updatedAt) {
+                                    taskDao.markTasksSynced(listOf(localTask.id))
                                 }
                             }
                         }
@@ -158,11 +164,17 @@ class FirestoreSyncManager @Inject constructor(
                     }
                 } else {
                     if (remoteTask.isDeleted) {
-                        taskDao.deleteTask(localTask)
+                        if (!localTask.isDeleted) {
+                            taskDao.updateTask(localTask.copy(isDeleted = true, deletedTimestamp = remoteTask.deletedTimestamp, isSynced = true))
+                        } else {
+                            taskDao.markTasksSynced(listOf(localTask.id))
+                        }
                     } else if (remoteTask.updatedAt > localTask.updatedAt) {
                         taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
                     } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
                         uploadTaskToFirestore(userId, localTask)
+                    } else if (!localTask.isSynced && remoteTask.updatedAt >= localTask.updatedAt) {
+                        taskDao.markTasksSynced(listOf(localTask.id))
                     }
                 }
             }
@@ -240,6 +252,18 @@ class FirestoreSyncManager @Inject constructor(
             val localUpdate = prefs.getLong("last_settings_local_update", now)
             val updatedAt = maxOf(now, localUpdate)
 
+            // Auto-populate user display name from FirebaseAuth if not set in prefs
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val currentNameInPrefs = prefs.getString("user_display_name", "") ?: ""
+            val resolvedName = if (currentNameInPrefs.isNotBlank()) {
+                currentNameInPrefs
+            } else {
+                currentUser?.displayName ?: currentUser?.email?.substringBefore("@") ?: ""
+            }
+            if (resolvedName.isNotBlank() && currentNameInPrefs.isBlank()) {
+                prefs.edit().putString("user_display_name", resolvedName).apply()
+            }
+
             // Category configuration as defined by the user
             val rawCatsJson = prefs.getString("custom_categories", null)
             val parsedList = parseCategoryList(rawCatsJson ?: "")
@@ -285,7 +309,7 @@ class FirestoreSyncManager @Inject constructor(
                 "aiKeyType" to (prefs.getString("ai_key_type", "public") ?: "public"),
                 "showAiBanner" to prefs.getBoolean("show_ai_banner", true),
                 "showBackupCard" to prefs.getBoolean("show_backup_card", true),
-                "userDisplayName" to (prefs.getString("user_display_name", "") ?: ""),
+                "userDisplayName" to resolvedName,
                 "trashRetentionDays" to prefs.getInt("trash_retention_days", 30),
                 "updatedAt" to updatedAt
             )
@@ -322,16 +346,22 @@ class FirestoreSyncManager @Inject constructor(
 
             val editor = prefs.edit()
 
+            val localCats = prefs.getString("custom_categories", "") ?: ""
             doc.getString("customCategories")?.let { remoteCats ->
-                editor.putString("custom_categories", remoteCats)
+                val mergedCats = mergeCategoriesJson(localCats, remoteCats)
+                editor.putString("custom_categories", mergedCats)
             }
 
+            val localColors = prefs.getString("category_colors", "{}") ?: "{}"
             doc.getString("categoryColors")?.let { remoteColors ->
-                editor.putString("category_colors", remoteColors)
+                val mergedColors = mergeJsonObjectStrings(localColors, remoteColors)
+                editor.putString("category_colors", mergedColors)
             }
 
+            val localIcons = prefs.getString("category_icons", "{}") ?: "{}"
             doc.getString("categoryIcons")?.let { remoteIcons ->
-                editor.putString("category_icons", remoteIcons)
+                val mergedIcons = mergeJsonObjectStrings(localIcons, remoteIcons)
+                editor.putString("category_icons", mergedIcons)
             }
 
             doc.getString("themeAccent")?.let { editor.putString("accent_color", it) }
@@ -359,7 +389,11 @@ class FirestoreSyncManager @Inject constructor(
             doc.getString("aiKeyType")?.let { editor.putString("ai_key_type", it) }
             doc.getBoolean("showAiBanner")?.let { editor.putBoolean("show_ai_banner", it) }
             doc.getBoolean("showBackupCard")?.let { editor.putBoolean("show_backup_card", it) }
-            doc.getString("userDisplayName")?.let { editor.putString("user_display_name", it) }
+            doc.getString("userDisplayName")?.let { remoteName ->
+                if (remoteName.isNotBlank()) {
+                    editor.putString("user_display_name", remoteName)
+                }
+            }
             doc.getLong("trashRetentionDays")?.let { editor.putInt("trash_retention_days", it.toInt()) }
 
             val newSyncTime = maxOf(remoteUpdatedAt, System.currentTimeMillis())

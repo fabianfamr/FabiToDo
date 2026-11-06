@@ -233,8 +233,14 @@ fun AccountSettingsDialog(
                                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                                             )
                                             Spacer(modifier = Modifier.height(2.dp))
+                                            val formattedLastSync = remember(lastSyncTimestamp) {
+                                                if (lastSyncTimestamp > 0L) {
+                                                    val sdf = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+                                                    sdf.format(java.util.Date(lastSyncTimestamp))
+                                                } else null
+                                            }
                                             Text(
-                                                text = stringResource(R.string.account_cloud_sync_desc),
+                                                text = if (formattedLastSync != null) "Última sincronización: $formattedLastSync" else stringResource(R.string.account_cloud_sync_desc),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
                                             )

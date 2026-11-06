@@ -60,6 +60,8 @@ class TaskRepository(
     // Returns all tasks (active and trashed) so ViewModel flows can route/filter correctly
     val allTasks: Flow<List<Task>> = taskDao.getAllTasksIncludeDeleted()
     
+    val unsyncedCount: Flow<Int> = taskDao.getUnsyncedCount()
+    
     suspend fun getAllTasksSync(): List<Task> = taskDao.getAllTasksSync()
 
     suspend fun getAllTrashedTasksSync(): List<Task> = taskDao.getAllTrashedTasksSync()

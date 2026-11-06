@@ -113,6 +113,14 @@ class AuthViewModel @Inject constructor(
 
     fun signOut(context: Context, onComplete: () -> Unit = {}) {
         firestoreSyncManager.stopRealtimeSync()
+        val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+        prefs.edit()
+            .remove("last_firestore_sync_time")
+            .remove("last_settings_cloud_sync")
+            .remove("last_settings_local_update")
+            .remove("user_display_name")
+            .apply()
+
         viewModelScope.launch {
             try {
                 auth.signOut()

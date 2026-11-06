@@ -130,14 +130,16 @@ class TaskViewModel @Inject constructor(
     }
 
     // Synchronization
-    private val _unsyncedTasksCount = MutableStateFlow(prefs.getInt("unsynced_tasks_count", 0))
-    val unsyncedTasksCount: StateFlow<Int> = _unsyncedTasksCount.asStateFlow()
+    val unsyncedTasksCount: StateFlow<Int> = repository.unsyncedCount
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
 
     private fun incrementUnsynced() {
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            val next = _unsyncedTasksCount.updateAndGet { it + 1 }
-            prefs.edit().putInt("unsynced_tasks_count", next).apply()
-        }
+        // Handled automatically via Room DB changes and isSynced = false flag
     }
 
     private var isAppInForeground = false
@@ -149,8 +151,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun markAllSynced() {
-        _unsyncedTasksCount.value = 0
-        prefs.edit().putInt("unsynced_tasks_count", 0).apply()
+        // Handled via FirestoreSyncManager and Room markTasksSynced
     }
 
     fun generateSubtasksWithAI(
