@@ -113,6 +113,7 @@ class FirestoreSyncManager @Inject constructor(
         val settingsDoc = firestore.collection("users").document(userId).collection("settings").document("preferences")
         settingsListener = settingsDoc.addSnapshotListener { snapshot, error ->
             if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+            if (snapshot.metadata.hasPendingWrites()) return@addSnapshotListener
             syncScope.launch {
                 applyRemoteSettings(snapshot)
             }
@@ -332,7 +333,7 @@ class FirestoreSyncManager @Inject constructor(
             val localLastUpdate = prefs.getLong("last_settings_local_update", 0L)
             val localLastSync = prefs.getLong("last_settings_cloud_sync", 0L)
 
-            if (localLastUpdate > remoteUpdatedAt) {
+            if (localLastUpdate >= remoteUpdatedAt && localLastUpdate > 0) {
                 val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
                 if (currentUserId.isNotBlank()) {
                     syncScope.launch {

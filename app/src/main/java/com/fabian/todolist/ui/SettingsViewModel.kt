@@ -514,7 +514,8 @@ class SettingsViewModel @Inject constructor(
     fun renameCategory(oldName: String, newName: String) {
         if (SystemCategory.isSystemCategory(oldName) || SystemCategory.isSystemCategory(newName)) return
         val trimmedNew = newName.trim()
-        if (trimmedNew.isBlank() || _categories.value.contains(trimmedNew)) return
+        if (trimmedNew.isBlank() || (trimmedNew != oldName && _categories.value.contains(trimmedNew))) return
+        if (trimmedNew == oldName) return
         
         // 1. Update tasks in Room so oldName is no longer associated with tasks
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {

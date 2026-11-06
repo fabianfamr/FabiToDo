@@ -39,19 +39,21 @@ fun EditCategoryDialog(
     settingsViewModel: SettingsViewModel,
     onDismiss: () -> Unit
 ) {
-    var newCategoryName by remember { mutableStateOf(category) }
-    var selectedColor by remember { mutableStateOf(CATEGORY_COLOR_PALETTE.first()) }
-    var selectedIconName by remember { mutableStateOf("List") }
-    var iconSearchQuery by remember { mutableStateOf("") }
-
     val colors by settingsViewModel.categoryColors.collectAsStateWithLifecycle()
     val iconsMap by settingsViewModel.categoryIcons.collectAsStateWithLifecycle()
 
-    LaunchedEffect(category) {
-        val loadedColor = colors[category]
-        if (loadedColor != null) selectedColor = loadedColor
-        val loadedIcon = iconsMap[category]
-        if (loadedIcon != null) selectedIconName = loadedIcon
+    var newCategoryName by remember(category) { mutableStateOf(category) }
+    var selectedColor by remember(category, colors) {
+        mutableStateOf(colors[category] ?: CATEGORY_COLOR_PALETTE.first())
+    }
+    var selectedIconName by remember(category, iconsMap) {
+        mutableStateOf(iconsMap[category] ?: "List")
+    }
+    var iconSearchQuery by remember { mutableStateOf("") }
+
+    LaunchedEffect(category, colors, iconsMap) {
+        colors[category]?.let { selectedColor = it }
+        iconsMap[category]?.let { selectedIconName = it }
     }
 
     val filteredIcons = remember(iconSearchQuery) {
@@ -248,7 +250,9 @@ fun EditCategoryDialog(
                 onClick = {
                     if (newCategoryName.isNotBlank()) {
                         val trimmed = newCategoryName.trim()
-                        settingsViewModel.renameCategory(category, trimmed)
+                        if (trimmed != category) {
+                            settingsViewModel.renameCategory(category, trimmed)
+                        }
                         settingsViewModel.setCategoryColor(trimmed, selectedColor)
                         settingsViewModel.setCategoryIcon(trimmed, selectedIconName)
                         onDismiss()

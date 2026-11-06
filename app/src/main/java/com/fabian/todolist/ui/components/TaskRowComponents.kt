@@ -266,12 +266,19 @@ fun TaskBadges(
                 val monthlyLabel = stringResource(R.string.repeat_monthly)
                 val repeatLabel = stringResource(R.string.repeat_label)
                 
-                val dateAndRepeatText = remember(dateText, task.dueTime, task.isRepeat, task.repeatType, dailyLabel, weeklyLabel, monthlyLabel, repeatLabel) {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val prefs = remember(context) { context.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
+                val timeFormatPref = remember(prefs) { prefs.getString("time_format", "24h") ?: "24h" }
+                val formattedDueTime = remember(task.dueTime, timeFormatPref) {
+                    com.fabian.todolist.util.DateTimeUtils.formatTimeWithPreference(task.dueTime, timeFormatPref)
+                }
+
+                val dateAndRepeatText = remember(dateText, formattedDueTime, task.isRepeat, task.repeatType, dailyLabel, weeklyLabel, monthlyLabel, repeatLabel) {
                     buildString {
                         append(dateText)
-                        if (!task.dueTime.isNullOrBlank()) {
+                        if (formattedDueTime.isNotBlank()) {
                             append(" - ")
-                            append(task.dueTime)
+                            append(formattedDueTime)
                         }
                         if (task.isRepeat) {
                             append(" (")

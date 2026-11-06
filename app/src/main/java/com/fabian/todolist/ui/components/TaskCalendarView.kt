@@ -782,9 +782,14 @@ private fun CalendarTaskItemCard(
                     }
 
                     // Due Date / Time (if set)
+                    val calendarContext = androidx.compose.ui.platform.LocalContext.current
+                    val calPrefs = remember(calendarContext) { calendarContext.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
+                    val calDateFormatPref = remember(calPrefs) { calPrefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA" }
+                    val calTimeFormatPref = remember(calPrefs) { calPrefs.getString("time_format", "24h") ?: "24h" }
+
                     if (task.dueDate != null && isOverdue) {
                         Text(
-                            text = DateTimeUtils.formatDateSimpleSlash(task.dueDate!!),
+                            text = DateTimeUtils.formatDateWithPreference(task.dueDate!!, calDateFormatPref),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.error
@@ -799,7 +804,7 @@ private fun CalendarTaskItemCard(
                             )
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
-                                text = task.dueTime!!,
+                                text = DateTimeUtils.formatTimeWithPreference(task.dueTime, calTimeFormatPref),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant

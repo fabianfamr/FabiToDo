@@ -95,4 +95,32 @@ object DateTimeUtils {
             timeString
         }
     }
+
+    /**
+     * Formats a date timestamp according to the user's date format preference ("DD/MM/AA", "MM/DD/AA", "AA/MM/DD").
+     */
+    fun formatDateWithPreference(millis: Long, dateFormatPref: String): String {
+        val pattern = when (dateFormatPref) {
+            "MM/DD/AA" -> "MM/dd/yy"
+            "AA/MM/DD" -> "yy/MM/dd"
+            else -> "dd/MM/yy"
+        }
+        return try {
+            SimpleDateFormat(pattern, Locale.getDefault()).format(Date(millis))
+        } catch (_: Exception) {
+            formatDateSimpleSlashShort(millis)
+        }
+    }
+
+    /**
+     * Formats a time string according to the user's time format preference ("12h" vs "24h").
+     */
+    fun formatTimeWithPreference(timeString: String?, timeFormatPref: String): String {
+        if (timeString.isNullOrBlank()) return ""
+        return if (timeFormatPref == "12h") {
+            formatTimeTo12Hour(timeString)
+        } else {
+            timeString
+        }
+    }
 }
