@@ -283,6 +283,9 @@ class FirestoreSyncManager @Inject constructor(
                 "aiLowLatencyMode" to prefs.getBoolean("ai_low_latency_mode", true),
                 "aiSubtaskCount" to prefs.getInt("ai_subtask_count", 5),
                 "aiKeyType" to (prefs.getString("ai_key_type", "public") ?: "public"),
+                "showAiBanner" to prefs.getBoolean("show_ai_banner", true),
+                "showBackupCard" to prefs.getBoolean("show_backup_card", true),
+                "userDisplayName" to (prefs.getString("user_display_name", "") ?: ""),
                 "trashRetentionDays" to prefs.getInt("trash_retention_days", 30),
                 "updatedAt" to updatedAt
             )
@@ -354,6 +357,9 @@ class FirestoreSyncManager @Inject constructor(
             doc.getBoolean("aiLowLatencyMode")?.let { editor.putBoolean("ai_low_latency_mode", it) }
             doc.getLong("aiSubtaskCount")?.let { editor.putInt("ai_subtask_count", it.toInt()) }
             doc.getString("aiKeyType")?.let { editor.putString("ai_key_type", it) }
+            doc.getBoolean("showAiBanner")?.let { editor.putBoolean("show_ai_banner", it) }
+            doc.getBoolean("showBackupCard")?.let { editor.putBoolean("show_backup_card", it) }
+            doc.getString("userDisplayName")?.let { editor.putString("user_display_name", it) }
             doc.getLong("trashRetentionDays")?.let { editor.putInt("trash_retention_days", it.toInt()) }
 
             val newSyncTime = maxOf(remoteUpdatedAt, System.currentTimeMillis())

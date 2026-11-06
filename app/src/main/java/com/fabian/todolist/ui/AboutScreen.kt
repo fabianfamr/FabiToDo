@@ -99,9 +99,9 @@ fun AboutScreen(
     val versionName: String = remember {
         try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            packageInfo.versionName ?: "1.35.2"
+            packageInfo.versionName ?: com.fabian.todolist.BuildConfig.VERSION_NAME
         } catch (_: Exception) {
-            "1.35.2"
+            com.fabian.todolist.BuildConfig.VERSION_NAME
         }
     }
 

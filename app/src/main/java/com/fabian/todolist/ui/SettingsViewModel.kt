@@ -246,19 +246,19 @@ class SettingsViewModel @Inject constructor(
 
     fun setThemeAccent(accent: String) {
         _themeAccent.value = accent
-        prefs.edit().putString("accent_color", accent).apply()
+        prefs.edit().putString("accent_color", accent).commit()
         triggerSettingsCloudPush()
     }
 
     fun setThemeDark(mode: String) {
         _themeDark.value = mode
-        prefs.edit().putString("theme_mode", mode).apply()
+        prefs.edit().putString("theme_mode", mode).commit()
         triggerSettingsCloudPush()
     }
 
     fun setLanguageCode(lang: String) {
         _languageCode.value = lang
-        prefs.edit().putString("app_locale", lang).apply()
+        prefs.edit().putString("app_locale", lang).commit()
         triggerSettingsCloudPush()
         
         val appLocale = if (lang == "system") {
@@ -271,55 +271,55 @@ class SettingsViewModel @Inject constructor(
 
     fun setDateFormat(format: String) {
         _dateFormat.value = format
-        prefs.edit().putString("date_format", format).apply()
+        prefs.edit().putString("date_format", format).commit()
         triggerSettingsCloudPush()
     }
 
     fun setTimeFormat(format: String) {
         _timeFormat.value = format
-        prefs.edit().putString("time_format", format).apply()
+        prefs.edit().putString("time_format", format).commit()
         triggerSettingsCloudPush()
     }
 
     fun setLongPressAction(action: String) {
         _longPressAction.value = action
-        prefs.edit().putString("long_press_action", action).apply()
+        prefs.edit().putString("long_press_action", action).commit()
         triggerSettingsCloudPush()
     }
 
     fun setConfirmOnDelete(confirm: Boolean) {
         _confirmOnDelete.value = confirm
-        prefs.edit().putBoolean("confirm_on_delete", confirm).apply()
+        prefs.edit().putBoolean("confirm_on_delete", confirm).commit()
         triggerSettingsCloudPush()
     }
 
     fun setHapticFeedbackOnComplete(feedback: Boolean) {
         _hapticFeedbackOnComplete.value = feedback
-        prefs.edit().putBoolean("haptic_feedback_on_complete", feedback).apply()
+        prefs.edit().putBoolean("haptic_feedback_on_complete", feedback).commit()
         triggerSettingsCloudPush()
     }
 
     fun setRequireBiometrics(require: Boolean) {
         _requireBiometrics.value = require
-        prefs.edit().putBoolean("require_biometrics", require).apply()
+        prefs.edit().putBoolean("require_biometrics", require).commit()
         triggerSettingsCloudPush()
     }
 
     fun setSecureScreenMode(enabled: Boolean) {
         _secureScreenMode.value = enabled
-        prefs.edit().putBoolean("secure_screen_mode", enabled).apply()
+        prefs.edit().putBoolean("secure_screen_mode", enabled).commit()
         triggerSettingsCloudPush()
     }
 
     fun setEncryptBackups(enabled: Boolean) {
         _encryptBackups.value = enabled
-        prefs.edit().putBoolean("encrypt_backups", enabled).apply()
+        prefs.edit().putBoolean("encrypt_backups", enabled).commit()
         triggerSettingsCloudPush()
     }
 
     fun setNotificationsEnabled(enabled: Boolean) {
         _notificationsEnabled.value = enabled
-        prefs.edit().putBoolean("global_notifications_enabled", enabled).apply()
+        prefs.edit().putBoolean("global_notifications_enabled", enabled).commit()
         triggerSettingsCloudPush()
     }
 
@@ -330,11 +330,11 @@ class SettingsViewModel @Inject constructor(
 
     fun setQuickAddNotificationInterval(intervalCode: String) {
         _quickAddNotificationInterval.value = intervalCode
-        prefs.edit().putString("quick_add_notification_interval", intervalCode).apply()
+        prefs.edit().putString("quick_add_notification_interval", intervalCode).commit()
         
         val isEnabled = intervalCode != "off"
         _quickAddNotificationEnabled.value = isEnabled
-        prefs.edit().putBoolean("quick_add_notification_enabled", isEnabled).apply()
+        prefs.edit().putBoolean("quick_add_notification_enabled", isEnabled).commit()
         triggerSettingsCloudPush()
 
         val context = getApplication<Application>().applicationContext
@@ -343,91 +343,91 @@ class SettingsViewModel @Inject constructor(
 
     fun setQuickAddQuietHoursEnabled(enabled: Boolean) {
         _quickAddQuietHoursEnabled.value = enabled
-        prefs.edit().putBoolean("quick_add_quiet_hours_enabled", enabled).apply()
+        prefs.edit().putBoolean("quick_add_quiet_hours_enabled", enabled).commit()
         triggerSettingsCloudPush()
     }
 
     fun setNotificationsSound(enabled: Boolean) {
         _notificationsSound.value = enabled
-        prefs.edit().putBoolean("notifications_sound", enabled).apply()
+        prefs.edit().putBoolean("notifications_sound", enabled).commit()
         triggerSettingsCloudPush()
     }
 
     fun setNotificationsVibrate(enabled: Boolean) {
         _notificationsVibrate.value = enabled
-        prefs.edit().putBoolean("notifications_vibrate", enabled).apply()
+        prefs.edit().putBoolean("notifications_vibrate", enabled).commit()
         triggerSettingsCloudPush()
     }
 
     fun setReminderOffsetMinutes(minutes: Int) {
         _reminderOffsetMinutes.value = minutes
-        prefs.edit().putInt("reminder_offset_minutes", minutes).apply()
+        prefs.edit().putInt("reminder_offset_minutes", minutes).commit()
         triggerSettingsCloudPush()
     }
 
     fun setSnoozeDuration(minutes: Int) {
         _snoozeDurationMinutes.value = minutes
-        prefs.edit().putInt("snooze_duration_minutes", minutes).apply()
+        prefs.edit().putInt("snooze_duration_minutes", minutes).commit()
         triggerSettingsCloudPush()
     }
 
     fun setTrashRetentionDays(days: Int) {
         _trashRetentionDays.value = days
-        prefs.edit().putInt("trash_retention_days", days).apply()
+        prefs.edit().putInt("trash_retention_days", days).commit()
         triggerSettingsCloudPush()
     }
 
     fun setAiModel(model: String) {
         _aiModel.value = model
-        prefs.edit().putString("ai_model", model).apply()
+        prefs.edit().putString("ai_model", model).commit()
         triggerSettingsCloudPush()
     }
 
     fun setAiLowLatencyMode(enabled: Boolean) {
         _aiLowLatencyMode.value = enabled
-        prefs.edit().putBoolean("ai_low_latency_mode", enabled).apply()
+        prefs.edit().putBoolean("ai_low_latency_mode", enabled).commit()
         triggerSettingsCloudPush()
     }
 
     fun setAiApiKey(key: String) {
         _aiApiKey.value = key
-        prefs.edit().putString("ai_api_key", key).apply()
+        prefs.edit().putString("ai_api_key", key).commit()
         triggerSettingsCloudPush()
     }
 
     fun setAiKeyType(type: String) {
         _aiKeyType.value = type
-        prefs.edit().putString("ai_key_type", type).apply()
+        prefs.edit().putString("ai_key_type", type).commit()
         triggerSettingsCloudPush()
     }
 
     fun setAiSubtaskCount(count: Int) {
         _aiSubtaskCount.value = count
-        prefs.edit().putInt("ai_subtask_count", count).apply()
+        prefs.edit().putInt("ai_subtask_count", count).commit()
         triggerSettingsCloudPush()
     }
 
     fun setShowAiBanner(show: Boolean) {
         _showAiBanner.value = show
-        prefs.edit().putBoolean("show_ai_banner", show).apply()
+        prefs.edit().putBoolean("show_ai_banner", show).commit()
         triggerSettingsCloudPush()
     }
 
     fun setShowBackupCard(show: Boolean) {
         _showBackupCard.value = show
-        prefs.edit().putBoolean("show_backup_card", show).apply()
+        prefs.edit().putBoolean("show_backup_card", show).commit()
         triggerSettingsCloudPush()
     }
 
     fun setOnboardingCompleted(completed: Boolean) {
         _onboardingCompleted.value = completed
-        prefs.edit().putBoolean("onboarding_completed", completed).apply()
+        prefs.edit().putBoolean("onboarding_completed", completed).commit()
         triggerSettingsCloudPush()
     }
 
     fun setUserName(name: String) {
         _userName.value = name
-        prefs.edit().putString("user_display_name", name).apply()
+        prefs.edit().putString("user_display_name", name).commit()
         triggerSettingsCloudPush()
     }
 
