@@ -224,12 +224,13 @@ private fun AboutHeroCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(R.mipmap.ic_launcher),
+                AsyncImage(
+                    model = R.drawable.ic_app_icon_foreground,
                     contentDescription = "FabiToDo App Icon",
                     modifier = Modifier
                         .size(56.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                     contentScale = ContentScale.Crop
                 )
 
