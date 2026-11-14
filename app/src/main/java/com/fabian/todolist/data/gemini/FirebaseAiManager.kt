@@ -29,6 +29,18 @@ object FirebaseAiManager {
         }
     }
 
+    fun mapToRestApiModel(modelName: String, lowLatency: Boolean = false): String {
+        if (lowLatency) {
+            return "gemini-2.5-flash-lite"
+        }
+        return when {
+            modelName.contains("flash-lite", ignoreCase = true) || modelName.contains("lite", ignoreCase = true) -> "gemini-2.5-flash-lite"
+            modelName.contains("argon", ignoreCase = true) || modelName.contains("pro", ignoreCase = true) -> "gemini-2.5-pro"
+            modelName.startsWith("gemini-2", ignoreCase = true) -> modelName
+            else -> "gemini-2.5-flash"
+        }
+    }
+
     suspend fun generateContent(
         modelName: String,
         prompt: String,

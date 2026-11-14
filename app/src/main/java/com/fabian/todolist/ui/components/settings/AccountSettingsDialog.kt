@@ -64,6 +64,12 @@ fun AccountSettingsDialog(
             .build()
     }
 
+    DisposableEffect(gifImageLoader) {
+        onDispose {
+            gifImageLoader.shutdown()
+        }
+    }
+
     val avatarUrl = remember(currentUser?.photoUrl) {
         currentUser?.photoUrl?.toString()?.let { url ->
             if (url.contains("googleusercontent.com")) {

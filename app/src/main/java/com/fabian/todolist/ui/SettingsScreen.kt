@@ -95,7 +95,6 @@ import android.os.Build
 import coil.compose.rememberAsyncImagePainter
 import com.fabian.todolist.MainActivity
 import com.fabian.todolist.R
-import com.fabian.todolist.data.AuthManager
 import com.fabian.todolist.util.getLocalizedCategoryName
 import com.fabian.todolist.util.getCategoryIconVector
 import com.fabian.todolist.util.getCategoryColor

@@ -35,10 +35,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fabian.todolist.R
 import com.fabian.todolist.ui.TaskViewModel
 import com.fabian.todolist.ui.SettingsViewModel
+import com.fabian.todolist.util.BackupImportResult
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,24 +54,39 @@ fun BackupSettingsDialog(
     onDismiss: () -> Unit
 ) {
     val showBackupCard by settingsViewModel.showBackupCard.collectAsStateWithLifecycle()
-    val allTasksList by viewModel.allTasksListState.collectAsStateWithLifecycle()
+    val encryptBackups by settingsViewModel.encryptBackups.collectAsStateWithLifecycle()
     val storageStats by settingsViewModel.storageStats.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    var selectedExportFormat by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("json") }
+    var selectedExportFormat by rememberSaveable { mutableStateOf("json") }
     var isFormatMenuExpanded by remember { mutableStateOf(false) }
+
+    var showExportPasswordDialog by rememberSaveable { mutableStateOf(false) }
+    var pendingExportPassphrase by rememberSaveable { mutableStateOf<String?>(null) }
+
+    var showImportPasswordDialog by rememberSaveable { mutableStateOf(false) }
+    var pendingImportUriString by rememberSaveable { mutableStateOf<String?>(null) }
+    var importPasswordWrongError by rememberSaveable { mutableStateOf(false) }
 
     // Launcher for exporting backup
     val createDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/octet-stream")
     ) { uri ->
+        val passphraseToUse = pendingExportPassphrase
+        pendingExportPassphrase = null
         if (uri != null) {
             coroutineScope.launch {
                 try {
+                    val liveTasks = viewModel.getAllTasksForBackup()
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                         val categoriesList = settingsViewModel.categories.value
-                        val success = viewModel.exportBackupToStream(outputStream, allTasksList, categoriesList)
+                        val success = viewModel.exportBackupToStream(
+                            outputStream = outputStream,
+                            tasks = liveTasks,
+                            customCategories = categoriesList,
+                            passphrase = passphraseToUse
+                        )
                         if (success) {
                             Toast.makeText(context, context.getString(R.string.toast_backup_export_success), Toast.LENGTH_SHORT).show()
                         } else {
@@ -86,13 +107,25 @@ fun BackupSettingsDialog(
         if (uri != null) {
             coroutineScope.launch {
                 try {
-                    context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                        val success = viewModel.importBackupFromStream(inputStream) { importedCats ->
+                    val result = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                        viewModel.importBackupFromStream(inputStream, passphrase = null) { importedCats ->
                             settingsViewModel.saveCategories(importedCats)
                         }
-                        if (success) {
+                    } ?: BackupImportResult.InvalidFile
+
+                    when (result) {
+                        BackupImportResult.Success -> {
                             Toast.makeText(context, context.getString(R.string.toast_backup_import_success), Toast.LENGTH_SHORT).show()
-                        } else {
+                        }
+                        BackupImportResult.RequiresPassword -> {
+                            pendingImportUriString = uri.toString()
+                            importPasswordWrongError = false
+                            showImportPasswordDialog = true
+                        }
+                        BackupImportResult.WrongPassword -> {
+                            Toast.makeText(context, context.getString(R.string.backup_password_wrong_error), Toast.LENGTH_SHORT).show()
+                        }
+                        BackupImportResult.InvalidFile -> {
                             Toast.makeText(context, context.getString(R.string.toast_backup_import_invalid), Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -345,8 +378,13 @@ fun BackupSettingsDialog(
 
                                 Button(
                                     onClick = {
-                                        val fileName = if (selectedExportFormat == "fabitodo") "fabitodo_backup.fabitodo" else "fabitodo_backup.json"
-                                        createDocumentLauncher.launch(fileName)
+                                        if (encryptBackups) {
+                                            showExportPasswordDialog = true
+                                        } else {
+                                            pendingExportPassphrase = null
+                                            val fileName = if (selectedExportFormat == "fabitodo") "fabitodo_backup.fabitodo" else "fabitodo_backup.json"
+                                            createDocumentLauncher.launch(fileName)
+                                        }
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -559,4 +597,145 @@ fun BackupSettingsDialog(
                     }
                 }
             }
+
+    if (showExportPasswordDialog) {
+        BackupPassphraseDialog(
+            description = stringResource(R.string.backup_password_export_desc),
+            externalError = null,
+            onDismiss = { showExportPasswordDialog = false },
+            onConfirm = { enteredPassphrase ->
+                showExportPasswordDialog = false
+                pendingExportPassphrase = enteredPassphrase
+                val fileName = if (selectedExportFormat == "fabitodo") "fabitodo_backup.fabitodo" else "fabitodo_backup.json"
+                createDocumentLauncher.launch(fileName)
+            }
+        )
+    }
+
+    if (showImportPasswordDialog && pendingImportUriString != null) {
+        BackupPassphraseDialog(
+            description = stringResource(R.string.backup_password_import_desc),
+            externalError = if (importPasswordWrongError) stringResource(R.string.backup_password_wrong_error) else null,
+            onDismiss = {
+                showImportPasswordDialog = false
+                pendingImportUriString = null
+                importPasswordWrongError = false
+            },
+            onConfirm = { enteredPassphrase ->
+                val targetUri = android.net.Uri.parse(pendingImportUriString)
+                coroutineScope.launch {
+                    try {
+                        val result = context.contentResolver.openInputStream(targetUri)?.use { inputStream ->
+                            viewModel.importBackupFromStream(inputStream, passphrase = enteredPassphrase) { importedCats ->
+                                settingsViewModel.saveCategories(importedCats)
+                            }
+                        } ?: BackupImportResult.InvalidFile
+
+                        when (result) {
+                            BackupImportResult.Success -> {
+                                showImportPasswordDialog = false
+                                pendingImportUriString = null
+                                importPasswordWrongError = false
+                                Toast.makeText(context, context.getString(R.string.toast_backup_import_success), Toast.LENGTH_SHORT).show()
+                            }
+                            BackupImportResult.WrongPassword,
+                            BackupImportResult.RequiresPassword -> {
+                                importPasswordWrongError = true
+                            }
+                            BackupImportResult.InvalidFile -> {
+                                showImportPasswordDialog = false
+                                pendingImportUriString = null
+                                importPasswordWrongError = false
+                                Toast.makeText(context, context.getString(R.string.toast_backup_import_invalid), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        showImportPasswordDialog = false
+                        pendingImportUriString = null
+                        importPasswordWrongError = false
+                        Toast.makeText(context, context.getString(R.string.toast_backup_import_error, e.message), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun BackupPassphraseDialog(
+    description: String,
+    externalError: String?,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var passphrase by rememberSaveable { mutableStateOf("") }
+    var showPassword by rememberSaveable { mutableStateOf(false) }
+    var emptyError by rememberSaveable { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        shape = RoundedCornerShape(28.dp),
+        containerColor = MaterialTheme.colorScheme.surface,
+        title = {
+            Text(
+                text = stringResource(R.string.backup_password_title),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                OutlinedTextField(
+                    value = passphrase,
+                    onValueChange = {
+                        passphrase = it
+                        emptyError = false
+                    },
+                    label = { Text(stringResource(R.string.backup_password_hint)) },
+                    singleLine = true,
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    isError = emptyError || externalError != null,
+                    supportingText = {
+                        when {
+                            emptyError -> Text(stringResource(R.string.backup_password_empty_error))
+                            externalError != null -> Text(externalError)
+                        }
+                    },
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (passphrase.isBlank()) {
+                        emptyError = true
+                    } else {
+                        onConfirm(passphrase)
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.backup_password_confirm_btn), fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }

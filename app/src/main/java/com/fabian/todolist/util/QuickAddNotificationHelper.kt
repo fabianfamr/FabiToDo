@@ -35,26 +35,21 @@ object QuickAddNotificationHelper {
      */
     suspend fun fetchDynamicMotivation(context: Context): String? {
         val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
-        val userKey = prefs.getString("ai_api_key", "") ?: ""
+        val aiKeyType = prefs.getString("ai_key_type", "public") ?: "public"
+        val userKey = SecurityCryptoHelper.readAndMigrateApiKey(prefs)
         val key = if (userKey.isNotBlank()) userKey else com.fabian.todolist.BuildConfig.GEMINI_API_KEY
         val model = prefs.getString("ai_model", "gemini-3.5-flash-lite") ?: "gemini-3.5-flash-lite"
-        
-        val currentLocaleCode = context.resources.configuration.locales.get(0).language
+        val useLowLatency = prefs.getBoolean("ai_low_latency_mode", true)
+
+        val currentLocale = context.resources.configuration.locales.get(0)
+        val currentLocaleCode = currentLocale.language
         val isSpanish = currentLocaleCode.startsWith("es")
-        // Nombre del idioma activo (en inglés) para pedirle al modelo que responda
-        // en el idioma del usuario: funciona con todos los idiomas soportados.
-        val responseLanguageName = context.resources.configuration.locales.get(0)
-            .getDisplayName(java.util.Locale.ENGLISH).ifBlank { "English" }
+        val responseLanguageName = currentLocale.getDisplayName(java.util.Locale.ENGLISH).ifBlank { "English" }
 
         val calendar = java.util.Calendar.getInstance()
         val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
 
-        // Nombre del día calculado con el locale del prompt (no hardcodeado),
-        // de modo que funciona igual con cualquiera de los 16 idiomas.
-        val dayOfWeekName = java.text.SimpleDateFormat(
-            "EEEE",
-            if (isSpanish) java.util.Locale("es") else java.util.Locale.ENGLISH
-        ).format(calendar.time)
+        val dayOfWeekName = java.text.SimpleDateFormat("EEEE", currentLocale).format(calendar.time)
 
         val timeOfDaySegment = when {
             hour in 6..11 -> if (isSpanish) "Mañana" else "Morning"
@@ -63,55 +58,50 @@ object QuickAddNotificationHelper {
             else -> if (isSpanish) "Madrugada" else "Late night"
         }
 
-        // Construct context-aware motivational dynamically tailored prompt
         val prompt = if (isSpanish) {
             """
             Estamos a día $dayOfWeekName y el reloj marca las $hour:00 h ($timeOfDaySegment).
-            Escribe una sola frase fresquísima, empática, alegre, muy creativa y corta (máximo 85 caracteres) que me inspire a abrir la app FabiToDo y registrar mis tareas.
-            Ajusta el mood o tono a la hora y día (por ejemplo, energía al arrancar la mañana, enfoque al mediodía, satisfacción o calma de noche, o buena vibra de fin de semana).
+            Escribe una sola frase empática, alegre y breve (máximo 85 caracteres) que me inspire a abrir la app FabiToDo y registrar mis tareas.
+            Ajusta el tono a la hora y día (energía al arrancar la mañana, enfoque al mediodía, calma de noche o serenidad de fin de semana).
             No incluyas hashtags, comillas ni formato markdown.
             """.trimIndent()
         } else {
             """
             Today is $dayOfWeekName and the current local hour is $hour:00 ($timeOfDaySegment).
-            Write a single fresh, friendly, encouraging, and brief reminder sentence (maximum 85 characters) to motivate me to open FabiToDo and write my pending tasks of today.
-            Tailor the energy to the time of day and the week (e.g., active morning starter, focused afternoon boost, cozy evening wrap-up, or relaxed weekend vibe).
+            Write a single brief, encouraging, and serious reminder sentence (maximum 85 characters) to motivate me to open FabiToDo and record my pending tasks for today.
+            Tailor the tone to the time of day and the week (active morning starter, focused afternoon boost, calm evening wrap-up, or relaxed weekend rhythm).
             IMPORTANT: Write your answer in $responseLanguageName.
             No hashtags, no quotes, and no markdown format.
             """.trimIndent()
         }
 
+        val systemInstruction = "You are a context-aware, empathetic task companion. Always write exactly one brief line, strictly under 85 characters, with no formatting, quotes, or markdown."
+
         return try {
-            if (com.fabian.todolist.data.gemini.FirebaseAiManager.isGeminiModel(model)) {
+            val hasValidCustomKey = key.isNotBlank() &&
+                key != "PLACEHOLDER_NOT_CONFIGURED" &&
+                key != "YOUR_GEMINI_API_KEY"
+
+            if (aiKeyType == "custom") {
+                if (!hasValidCustomKey) return null
+                val restModel = com.fabian.todolist.data.gemini.FirebaseAiManager.mapToRestApiModel(model, useLowLatency)
+                val request = GenerateContentRequest(
+                    contents = listOf(Content(parts = listOf(Part(text = prompt)))),
+                    systemInstruction = Content(parts = listOf(Part(text = systemInstruction)))
+                )
+                val response = RetrofitClient.service.generateContent(restModel, key, request)
+                val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.trim()
+                if (!text.isNullOrBlank()) text.replace("\"", "").replace("'", "").trim() else null
+            } else {
                 val text = com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
                     modelName = model,
                     prompt = prompt,
-                    systemInstructionText = "You are a context-aware, highly empathetic and charismatic task companion. Always write exactly one brief line, strictly under 85 characters, with absolutely no formatting, quotes, or markdown.",
-                    lowLatency = true,
+                    systemInstructionText = systemInstruction,
+                    lowLatency = useLowLatency,
                     timeoutMs = 15_000L,
                     userContext = context
                 )
                 text.replace("\"", "").replace("'", "").trim()
-            } else if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
-                val request = GenerateContentRequest(
-                    contents = listOf(
-                        Content(
-                            parts = listOf(Part(text = prompt))
-                        )
-                    ),
-                    systemInstruction = Content(
-                        parts = listOf(Part(text = "You are a context-aware, highly empathetic and charismatic task companion. Always write exactly one brief line, strictly under 85 characters, with absolutely no formatting, quotes, or markdown."))
-                    )
-                )
-                val response = RetrofitClient.service.generateContent(model, key, request)
-                val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.trim()
-                if (!text.isNullOrBlank()) {
-                    text.replace("\"", "").replace("'", "").trim()
-                } else {
-                    null
-                }
-            } else {
-                null
             }
         } catch (e: Exception) {
             Log.e("QuickAddNotification", "Failed to fetch motivation from Gemini API", e)
@@ -133,10 +123,9 @@ object QuickAddNotificationHelper {
             notificationManager.createNotificationChannel(channel)
         }
 
-        // Action when notification is clicked or button is pressed (ACTION_ADD_TASK triggers AddTaskDialog)
         val intent = Intent(context, MainActivity::class.java).apply {
             action = "com.fabian.todolist.ACTION_ADD_TASK"
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -191,10 +180,16 @@ object QuickAddNotificationHelper {
      * Schedules the non-permanent reminders based on the chosen interval value.
      * Available intervals: "off", "1h", "2h", "6h", "12h", "24h".
      */
-    fun schedulePeriodicReminders(context: Context, intervalCode: String) {
+    fun schedulePeriodicReminders(
+        context: Context,
+        intervalCode: String,
+        replaceExisting: Boolean = false
+    ) {
+        val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+        val notificationsEnabled = prefs.getBoolean("global_notifications_enabled", true)
         val workManager = WorkManager.getInstance(context)
-        
-        if (intervalCode == "off") {
+
+        if (intervalCode == "off" || !notificationsEnabled) {
             workManager.cancelUniqueWork(UNIQUE_WORK_NAME)
             cancelQuickAddNotification(context)
             return
@@ -206,18 +201,23 @@ object QuickAddNotificationHelper {
             "6h" -> 360L
             "12h" -> 720L
             "24h" -> 1440L
-            else -> 360L // Default fallback to 6 hours
+            else -> 360L
         }
 
         val periodicWorkRequest = PeriodicWorkRequestBuilder<QuickAddReminderWorker>(
             repeatIntervalMinutes, TimeUnit.MINUTES,
-            15L, TimeUnit.MINUTES // Flexible interval allowance for Android optimization
-        )
-        .build()
+            15L, TimeUnit.MINUTES
+        ).build()
+
+        val policy = if (replaceExisting) {
+            ExistingPeriodicWorkPolicy.UPDATE
+        } else {
+            ExistingPeriodicWorkPolicy.KEEP
+        }
 
         workManager.enqueueUniquePeriodicWork(
             UNIQUE_WORK_NAME,
-            ExistingPeriodicWorkPolicy.UPDATE,
+            policy,
             periodicWorkRequest
         )
     }

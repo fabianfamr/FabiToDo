@@ -12,6 +12,9 @@ class QuickAddReminderWorker(
 
     override suspend fun doWork(): Result {
         val prefs = applicationContext.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("global_notifications_enabled", true)) {
+            return Result.success()
+        }
         val quietHoursEnabled = prefs.getBoolean("quick_add_quiet_hours_enabled", true)
         
         if (quietHoursEnabled) {

@@ -680,6 +680,16 @@
     <string name="auth_error_unsupported_credential">Tipo de credencial no compatible</string>
     <string name="quick_add_fallback_message">Organiza tu día con FabiToDo</string>
     <string name="category_icon_count">%1$s (%2$d)</string>
+    <string name="backup_password_title">Contraseña de respaldo</string>
+    <string name="backup_password_export_desc">Ingresa una contraseña para cifrar este archivo antes de guardarlo. Guárdala en un lugar seguro, ya que no puede recuperarse.</string>
+    <string name="backup_password_import_desc">Este archivo de respaldo está cifrado. Ingresa la contraseña con la que fue exportado.</string>
+    <string name="backup_password_hint">Contraseña</string>
+    <string name="backup_password_empty_error">Ingresa una contraseña</string>
+    <string name="backup_password_wrong_error">Contraseña incorrecta o archivo dañado</string>
+    <string name="backup_password_confirm_btn">Continuar</string>
+    <string name="empty_state_filtered_title">No hay tareas que coincidan</string>
+    <string name="empty_state_filtered_desc">Limpia la búsqueda o el filtro de estado activo para volver a ver tus tareas.</string>
+    <string name="clear_filters_action">Limpiar filtros</string>
 
     <plurals name="scheduled_tasks_count">
         <item quantity="one">%d tarea programada</item>

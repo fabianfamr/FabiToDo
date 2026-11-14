@@ -4,8 +4,14 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+
+val LocalIsDarkTheme = compositionLocalOf { false }
+val LocalDateFormat = compositionLocalOf { "DD/MM/AA" }
+val LocalTimeFormat = compositionLocalOf { "24h" }
 
 // Midnight Slate Scheme (Premium Blue Accents)
 private val BlueLightColors = lightColorScheme(
@@ -277,10 +283,12 @@ fun FabiToDoTheme(
         else -> if (useDark) BlueDarkColors else BlueLightColors
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        shapes = ExpressiveShapes,
-        content = content
-    )
+    CompositionLocalProvider(LocalIsDarkTheme provides useDark) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            shapes = ExpressiveShapes,
+            content = content
+        )
+    }
 }

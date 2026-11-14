@@ -64,6 +64,8 @@ class TaskRepository(
     
     suspend fun getAllTasksSync(): List<Task> = taskDao.getAllTasksSync()
 
+    suspend fun getAllTasksIncludeDeletedSync(): List<Task> = taskDao.getAllTasksIncludeDeletedSync()
+
     suspend fun getAllTrashedTasksSync(): List<Task> = taskDao.getAllTrashedTasksSync()
 
     suspend fun emptyTrash() {
@@ -94,15 +96,20 @@ class TaskRepository(
     }
 
     suspend fun insertTasks(tasks: List<Task>) {
+        val now = System.currentTimeMillis()
         val newTasks = tasks.map {
             it.copy(
-                updatedAt = if (it.updatedAt == 0L) System.currentTimeMillis() else it.updatedAt,
+                updatedAt = if (it.updatedAt == 0L) now else it.updatedAt,
                 isSynced = false
             )
         }
-        taskDao.insertTasks(newTasks)
+        val insertedIds = taskDao.insertTasks(newTasks)
+        val savedTasks = newTasks.mapIndexed { index, task ->
+            val generatedId = insertedIds.getOrNull(index)?.toInt() ?: task.id
+            if (generatedId > 0) task.copy(id = generatedId) else task
+        }
         notifyWidget()
-        syncTasksToCloud(newTasks)
+        syncTasksToCloud(savedTasks)
     }
 
     suspend fun update(task: Task) {
@@ -172,6 +179,15 @@ class TaskRepository(
             applicationScope.launch {
                 firestoreSyncManager.deleteRemoteTask(userId, task.cloudId)
             }
+        }
+    }
+
+    suspend fun hardDeleteSync(task: Task) {
+        taskDao.deleteTask(task)
+        notifyWidget()
+        val userId = getUserIdOrNull()
+        if (userId != null && firestoreSyncManager != null) {
+            firestoreSyncManager.deleteRemoteTask(userId, task.cloudId)
         }
     }
 

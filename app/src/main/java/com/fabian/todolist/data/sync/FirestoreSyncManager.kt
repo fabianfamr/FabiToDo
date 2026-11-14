@@ -7,6 +7,7 @@ import com.fabian.todolist.data.SystemCategory
 import com.fabian.todolist.data.Task
 import com.fabian.todolist.data.TaskDao
 import com.fabian.todolist.data.subtasksToJson
+import com.fabian.todolist.util.AlarmSchedulerHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -92,6 +93,9 @@ class FirestoreSyncManager @Inject constructor(
         /** Identificador estable por instalación para reconocer ecos propios. */
         private const val KEY_DEVICE_ID = "settings_device_id"
 
+        /** Tombstones de categorías eliminadas para no resucitarlas al sincronizar. */
+        private const val KEY_DELETED_CATEGORIES = "deleted_categories"
+
         private const val PUSH_DEBOUNCE_MS = 400L
         private const val SYNC_TIMEOUT_MS = 20_000L
 
@@ -135,11 +139,14 @@ class FirestoreSyncManager @Inject constructor(
                     return@addSnapshotListener
                 }
 
-                if (snapshot != null && !snapshot.isEmpty) {
+                if (snapshot != null) {
+                    val isFromServer = !snapshot.metadata.isFromCache && !snapshot.metadata.hasPendingWrites()
                     syncScope.launch {
                         try {
+                            val remoteCloudIds = HashSet<String>(snapshot.documents.size)
                             for (doc in snapshot.documents) {
                                 val remoteTask = parseDocumentToTask(doc) ?: continue
+                                remoteCloudIds.add(remoteTask.cloudId)
                                 val localTask = taskDao.getTaskByCloudId(remoteTask.cloudId)
 
                                 if (localTask == null) {
@@ -149,16 +156,29 @@ class FirestoreSyncManager @Inject constructor(
                                 } else {
                                     if (remoteTask.isDeleted) {
                                         if (!localTask.isDeleted) {
+                                            AlarmSchedulerHelper.cancelTaskAlarms(context, localTask)
                                             taskDao.updateTask(localTask.copy(isDeleted = true, deletedTimestamp = remoteTask.deletedTimestamp, isSynced = true))
-                                        } else {
+                                        } else if (!localTask.isSynced) {
                                             taskDao.markTasksSynced(listOf(localTask.id))
                                         }
                                     } else if (remoteTask.updatedAt > localTask.updatedAt) {
                                         taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
                                     } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
                                         uploadTaskToFirestore(userId, localTask)
+                                        taskDao.markTasksSynced(listOf(localTask.id))
                                     } else if (!localTask.isSynced && remoteTask.updatedAt >= localTask.updatedAt) {
                                         taskDao.markTasksSynced(listOf(localTask.id))
+                                    }
+                                }
+                            }
+
+                            if (isFromServer) {
+                                val syncedLocalTasks = taskDao.getAllTasksIncludeDeletedSync()
+                                    .filter { it.isSynced && it.cloudId.isNotBlank() }
+                                for (staleTask in syncedLocalTasks) {
+                                    if (staleTask.cloudId !in remoteCloudIds) {
+                                        AlarmSchedulerHelper.cancelTaskAlarms(context, staleTask)
+                                        taskDao.deleteTask(staleTask)
                                     }
                                 }
                             }
@@ -255,9 +275,11 @@ class FirestoreSyncManager @Inject constructor(
             // 3. Descargar todas las tareas remotas
             val tasksCollection = firestore.collection("users").document(userId).collection("tasks")
             val remoteDocs = tasksCollection.get().await()
+            val remoteCloudIds = HashSet<String>(remoteDocs.documents.size)
 
             for (doc in remoteDocs.documents) {
                 val remoteTask = parseDocumentToTask(doc) ?: continue
+                remoteCloudIds.add(remoteTask.cloudId)
                 val localTask = taskDao.getTaskByCloudId(remoteTask.cloudId)
 
                 if (localTask == null) {
@@ -267,16 +289,29 @@ class FirestoreSyncManager @Inject constructor(
                 } else {
                     if (remoteTask.isDeleted) {
                         if (!localTask.isDeleted) {
+                            AlarmSchedulerHelper.cancelTaskAlarms(context, localTask)
                             taskDao.updateTask(localTask.copy(isDeleted = true, deletedTimestamp = remoteTask.deletedTimestamp, isSynced = true))
-                        } else {
+                        } else if (!localTask.isSynced) {
                             taskDao.markTasksSynced(listOf(localTask.id))
                         }
                     } else if (remoteTask.updatedAt > localTask.updatedAt) {
                         taskDao.updateTask(remoteTask.copy(id = localTask.id, isSynced = true))
                     } else if (localTask.updatedAt > remoteTask.updatedAt && !localTask.isSynced) {
                         uploadTaskToFirestore(userId, localTask)
+                        taskDao.markTasksSynced(listOf(localTask.id))
                     } else if (!localTask.isSynced && remoteTask.updatedAt >= localTask.updatedAt) {
                         taskDao.markTasksSynced(listOf(localTask.id))
+                    }
+                }
+            }
+
+            if (!remoteDocs.metadata.isFromCache) {
+                val syncedLocalTasks = taskDao.getAllTasksIncludeDeletedSync()
+                    .filter { it.isSynced && it.cloudId.isNotBlank() }
+                for (staleTask in syncedLocalTasks) {
+                    if (staleTask.cloudId !in remoteCloudIds) {
+                        AlarmSchedulerHelper.cancelTaskAlarms(context, staleTask)
+                        taskDao.deleteTask(staleTask)
                     }
                 }
             }
@@ -308,14 +343,16 @@ class FirestoreSyncManager @Inject constructor(
     suspend fun pushTasks(userId: String, tasks: List<Task>) = withContext(Dispatchers.IO) {
         if (userId.isBlank() || tasks.isEmpty()) return@withContext
         try {
-            val batch = firestore.batch()
             val collection = firestore.collection("users").document(userId).collection("tasks")
-            tasks.forEach { task ->
-                val docRef = collection.document(task.cloudId)
-                batch.set(docRef, taskToFirestoreMap(task), SetOptions.merge())
+            tasks.chunked(500).forEach { chunk ->
+                val batch = firestore.batch()
+                chunk.forEach { task ->
+                    val docRef = collection.document(task.cloudId)
+                    batch.set(docRef, taskToFirestoreMap(task), SetOptions.merge())
+                }
+                batch.commit().await()
+                taskDao.markTasksSynced(chunk.map { it.id })
             }
-            batch.commit().await()
-            taskDao.markTasksSynced(tasks.map { it.id })
             updateLastSyncTimestamp()
         } catch (e: Exception) {
             Log.e(TAG, "Error batch pushing tasks", e)
@@ -361,9 +398,31 @@ class FirestoreSyncManager @Inject constructor(
      * Es la única función que escribe [KEY_DIRTY]: el marcador de "ediciones pendientes"
      * refleja exclusivamente ediciones del usuario, nunca operaciones de sincronización.
      */
+    fun recordCategoryDeleted(categoryName: String) {
+        val trimmed = categoryName.trim()
+        if (trimmed.isEmpty() || SystemCategory.isSystemCategory(trimmed)) return
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val current = parseCategoryList(prefs.getString(KEY_DELETED_CATEGORIES, "[]") ?: "[]").toMutableSet()
+        if (current.add(trimmed)) {
+            val arr = JSONArray().apply { current.forEach { put(it) } }
+            prefs.edit().putString(KEY_DELETED_CATEGORIES, arr.toString()).apply()
+        }
+    }
+
+    fun recordCategoryAdded(categoryName: String) {
+        val trimmed = categoryName.trim()
+        if (trimmed.isEmpty()) return
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val current = parseCategoryList(prefs.getString(KEY_DELETED_CATEGORIES, "[]") ?: "[]").toMutableSet()
+        if (current.remove(trimmed)) {
+            val arr = JSONArray().apply { current.forEach { put(it) } }
+            prefs.edit().putString(KEY_DELETED_CATEGORIES, arr.toString()).apply()
+        }
+    }
+
     fun scheduleSettingsPush() {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putLong(KEY_DIRTY, System.currentTimeMillis()).commit()
+        prefs.edit().putLong(KEY_DIRTY, System.currentTimeMillis()).apply()
         settingsPushJob?.cancel()
         settingsPushJob = syncScope.launch {
             delay(PUSH_DEBOUNCE_MS)
@@ -391,13 +450,14 @@ class FirestoreSyncManager @Inject constructor(
                 }
 
                 // Normalización de la lista de categorías (mismo criterio que la UI)
+                val deletedCats = parseCategoryList(prefs.getString(KEY_DELETED_CATEGORIES, "[]") ?: "[]").toSet()
                 val rawCatsJson = prefs.getString("custom_categories", null)
                 val parsedList = parseCategoryList(rawCatsJson ?: "")
-                val userCats = parsedList.filter { !SystemCategory.isSystemCategory(it) }
+                val userCats = parsedList.filter { !SystemCategory.isSystemCategory(it) && it !in deletedCats }
                 val finalUserCats = if (rawCatsJson != null) {
                     userCats
                 } else {
-                    listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+                    listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud").filter { it !in deletedCats }
                 }
                 val safeCategoriesList = listOf(SystemCategory.ALL_TASKS) + finalUserCats + listOf(SystemCategory.COMPLETED)
                 val jsonArray = JSONArray()
@@ -497,9 +557,15 @@ class FirestoreSyncManager @Inject constructor(
             // 2) La versión remota gana: se aplican todos los campos.
             val editor = prefs.edit()
 
+            val localDeletedCats = parseCategoryList(prefs.getString(KEY_DELETED_CATEGORIES, "[]") ?: "[]")
+            val remoteDeletedCats = readStringField(doc, "deletedCategories")?.let { parseCategoryList(it) } ?: emptyList()
+            val mergedDeletedCats = (localDeletedCats + remoteDeletedCats).filter { !SystemCategory.isSystemCategory(it) }.distinct()
+            val deletedArray = JSONArray().apply { mergedDeletedCats.forEach { put(it) } }
+            editor.putString(KEY_DELETED_CATEGORIES, deletedArray.toString())
+
             val localCats = prefs.getString("custom_categories", "") ?: ""
             readStringField(doc, "customCategories")?.let { remoteCats ->
-                editor.putString("custom_categories", mergeCategoriesJson(localCats, remoteCats))
+                editor.putString("custom_categories", mergeCategoriesJson(localCats, remoteCats, mergedDeletedCats.toSet()))
             }
 
             val localColors = prefs.getString("category_colors", "{}") ?: "{}"
@@ -535,8 +601,6 @@ class FirestoreSyncManager @Inject constructor(
             readBoolField(doc, "aiLowLatencyMode")?.let { editor.putBoolean("ai_low_latency_mode", it) }
             readLongField(doc, "aiSubtaskCount")?.let { editor.putInt("ai_subtask_count", it.toInt()) }
             readStringField(doc, "aiKeyType")?.let { editor.putString("ai_key_type", it) }
-            // Ajuste antes no sincronizado: la clave de API propia de Gemini.
-            readStringField(doc, "aiApiKey")?.let { editor.putString("ai_api_key", it) }
             readBoolField(doc, "showAiBanner")?.let { editor.putBoolean("show_ai_banner", it) }
             readBoolField(doc, "showBackupCard")?.let { editor.putBoolean("show_backup_card", it) }
             readStringField(doc, "userDisplayName")?.let { remoteName ->
@@ -575,6 +639,7 @@ class FirestoreSyncManager @Inject constructor(
     ): Map<String, Any?> {
         return mapOf(
             "customCategories" to finalCatsJson,
+            "deletedCategories" to (prefs.getString(KEY_DELETED_CATEGORIES, "[]") ?: "[]"),
             "categoryColors" to (prefs.getString("category_colors", "{}") ?: "{}"),
             "categoryIcons" to (prefs.getString("category_icons", "{}") ?: "{}"),
             "themeAccent" to (prefs.getString("accent_color", "system") ?: "system"),
@@ -600,11 +665,6 @@ class FirestoreSyncManager @Inject constructor(
             "aiLowLatencyMode" to prefs.getBoolean("ai_low_latency_mode", true),
             "aiSubtaskCount" to prefs.getInt("ai_subtask_count", 5),
             "aiKeyType" to (prefs.getString("ai_key_type", "public") ?: "public"),
-            // Ajuste antes no sincronizado: la clave de API propia de Gemini.
-            // NOTA DE SEGURIDAD: se guarda en claro en Firestore (solo legible por el
-            // dueño según firestore.rules). Si no quieres subirla, elimina esta línea
-            // y su lectura simétrica en applyRemoteSettings().
-            "aiApiKey" to (prefs.getString("ai_api_key", "") ?: ""),
             "showAiBanner" to prefs.getBoolean("show_ai_banner", true),
             "showBackupCard" to prefs.getBoolean("show_backup_card", true),
             "userDisplayName" to resolvedName,
@@ -631,7 +691,7 @@ class FirestoreSyncManager @Inject constructor(
         var id = prefs.getString(KEY_DEVICE_ID, null)
         if (id.isNullOrBlank()) {
             id = UUID.randomUUID().toString()
-            prefs.edit().putString(KEY_DEVICE_ID, id).commit()
+            prefs.edit().putString(KEY_DEVICE_ID, id).apply()
         }
         return id
     }
@@ -646,14 +706,23 @@ class FirestoreSyncManager @Inject constructor(
     private fun readStringField(doc: DocumentSnapshot, key: String): String? =
         try { doc.getString(key) } catch (_: Exception) { null }
 
-    private suspend fun mergeCategoriesJson(localJson: String, remoteJson: String): String {
+    private suspend fun mergeCategoriesJson(
+        localJson: String,
+        remoteJson: String,
+        deletedCategories: Set<String> = emptySet()
+    ): String {
         try {
             val localList = parseCategoryList(localJson)
             val remoteList = parseCategoryList(remoteJson)
-            val combinedUserCats = (localList + remoteList).filter { !SystemCategory.isSystemCategory(it) }.distinct()
+            val combinedUserCats = (localList + remoteList)
+                .filter { !SystemCategory.isSystemCategory(it) && it !in deletedCategories }
+                .distinct()
 
             val fromTasks = try {
-                taskDao.getAllTasksSync().map { it.category.trim() }.filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) }.distinct()
+                taskDao.getAllTasksSync()
+                    .map { it.category.trim() }
+                    .filter { it.isNotBlank() && !SystemCategory.isSystemCategory(it) && it !in deletedCategories }
+                    .distinct()
             } catch (_: Exception) { emptyList() }
 
             val allUserCats = (combinedUserCats + fromTasks).distinct()
@@ -661,6 +730,7 @@ class FirestoreSyncManager @Inject constructor(
                 allUserCats
             } else {
                 listOf("Personal", "Trabajo", "Compras", "Hogar", "Salud")
+                    .filter { it !in deletedCategories }
             }
 
             val mergedList = mutableListOf<String>()
@@ -726,14 +796,16 @@ class FirestoreSyncManager @Inject constructor(
         if (unsynced.isEmpty()) return
 
         try {
-            val batch = firestore.batch()
             val collection = firestore.collection("users").document(userId).collection("tasks")
-            unsynced.forEach { task ->
-                val docRef = collection.document(task.cloudId)
-                batch.set(docRef, taskToFirestoreMap(task), SetOptions.merge())
+            unsynced.chunked(500).forEach { chunk ->
+                val batch = firestore.batch()
+                chunk.forEach { task ->
+                    val docRef = collection.document(task.cloudId)
+                    batch.set(docRef, taskToFirestoreMap(task), SetOptions.merge())
+                }
+                batch.commit().await()
+                taskDao.markTasksSynced(chunk.map { it.id })
             }
-            batch.commit().await()
-            taskDao.markTasksSynced(unsynced.map { it.id })
         } catch (e: Exception) {
             Log.e(TAG, "Failed to upload unsynced tasks", e)
         }

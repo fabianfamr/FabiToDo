@@ -4,14 +4,18 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
+import com.fabian.todolist.data.AppDatabase
 import com.fabian.todolist.data.SystemCategory
 import com.fabian.todolist.data.TaskRepository
+import com.fabian.todolist.util.SecurityCryptoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.lifecycle.viewModelScope
 import org.json.JSONArray
 import org.json.JSONObject
@@ -23,7 +27,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     application: Application,
     private val repository: TaskRepository,
-    private val firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager
+    private val firestoreSyncManager: com.fabian.todolist.data.sync.FirestoreSyncManager,
+    private val appDatabase: AppDatabase
 ) : AndroidViewModel(application) {
 
     private val prefs = application.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
@@ -64,6 +69,7 @@ class SettingsViewModel @Inject constructor(
             "ai_low_latency_mode" -> _aiLowLatencyMode.value = p.getBoolean("ai_low_latency_mode", true)
             "ai_subtask_count" -> _aiSubtaskCount.value = p.getInt("ai_subtask_count", 5)
             "ai_key_type" -> _aiKeyType.value = p.getString("ai_key_type", "public") ?: "public"
+            "ai_api_key" -> _aiApiKey.value = SecurityCryptoHelper.decryptApiKey(p.getString("ai_api_key", ""))
             "show_ai_banner" -> _showAiBanner.value = p.getBoolean("show_ai_banner", true)
             "show_backup_card" -> _showBackupCard.value = p.getBoolean("show_backup_card", true)
             "onboarding_completed" -> _onboardingCompleted.value = p.getBoolean("onboarding_completed", true)
@@ -149,7 +155,7 @@ class SettingsViewModel @Inject constructor(
     private val _aiLowLatencyMode = MutableStateFlow(prefs.getBoolean("ai_low_latency_mode", true))
     val aiLowLatencyMode: StateFlow<Boolean> = _aiLowLatencyMode.asStateFlow()
 
-    private val _aiApiKey = MutableStateFlow(prefs.getString("ai_api_key", "") ?: "")
+    private val _aiApiKey = MutableStateFlow(SecurityCryptoHelper.readAndMigrateApiKey(prefs))
     val aiApiKey: StateFlow<String> = _aiApiKey.asStateFlow()
 
     private val _aiKeyType = MutableStateFlow(prefs.getString("ai_key_type", "public") ?: "public")
@@ -249,19 +255,19 @@ class SettingsViewModel @Inject constructor(
 
     fun setThemeAccent(accent: String) {
         _themeAccent.value = accent
-        prefs.edit().putString("accent_color", accent).commit()
+        prefs.edit().putString("accent_color", accent).apply()
         triggerSettingsCloudPush()
     }
 
     fun setThemeDark(mode: String) {
         _themeDark.value = mode
-        prefs.edit().putString("theme_mode", mode).commit()
+        prefs.edit().putString("theme_mode", mode).apply()
         triggerSettingsCloudPush()
     }
 
     fun setLanguageCode(lang: String) {
         _languageCode.value = lang
-        prefs.edit().putString("app_locale", lang).commit()
+        prefs.edit().putString("app_locale", lang).apply()
         triggerSettingsCloudPush()
         
         val appLocale = if (lang == "system") {
@@ -274,56 +280,64 @@ class SettingsViewModel @Inject constructor(
 
     fun setDateFormat(format: String) {
         _dateFormat.value = format
-        prefs.edit().putString("date_format", format).commit()
+        prefs.edit().putString("date_format", format).apply()
         triggerSettingsCloudPush()
     }
 
     fun setTimeFormat(format: String) {
         _timeFormat.value = format
-        prefs.edit().putString("time_format", format).commit()
+        prefs.edit().putString("time_format", format).apply()
         triggerSettingsCloudPush()
     }
 
     fun setLongPressAction(action: String) {
         _longPressAction.value = action
-        prefs.edit().putString("long_press_action", action).commit()
+        prefs.edit().putString("long_press_action", action).apply()
         triggerSettingsCloudPush()
     }
 
     fun setConfirmOnDelete(confirm: Boolean) {
         _confirmOnDelete.value = confirm
-        prefs.edit().putBoolean("confirm_on_delete", confirm).commit()
+        prefs.edit().putBoolean("confirm_on_delete", confirm).apply()
         triggerSettingsCloudPush()
     }
 
     fun setHapticFeedbackOnComplete(feedback: Boolean) {
         _hapticFeedbackOnComplete.value = feedback
-        prefs.edit().putBoolean("haptic_feedback_on_complete", feedback).commit()
+        prefs.edit().putBoolean("haptic_feedback_on_complete", feedback).apply()
         triggerSettingsCloudPush()
     }
 
     fun setRequireBiometrics(require: Boolean) {
         _requireBiometrics.value = require
-        prefs.edit().putBoolean("require_biometrics", require).commit()
+        prefs.edit().putBoolean("require_biometrics", require).apply()
         triggerSettingsCloudPush()
     }
 
     fun setSecureScreenMode(enabled: Boolean) {
         _secureScreenMode.value = enabled
-        prefs.edit().putBoolean("secure_screen_mode", enabled).commit()
+        prefs.edit().putBoolean("secure_screen_mode", enabled).apply()
         triggerSettingsCloudPush()
     }
 
     fun setEncryptBackups(enabled: Boolean) {
         _encryptBackups.value = enabled
-        prefs.edit().putBoolean("encrypt_backups", enabled).commit()
+        prefs.edit().putBoolean("encrypt_backups", enabled).apply()
         triggerSettingsCloudPush()
     }
 
     fun setNotificationsEnabled(enabled: Boolean) {
         _notificationsEnabled.value = enabled
-        prefs.edit().putBoolean("global_notifications_enabled", enabled).commit()
+        prefs.edit().putBoolean("global_notifications_enabled", enabled).apply()
         triggerSettingsCloudPush()
+
+        val context = getApplication<Application>().applicationContext
+        val intervalToApply = if (enabled) _quickAddNotificationInterval.value else "off"
+        QuickAddNotificationHelper.schedulePeriodicReminders(
+            context = context,
+            intervalCode = intervalToApply,
+            replaceExisting = true
+        )
     }
 
     fun setQuickAddNotificationEnabled(enabled: Boolean) {
@@ -333,104 +347,109 @@ class SettingsViewModel @Inject constructor(
 
     fun setQuickAddNotificationInterval(intervalCode: String) {
         _quickAddNotificationInterval.value = intervalCode
-        prefs.edit().putString("quick_add_notification_interval", intervalCode).commit()
+        prefs.edit().putString("quick_add_notification_interval", intervalCode).apply()
         
         val isEnabled = intervalCode != "off"
         _quickAddNotificationEnabled.value = isEnabled
-        prefs.edit().putBoolean("quick_add_notification_enabled", isEnabled).commit()
+        prefs.edit().putBoolean("quick_add_notification_enabled", isEnabled).apply()
         triggerSettingsCloudPush()
 
         val context = getApplication<Application>().applicationContext
-        QuickAddNotificationHelper.schedulePeriodicReminders(context, intervalCode)
+        QuickAddNotificationHelper.schedulePeriodicReminders(
+            context = context,
+            intervalCode = intervalCode,
+            replaceExisting = true
+        )
     }
 
     fun setQuickAddQuietHoursEnabled(enabled: Boolean) {
         _quickAddQuietHoursEnabled.value = enabled
-        prefs.edit().putBoolean("quick_add_quiet_hours_enabled", enabled).commit()
+        prefs.edit().putBoolean("quick_add_quiet_hours_enabled", enabled).apply()
         triggerSettingsCloudPush()
     }
 
     fun setNotificationsSound(enabled: Boolean) {
         _notificationsSound.value = enabled
-        prefs.edit().putBoolean("notifications_sound", enabled).commit()
+        prefs.edit().putBoolean("notifications_sound", enabled).apply()
         triggerSettingsCloudPush()
     }
 
     fun setNotificationsVibrate(enabled: Boolean) {
         _notificationsVibrate.value = enabled
-        prefs.edit().putBoolean("notifications_vibrate", enabled).commit()
+        prefs.edit().putBoolean("notifications_vibrate", enabled).apply()
         triggerSettingsCloudPush()
     }
 
     fun setReminderOffsetMinutes(minutes: Int) {
         _reminderOffsetMinutes.value = minutes
-        prefs.edit().putInt("reminder_offset_minutes", minutes).commit()
+        prefs.edit().putInt("reminder_offset_minutes", minutes).apply()
         triggerSettingsCloudPush()
     }
 
     fun setSnoozeDuration(minutes: Int) {
         _snoozeDurationMinutes.value = minutes
-        prefs.edit().putInt("snooze_duration_minutes", minutes).commit()
+        prefs.edit().putInt("snooze_duration_minutes", minutes).apply()
         triggerSettingsCloudPush()
     }
 
     fun setTrashRetentionDays(days: Int) {
         _trashRetentionDays.value = days
-        prefs.edit().putInt("trash_retention_days", days).commit()
+        prefs.edit().putInt("trash_retention_days", days).apply()
         triggerSettingsCloudPush()
     }
 
     fun setAiModel(model: String) {
         _aiModel.value = model
-        prefs.edit().putString("ai_model", model).commit()
+        prefs.edit().putString("ai_model", model).apply()
         triggerSettingsCloudPush()
     }
 
     fun setAiLowLatencyMode(enabled: Boolean) {
         _aiLowLatencyMode.value = enabled
-        prefs.edit().putBoolean("ai_low_latency_mode", enabled).commit()
+        prefs.edit().putBoolean("ai_low_latency_mode", enabled).apply()
         triggerSettingsCloudPush()
     }
 
     fun setAiApiKey(key: String) {
-        _aiApiKey.value = key
-        prefs.edit().putString("ai_api_key", key).commit()
-        triggerSettingsCloudPush()
+        val trimmed = key.trim()
+        _aiApiKey.value = trimmed
+        val encrypted = SecurityCryptoHelper.encryptApiKey(trimmed)
+        prefs.edit().putString("ai_api_key", encrypted).apply()
     }
 
     fun setAiKeyType(type: String) {
         _aiKeyType.value = type
-        prefs.edit().putString("ai_key_type", type).commit()
+        prefs.edit().putString("ai_key_type", type).apply()
         triggerSettingsCloudPush()
     }
 
     fun setAiSubtaskCount(count: Int) {
         _aiSubtaskCount.value = count
-        prefs.edit().putInt("ai_subtask_count", count).commit()
+        prefs.edit().putInt("ai_subtask_count", count).apply()
         triggerSettingsCloudPush()
     }
 
     fun setShowAiBanner(show: Boolean) {
         _showAiBanner.value = show
-        prefs.edit().putBoolean("show_ai_banner", show).commit()
+        prefs.edit().putBoolean("show_ai_banner", show).apply()
         triggerSettingsCloudPush()
     }
 
     fun setShowBackupCard(show: Boolean) {
         _showBackupCard.value = show
-        prefs.edit().putBoolean("show_backup_card", show).commit()
+        prefs.edit().putBoolean("show_backup_card", show).apply()
         triggerSettingsCloudPush()
     }
 
     fun setOnboardingCompleted(completed: Boolean) {
         _onboardingCompleted.value = completed
-        prefs.edit().putBoolean("onboarding_completed", completed).commit()
+        prefs.edit().putBoolean("onboarding_completed", completed).apply()
         triggerSettingsCloudPush()
     }
 
     fun setUserName(name: String) {
         _userName.value = name
-        prefs.edit().putString("user_display_name", name).commit()
+        prefs.edit().putString("user_display_name", name).apply()
         triggerSettingsCloudPush()
     }
 
@@ -450,7 +469,7 @@ class SettingsViewModel @Inject constructor(
 
         val jsonArray = JSONArray()
         fullList.forEach { jsonArray.put(it) }
-        prefs.edit().putString("custom_categories", jsonArray.toString()).commit()
+        prefs.edit().putString("custom_categories", jsonArray.toString()).apply()
         _categories.value = fullList
         triggerSettingsCloudPush()
     }
@@ -458,6 +477,7 @@ class SettingsViewModel @Inject constructor(
     fun addCategory(categoryName: String, color: Int? = null, iconName: String? = null) {
         val trimmed = categoryName.trim()
         if (trimmed.isBlank() || _categories.value.contains(trimmed) || SystemCategory.isSystemCategory(trimmed)) return
+        firestoreSyncManager.recordCategoryAdded(trimmed)
         val currentList = _categories.value.toMutableList()
         val completedIndex = currentList.indexOf(SystemCategory.COMPLETED)
         if (completedIndex != -1) {
@@ -473,45 +493,46 @@ class SettingsViewModel @Inject constructor(
             setCategoryIcon(trimmed, iconName)
         }
         saveCategories(currentList)
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.reorderTasksByCategory(currentList)
         }
     }
 
     fun deleteCategory(categoryName: String) {
         if (SystemCategory.isSystemCategory(categoryName)) return
-        
-        // 1. Reassign tasks in Room from deleted category to General
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+
+        viewModelScope.launch(Dispatchers.IO) {
             val tasksToUpdate = repository.allTasks.first()
                 .filter { it.category == categoryName }
-                .map { it.copy(category = "General") }
+                .map { it.copy(category = "General", updatedAt = System.currentTimeMillis(), isSynced = false) }
             if (tasksToUpdate.isNotEmpty()) {
                 repository.updateTasks(tasksToUpdate)
             }
-        }
 
-        // 2. Clean up color & icon maps for deleted category
-        val colorMap = _categoryColors.value.toMutableMap()
-        if (colorMap.containsKey(categoryName)) {
-            colorMap.remove(categoryName)
-            _categoryColors.value = colorMap
-            val jsonObject = JSONObject()
-            colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_colors", jsonObject.toString()).commit()
-        }
+            withContext(Dispatchers.Main) {
+                firestoreSyncManager.recordCategoryDeleted(categoryName)
 
-        val iconMap = _categoryIcons.value.toMutableMap()
-        if (iconMap.containsKey(categoryName)) {
-            iconMap.remove(categoryName)
-            _categoryIcons.value = iconMap
-            val jsonObject = JSONObject()
-            iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_icons", jsonObject.toString()).commit()
-        }
+                val colorMap = _categoryColors.value.toMutableMap()
+                if (colorMap.containsKey(categoryName)) {
+                    colorMap.remove(categoryName)
+                    _categoryColors.value = colorMap
+                    val jsonObject = JSONObject()
+                    colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
+                    prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+                }
 
-        // 3. Save remaining categories and push to cloud
-        saveCategories(_categories.value.filter { it != categoryName })
+                val iconMap = _categoryIcons.value.toMutableMap()
+                if (iconMap.containsKey(categoryName)) {
+                    iconMap.remove(categoryName)
+                    _categoryIcons.value = iconMap
+                    val jsonObject = JSONObject()
+                    iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
+                    prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+                }
+
+                saveCategories(_categories.value.filter { it != categoryName })
+            }
+        }
     }
 
     fun renameCategory(oldName: String, newName: String) {
@@ -519,40 +540,41 @@ class SettingsViewModel @Inject constructor(
         val trimmedNew = newName.trim()
         if (trimmedNew.isBlank() || (trimmedNew != oldName && _categories.value.contains(trimmedNew))) return
         if (trimmedNew == oldName) return
-        
-        // 1. Update tasks in Room so oldName is no longer associated with tasks
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+
+        viewModelScope.launch(Dispatchers.IO) {
             val tasksToUpdate = repository.allTasks.first()
                 .filter { it.category == oldName }
-                .map { it.copy(category = trimmedNew) }
+                .map { it.copy(category = trimmedNew, updatedAt = System.currentTimeMillis(), isSynced = false) }
             if (tasksToUpdate.isNotEmpty()) {
                 repository.updateTasks(tasksToUpdate)
             }
-        }
 
-        // 2. Transfer color & icon maps cleanly
-        val colorMap = _categoryColors.value.toMutableMap()
-        val oldColor = colorMap.remove(oldName)
-        if (oldColor != null) {
-            colorMap[trimmedNew] = oldColor
-            _categoryColors.value = colorMap
-            val jsonObject = JSONObject()
-            colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_colors", jsonObject.toString()).commit()
-        }
+            withContext(Dispatchers.Main) {
+                firestoreSyncManager.recordCategoryAdded(trimmedNew)
 
-        val iconMap = _categoryIcons.value.toMutableMap()
-        val oldIcon = iconMap.remove(oldName)
-        if (oldIcon != null) {
-            iconMap[trimmedNew] = oldIcon
-            _categoryIcons.value = iconMap
-            val jsonObject = JSONObject()
-            iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
-            prefs.edit().putString("category_icons", jsonObject.toString()).commit()
-        }
+                val colorMap = _categoryColors.value.toMutableMap()
+                val oldColor = colorMap.remove(oldName)
+                if (oldColor != null) {
+                    colorMap[trimmedNew] = oldColor
+                    _categoryColors.value = colorMap
+                    val jsonObject = JSONObject()
+                    colorMap.forEach { (k, v) -> jsonObject.put(k, v) }
+                    prefs.edit().putString("category_colors", jsonObject.toString()).apply()
+                }
 
-        // 3. Update category list and push to cloud
-        saveCategories(_categories.value.map { if (it == oldName) trimmedNew else it })
+                val iconMap = _categoryIcons.value.toMutableMap()
+                val oldIcon = iconMap.remove(oldName)
+                if (oldIcon != null) {
+                    iconMap[trimmedNew] = oldIcon
+                    _categoryIcons.value = iconMap
+                    val jsonObject = JSONObject()
+                    iconMap.forEach { (k, v) -> jsonObject.put(k, v) }
+                    prefs.edit().putString("category_icons", jsonObject.toString()).apply()
+                }
+
+                saveCategories(_categories.value.map { if (it == oldName) trimmedNew else it })
+            }
+        }
     }
 
     fun moveUserCategory(category: String, direction: Int) {
@@ -596,7 +618,7 @@ class SettingsViewModel @Inject constructor(
         _categoryColors.value = newMap
         val jsonObject = JSONObject()
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
-        prefs.edit().putString("category_colors", jsonObject.toString()).commit()
+        prefs.edit().putString("category_colors", jsonObject.toString()).apply()
         triggerSettingsCloudPush()
     }
 
@@ -606,7 +628,7 @@ class SettingsViewModel @Inject constructor(
         _categoryIcons.value = newMap
         val jsonObject = JSONObject()
         newMap.forEach { (k, v) -> jsonObject.put(k, v) }
-        prefs.edit().putString("category_icons", jsonObject.toString()).commit()
+        prefs.edit().putString("category_icons", jsonObject.toString()).apply()
         triggerSettingsCloudPush()
     }
 
@@ -672,18 +694,20 @@ class SettingsViewModel @Inject constructor(
 
     @OptIn(coil.annotation.ExperimentalCoilApi::class)
     fun clearAppCache(onComplete: (Boolean) -> Unit = {}) {
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val context = getApplication<Application>().applicationContext
             var success = true
             try {
-                deleteDirContent(context.cacheDir)
+                val cacheCleared = deleteDirContent(context.cacheDir)
+                val codeCacheCleared = deleteDirContent(context.codeCacheDir)
                 coil.Coil.imageLoader(context).diskCache?.clear()
                 coil.Coil.imageLoader(context).memoryCache?.clear()
+                success = cacheCleared && codeCacheCleared
             } catch (e: Exception) {
                 success = false
             }
             refreshStorageStats()
-            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 onComplete(success)
             }
         }
@@ -695,7 +719,9 @@ class SettingsViewModel @Inject constructor(
         var allDeleted = true
         for (child in children) {
             if (child.isDirectory) {
-                deleteDirContent(child)
+                if (!deleteDirContent(child)) {
+                    allDeleted = false
+                }
             }
             if (!child.delete()) {
                 allDeleted = false
@@ -705,12 +731,10 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun optimizeDatabase(onComplete: (Boolean) -> Unit = {}) {
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            val context = getApplication<Application>().applicationContext
+        viewModelScope.launch(Dispatchers.IO) {
             var success = true
             try {
-                val db = com.fabian.todolist.data.AppDatabase.getDatabase(context)
-                val writableDb = db.openHelper.writableDatabase
+                val writableDb = appDatabase.openHelper.writableDatabase
 
                 // 1. Flush and truncate Write-Ahead Log (WAL) journal file
                 try {

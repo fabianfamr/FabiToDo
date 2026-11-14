@@ -3,9 +3,9 @@ package com.fabian.todolist.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.fabian.todolist.data.AppDatabase
-import com.fabian.todolist.data.TaskRepository
-import java.util.Calendar
+import com.fabian.todolist.di.AppSingletonEntryPoint
+import com.fabian.todolist.util.AlarmSchedulerHelper
+import dagger.hilt.android.EntryPointAccessors
 
 class TrashCleanupWorker(
     appContext: Context,
@@ -22,24 +22,20 @@ class TrashCleanupWorker(
         }
         if (retentionDays <= 0) return Result.success()
 
-        val database = AppDatabase.getDatabase(applicationContext)
-        val repository = TaskRepository(database.taskDao(), applicationContext)
+        val entryPoint = EntryPointAccessors.fromApplication(
+            applicationContext,
+            AppSingletonEntryPoint::class.java
+        )
+        val repository = entryPoint.taskRepository()
 
         val limitTime = System.currentTimeMillis() - (retentionDays * 24L * 60 * 60 * 1000)
-        
+
         try {
-            // Query ONLY trashed tasks. The previous implementation called getAllTasksSync()
-            // which filters `isDeleted = 0`, so the cleanup loop never matched anything
-            // and the trash bin grew forever.
             val trashedTasks = repository.getAllTrashedTasksSync()
             trashedTasks.forEach { task ->
-                if (task.deletedTimestamp == 0L) {
-                    // Compatibility: if deleted without timestamp, delete immediately
-                    repository.hardDelete(task)
-                } else if (task.deletedTimestamp < limitTime) {
-                    // Past retention period
-                    repository.hardDelete(task)
-                    com.fabian.todolist.util.AlarmSchedulerHelper.cancelTaskAlarms(applicationContext, task)
+                if (task.deletedTimestamp == 0L || task.deletedTimestamp < limitTime) {
+                    AlarmSchedulerHelper.cancelTaskAlarms(applicationContext, task)
+                    repository.hardDeleteSync(task)
                 }
             }
             return Result.success()

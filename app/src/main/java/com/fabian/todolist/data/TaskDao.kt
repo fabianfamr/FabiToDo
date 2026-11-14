@@ -14,6 +14,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE isDeleted = 0 ORDER BY id DESC")
     suspend fun getAllTasksSync(): List<Task>
 
+    @Query("SELECT * FROM tasks ORDER BY isCompleted ASC, displayOrder ASC, dueDate ASC, id DESC")
+    suspend fun getAllTasksIncludeDeletedSync(): List<Task>
+
     @Query("SELECT * FROM tasks WHERE isDeleted = 1 ORDER BY deletedTimestamp ASC")
     suspend fun getAllTrashedTasksSync(): List<Task>
 
@@ -27,7 +30,7 @@ interface TaskDao {
     suspend fun insertTask(task: Task): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTasks(tasks: List<Task>)
+    suspend fun insertTasks(tasks: List<Task>): List<Long>
 
     @Update
     suspend fun updateTask(task: Task)

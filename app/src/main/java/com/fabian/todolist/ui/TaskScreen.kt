@@ -75,10 +75,6 @@ import com.fabian.todolist.ui.components.TaskEmptyState
 import com.fabian.todolist.ui.components.TaskDeleteDialog
 import com.fabian.todolist.ui.components.TaskAddCategoryDialog
 import com.fabian.todolist.ui.components.MySelectionTopAppBar
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.geometry.Offset
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -122,8 +118,12 @@ fun TaskScreen(
     val aiKeyType by settingsViewModel.aiKeyType.collectAsStateWithLifecycle()
     val aiSubtaskCount by settingsViewModel.aiSubtaskCount.collectAsStateWithLifecycle()
 
-    var showAddEditDialog by remember { mutableStateOf(false) }
-    var taskToEdit by remember { mutableStateOf<Task?>(null) }
+    var showAddEditDialog by rememberSaveable { mutableStateOf(false) }
+    var editingTaskId by rememberSaveable { mutableStateOf<Int?>(null) }
+    var draftTitle by rememberSaveable { mutableStateOf<String?>(null) }
+    var draftDescription by rememberSaveable { mutableStateOf<String?>(null) }
+    var draftCategory by rememberSaveable { mutableStateOf<String?>(null) }
+    var draftDueDate by rememberSaveable { mutableStateOf<Long?>(null) }
     var showAddCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
     var showStatsDialog by rememberSaveable { mutableStateOf(false) }
@@ -147,6 +147,56 @@ fun TaskScreen(
     val hapticFeedback = androidx.compose.ui.platform.LocalHapticFeedback.current
     val localView = androidx.compose.ui.platform.LocalView.current
 
+    val allTasksListState by viewModel.allTasksListState.collectAsStateWithLifecycle()
+    val taskToEdit = remember(editingTaskId, allTasksListState, draftTitle, draftDescription, draftCategory, draftDueDate) {
+        val targetId = editingTaskId
+        if (targetId != null) {
+            allTasksListState.find { it.id == targetId }
+        } else if (draftTitle != null || draftDescription != null || draftDueDate != null) {
+            Task(
+                title = draftTitle ?: "",
+                description = draftDescription ?: "",
+                category = draftCategory ?: "General",
+                dueDate = draftDueDate
+            )
+        } else {
+            null
+        }
+    }
+
+    val openNewTaskDialog: (Long?) -> Unit = { dueDateMillis ->
+        editingTaskId = null
+        draftTitle = null
+        draftDescription = null
+        draftCategory = if (selectedCategory in listOf(
+                com.fabian.todolist.data.SystemCategory.ALL_TASKS,
+                com.fabian.todolist.data.SystemCategory.COMPLETED,
+                com.fabian.todolist.data.SystemCategory.TRASH,
+                com.fabian.todolist.data.SystemCategory.EISENHOWER,
+                com.fabian.todolist.data.SystemCategory.CALENDAR
+            )) "General" else selectedCategory
+        draftDueDate = dueDateMillis
+        showAddEditDialog = true
+    }
+
+    val openEditTaskDialog: (Task) -> Unit = { task ->
+        editingTaskId = task.id
+        draftTitle = null
+        draftDescription = null
+        draftCategory = null
+        draftDueDate = null
+        showAddEditDialog = true
+    }
+
+    val closeAddEditDialog: () -> Unit = {
+        showAddEditDialog = false
+        editingTaskId = null
+        draftTitle = null
+        draftDescription = null
+        draftCategory = null
+        draftDueDate = null
+    }
+
     LaunchedEffect(shouldShowSettings) {
         if (shouldShowSettings) {
             showSettingsDialog = true
@@ -157,21 +207,35 @@ fun TaskScreen(
     val prefilledTask by viewModel.prefilledTask.collectAsStateWithLifecycle()
     LaunchedEffect(shouldShowAddDialog, prefilledTask) {
         if (shouldShowAddDialog) {
-            taskToEdit = prefilledTask
+            val prefill = prefilledTask
+            editingTaskId = null
+            draftTitle = prefill?.title
+            draftDescription = prefill?.description
+            draftCategory = prefill?.category
+            draftDueDate = prefill?.dueDate
             showAddEditDialog = true
             viewModel.setShouldShowAddDialog(false)
             viewModel.consumePrefilledTask()
         }
     }
 
-    val allTasksListState by viewModel.allTasksListState.collectAsStateWithLifecycle()
     val pendingTaskIdFromNotification by viewModel.pendingTaskIdFromNotification.collectAsStateWithLifecycle()
     LaunchedEffect(pendingTaskIdFromNotification, allTasksListState) {
         val targetId = pendingTaskIdFromNotification ?: return@LaunchedEffect
-        val targetTask = allTasksListState.find { it.id == targetId }
+        if (targetId <= 0) {
+            viewModel.consumePendingTaskIdFromNotification()
+            return@LaunchedEffect
+        }
+        val targetTask = allTasksListState.find { it.id == targetId && !it.isDeleted }
         if (targetTask != null) {
-            taskToEdit = targetTask
+            editingTaskId = targetTask.id
+            draftTitle = null
+            draftDescription = null
+            draftCategory = null
+            draftDueDate = null
             showAddEditDialog = true
+            viewModel.consumePendingTaskIdFromNotification()
+        } else if (allTasksListState.isNotEmpty()) {
             viewModel.consumePendingTaskIdFromNotification()
         }
     }
@@ -208,7 +272,6 @@ fun TaskScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
-    var isProgressVisible by rememberSaveable { mutableStateOf(false) }
 
     val showUndoSnackbar = { task: Task ->
         scope.launch {
@@ -232,28 +295,6 @@ fun TaskScreen(
             )
             if (result == SnackbarResult.ActionPerformed) {
                 tasks.forEach { viewModel.restoreTask(it) }
-            }
-        }
-    }
-
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                if (available.y > 15f) {
-                    isProgressVisible = true
-                }
-                return super.onPostScroll(consumed, available, source)
-            }
-
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (available.y < -15f) {
-                    isProgressVisible = false
-                }
-                return super.onPreScroll(available, source)
             }
         }
     }
@@ -307,8 +348,7 @@ fun TaskScreen(
                             }
                         },
                         onAddClick = {
-                            taskToEdit = null
-                            showAddEditDialog = true
+                            openNewTaskDialog(null)
                         },
                         onStatsClick = { showStatsDialog = true },
                         onSettingsClick = { showSettingsDialog = true }
@@ -338,8 +378,7 @@ fun TaskScreen(
                                         val singleTaskId = selectedTaskIds.firstOrNull()
                                         val singleTask = tasks.find { it.id == singleTaskId }
                                         if (singleTask != null) {
-                                            taskToEdit = singleTask
-                                            showAddEditDialog = true
+                                            openEditTaskDialog(singleTask)
                                             selectedTaskIds.clear()
                                         }
                                     },
@@ -408,8 +447,7 @@ fun TaskScreen(
                                 text = { Text(stringResource(R.string.add_task), modifier = Modifier.animateContentSize()) },
                                 icon = { Icon(painterResource(com.fabian.todolist.ui.Appicons.ICON_ADD), contentDescription = stringResource(R.string.content_desc_add_tasks)) },
                                 onClick = {
-                                    taskToEdit = null
-                                    showAddEditDialog = true
+                                    openNewTaskDialog(null)
                                 },
                                 expanded = isFabExpanded,
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -454,8 +492,7 @@ fun TaskScreen(
                                 onToggleComplete = { viewModel.toggleTaskCompletion(it) },
                                 onRestore = { viewModel.restoreTask(it) },
                                 onEdit = {
-                                    taskToEdit = it
-                                    showAddEditDialog = true
+                                    openEditTaskDialog(it)
                                 },
                                 onDelete = { task ->
                                     if (confirmOnDelete) {
@@ -489,9 +526,7 @@ fun TaskScreen(
 
                         val taskListContent: @Composable () -> Unit = {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .nestedScroll(nestedScrollConnection)
+                                modifier = Modifier.fillMaxSize()
                             ) {
                                 TaskSearchBar(
                                     isSearchExpanded = isSearchExpanded,
@@ -535,6 +570,22 @@ fun TaskScreen(
                         if (selectedCategory == com.fabian.todolist.data.SystemCategory.TRASH && tasks.isEmpty()) {
                             item {
                                 com.fabian.todolist.ui.components.EmptyTrashState()
+                            }
+                        } else if (selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH && tasks.isEmpty()) {
+                            item {
+                                val hasActiveFilters = searchQuery.isNotBlank() ||
+                                    selectedStatus != com.fabian.todolist.data.TaskStatus.ALL
+                                TaskEmptyState(
+                                    isFiltered = hasActiveFilters,
+                                    onClearFilters = {
+                                        viewModel.setSearchQuery("")
+                                        viewModel.setSelectedStatus(com.fabian.todolist.data.TaskStatus.ALL)
+                                        isSearchExpanded = false
+                                    },
+                                    onAddTask = { openNewTaskDialog(null) },
+                                    onOpenCategories = { scope.launch { drawerState.open() } },
+                                    onOpenStats = { showStatsDialog = true }
+                                )
                             }
                         }
 
@@ -580,7 +631,13 @@ fun TaskScreen(
                                                                 if (hapticFeedbackOnComplete && !task.isCompleted) {
                                                                     com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
                                                                 }
-                                                                if (selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                                                                val isRepeatingActive = task.isRepeat &&
+                                                                    task.repeatType != com.fabian.todolist.data.RepeatType.NONE &&
+                                                                    !task.isCompleted
+                                                                if (!isRepeatingActive &&
+                                                                    selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED &&
+                                                                    selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH
+                                                                ) {
                                                                     isVisible = false
                                                                     // Wait for animation before updating DB
                                                                     scope.launch {
@@ -596,8 +653,7 @@ fun TaskScreen(
                                                                 isVisible = false
                                                             },
                                                             onEdit = {
-                                                                taskToEdit = task
-                                                                showAddEditDialog = true
+                                                                openEditTaskDialog(task)
                                                             },
                                                             onDelete = {
                                                                 if (hapticFeedbackOnComplete) {
@@ -665,7 +721,13 @@ fun TaskScreen(
                                                 if (hapticFeedbackOnComplete && !task.isCompleted) {
                                                     com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
                                                 }
-                                                if (selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
+                                                val isRepeatingActive = task.isRepeat &&
+                                                    task.repeatType != com.fabian.todolist.data.RepeatType.NONE &&
+                                                    !task.isCompleted
+                                                if (!isRepeatingActive &&
+                                                    selectedCategory != com.fabian.todolist.data.SystemCategory.COMPLETED &&
+                                                    selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH
+                                                ) {
                                                     isVisible = false
                                                     scope.launch {
                                                         kotlinx.coroutines.delay(300)
@@ -680,8 +742,7 @@ fun TaskScreen(
                                                 isVisible = false
                                             },
                                             onEdit = {
-                                                taskToEdit = task
-                                                showAddEditDialog = true
+                                                openEditTaskDialog(task)
                                             },
                                                 onDelete = {
                                                     if (hapticFeedbackOnComplete) {
@@ -739,8 +800,7 @@ fun TaskScreen(
                 categoryColors = categoryColors,
                 onToggleComplete = { viewModel.toggleTaskCompletion(it) },
                 onEditTask = {
-                    taskToEdit = it
-                    showAddEditDialog = true
+                    openEditTaskDialog(it)
                 },
                 onDeleteTask = { task ->
                     if (confirmOnDelete) {
@@ -751,19 +811,7 @@ fun TaskScreen(
                     }
                 },
                 onAddTaskForDate = { dateMillis ->
-                    taskToEdit = Task(
-                        title = "",
-                        description = "",
-                        category = if (selectedCategory in listOf(
-                                com.fabian.todolist.data.SystemCategory.ALL_TASKS,
-                                com.fabian.todolist.data.SystemCategory.COMPLETED,
-                                com.fabian.todolist.data.SystemCategory.TRASH,
-                                com.fabian.todolist.data.SystemCategory.EISENHOWER,
-                                com.fabian.todolist.data.SystemCategory.CALENDAR
-                            )) "General" else selectedCategory,
-                        dueDate = dateMillis
-                    )
-                    showAddEditDialog = true
+                    openNewTaskDialog(dateMillis)
                 },
                 isDualPane = dual,
                 onBackToTasks = {
@@ -781,15 +829,6 @@ fun TaskScreen(
                 ) {
                     if (selectedCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
                         eisenhowerContent()
-                    } else if (tasks.isEmpty() && selectedCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                        TaskEmptyState(
-                            onAddTask = {
-                                taskToEdit = null
-                                showAddEditDialog = true
-                            },
-                            onOpenCategories = { scope.launch { drawerState.open() } },
-                            onOpenStats = { showStatsDialog = true }
-                        )
                     } else {
                         taskListContent()
                     }
@@ -837,15 +876,6 @@ fun TaskScreen(
                         calendarPaneContent(false)
                     } else if (currentCategory == com.fabian.todolist.data.SystemCategory.EISENHOWER) {
                         eisenhowerContent()
-                    } else if (tasks.isEmpty() && currentCategory != com.fabian.todolist.data.SystemCategory.TRASH) {
-                        TaskEmptyState(
-                            onAddTask = {
-                                taskToEdit = null
-                                showAddEditDialog = true
-                            },
-                            onOpenCategories = { scope.launch { drawerState.open() } },
-                            onOpenStats = { showStatsDialog = true }
-                        )
                     } else {
                         taskListContent()
                     }
@@ -922,7 +952,7 @@ fun TaskScreen(
 
     if (showStatsDialog) {
         com.fabian.todolist.ui.components.ProductivityStatsDialog(
-            tasks = tasks,
+            tasks = allTasksListState.filter { !it.isDeleted },
             onDismiss = { showStatsDialog = false }
         )
     }
@@ -956,7 +986,7 @@ fun TaskScreen(
                 )
             },
             onSave = { finishedTask ->
-                if (taskToEdit == null || taskToEdit?.id == 0) {
+                if (editingTaskId == null) {
                     viewModel.insertTask(finishedTask)
                 } else {
                     viewModel.updateTask(finishedTask)
@@ -964,16 +994,9 @@ fun TaskScreen(
                 if (searchQuery.isNotEmpty()) {
                     viewModel.setSearchQuery("")
                 }
-                showAddEditDialog = false
+                closeAddEditDialog()
             },
-            onSaveBatch = { tasks ->
-                viewModel.insertTasks(tasks)
-                if (searchQuery.isNotEmpty()) {
-                    viewModel.setSearchQuery("")
-                }
-                showAddEditDialog = false
-            },
-            onDismiss = { showAddEditDialog = false }
+            onDismiss = closeAddEditDialog
         )
     }
 

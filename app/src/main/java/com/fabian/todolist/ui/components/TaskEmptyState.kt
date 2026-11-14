@@ -37,6 +37,8 @@ import com.fabian.todolist.R
 
 @Composable
 fun TaskEmptyState(
+    isFiltered: Boolean = false,
+    onClearFilters: () -> Unit = {},
     onAddTask: () -> Unit = {},
     onOpenCategories: () -> Unit = {},
     onOpenStats: () -> Unit = {}
@@ -86,7 +88,7 @@ fun TaskEmptyState(
                     Spacer(modifier = Modifier.height(20.dp))
                     
                     Text(
-                        text = stringResource(R.string.empty_state_title),
+                        text = stringResource(if (isFiltered) R.string.empty_state_filtered_title else R.string.empty_state_title),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
@@ -97,7 +99,7 @@ fun TaskEmptyState(
                     Spacer(modifier = Modifier.height(10.dp))
                     
                     Text(
-                        text = stringResource(R.string.empty_state_add_tip),
+                        text = stringResource(if (isFiltered) R.string.empty_state_filtered_desc else R.string.empty_state_add_tip),
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                         fontSize = 15.sp,
                         lineHeight = 22.sp,
@@ -107,6 +109,21 @@ fun TaskEmptyState(
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
+
+                    if (isFiltered) {
+                        OutlinedButton(
+                            onClick = onClearFilters,
+                            shape = RoundedCornerShape(16.dp),
+                            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.clear_filters_action),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
 
                     // Quick Action Buttons
                     Button(

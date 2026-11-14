@@ -33,6 +33,7 @@ import androidx.compose.material.icons.automirrored.filled.FactCheck
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +55,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.fabian.todolist.R
 import com.fabian.todolist.data.Subtask
 import com.fabian.todolist.data.Task
+import com.fabian.todolist.data.TaskConverters
 import com.fabian.todolist.ui.components.addtask.SubtaskSection
 import com.fabian.todolist.ui.components.addtask.DateTimeSection
 import com.fabian.todolist.data.getSubtasks
@@ -70,7 +72,6 @@ fun AddEditTaskDialog(
     task: Task?,
     categories: List<String>,
     onSave: (Task) -> Unit,
-    onSaveBatch: (List<Task>) -> Unit = {},
     initialCategory: String = "General",
     defaultOffsetMinutes: Int = 0,
     categoryColors: Map<String, Int> = emptyMap(),
@@ -81,16 +82,31 @@ fun AddEditTaskDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    val dialogKey = remember(task?.id) {
+        when {
+            task == null -> "new"
+            task.id != 0 -> "edit_${task.id}"
+            else -> "draft"
+        }
+    }
+    val taskConverters = remember { TaskConverters() }
 
-    var title by remember { mutableStateOf(task?.title ?: "") }
-    var description by remember { mutableStateOf(task?.description ?: "") }
-    var selectedCategory by remember { mutableStateOf(task?.category ?: initialCategory.ifBlank { "General" }) }
-    var localSubtasks by remember { mutableStateOf(task?.getSubtasks() ?: emptyList()) }
-    var isSubtasksExpanded by remember { mutableStateOf(localSubtasks.isNotEmpty()) }
-    var newSubtaskText by remember { mutableStateOf("") }
-    
-    var selectedPriority by remember { mutableStateOf(task?.priority ?: com.fabian.todolist.data.TaskPriority.MEDIUM) }
-    var attachedImageUri by remember { mutableStateOf(task?.attachedImageUri) }
+    var title by rememberSaveable(dialogKey) { mutableStateOf(task?.title ?: "") }
+    var description by rememberSaveable(dialogKey) { mutableStateOf(task?.description ?: "") }
+    var selectedCategory by rememberSaveable(dialogKey) { mutableStateOf(task?.category ?: initialCategory.ifBlank { "General" }) }
+    var localSubtasksJson by rememberSaveable(dialogKey) {
+        mutableStateOf(taskConverters.fromSubtaskList(task?.getSubtasks() ?: emptyList()))
+    }
+    val localSubtasks = remember(localSubtasksJson) {
+        taskConverters.toSubtaskList(localSubtasksJson)
+    }
+    val updateLocalSubtasks: (List<Subtask>) -> Unit = { updated ->
+        localSubtasksJson = taskConverters.fromSubtaskList(updated)
+    }
+    var isSubtasksExpanded by rememberSaveable(dialogKey) { mutableStateOf(localSubtasks.isNotEmpty()) }
+
+    var selectedPriority by rememberSaveable(dialogKey) { mutableStateOf(task?.priority ?: com.fabian.todolist.data.TaskPriority.MEDIUM) }
+    var attachedImageUri by rememberSaveable(dialogKey) { mutableStateOf(task?.attachedImageUri) }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -104,53 +120,57 @@ fun AddEditTaskDialog(
         }
     }
 
-    var showAddCategoryDialog by remember { mutableStateOf(false) }
-    var newCategoryText by remember { mutableStateOf("") }
+    var showAddCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    var newCategoryText by rememberSaveable { mutableStateOf("") }
 
     // Alarm properties
-    var selectedDateInMillis by remember { mutableStateOf(task?.dueDate) }
-    var selectedTimeStr by remember { mutableStateOf(task?.dueTime) }
-    var setupReminder by remember { mutableStateOf(true) }
-    var isRepeat by remember { mutableStateOf(task?.isRepeat ?: false) }
-    var repeatType by remember { mutableStateOf(task?.repeatType ?: com.fabian.todolist.data.RepeatType.NONE) }
+    var selectedDateInMillis by rememberSaveable(dialogKey) { mutableStateOf(task?.dueDate) }
+    var selectedTimeStr by rememberSaveable(dialogKey) { mutableStateOf(task?.dueTime) }
+    var setupReminder by rememberSaveable(dialogKey) { mutableStateOf(task == null || task.reminderTime != null) }
+    var isRepeat by rememberSaveable(dialogKey) { mutableStateOf(task?.isRepeat ?: false) }
+    var repeatType by rememberSaveable(dialogKey) { mutableStateOf(task?.repeatType ?: com.fabian.todolist.data.RepeatType.NONE) }
 
-    var selectedOffsetMinutes by remember {
-        mutableStateOf(
-            if (task?.reminderTime != null && task.dueDate != null && task.dueTime != null) {
-                val calDue = Calendar.getInstance().apply {
-                    timeInMillis = task.dueDate!!
-                }
-                val parts = task.dueTime!!.split(":")
-                var parsedOk = false
-                if (parts.size == 2) {
-                    try {
-                        calDue.set(Calendar.HOUR_OF_DAY, parts[0].toInt())
-                        calDue.set(Calendar.MINUTE, parts[1].toInt())
-                        calDue.set(Calendar.SECOND, 0)
-                        calDue.set(Calendar.MILLISECOND, 0)
-                        parsedOk = true
-                    } catch (_: Exception) {}
-                }
-                if (parsedOk) {
-                    val diffMins = (calDue.timeInMillis - task.reminderTime!!) / 60000L
-                    diffMins.toInt().coerceAtLeast(0)
-                } else {
-                    defaultOffsetMinutes
-                }
+    val initialOffsetMinutes = remember(dialogKey, defaultOffsetMinutes) {
+        if (task?.reminderTime != null && task.dueDate != null && task.dueTime != null) {
+            val calDue = Calendar.getInstance().apply {
+                timeInMillis = task.dueDate!!
+            }
+            val parts = task.dueTime!!.split(":")
+            var parsedOk = false
+            if (parts.size == 2) {
+                try {
+                    calDue.set(Calendar.HOUR_OF_DAY, parts[0].toInt())
+                    calDue.set(Calendar.MINUTE, parts[1].toInt())
+                    calDue.set(Calendar.SECOND, 0)
+                    calDue.set(Calendar.MILLISECOND, 0)
+                    parsedOk = true
+                } catch (_: Exception) {}
+            }
+            if (parsedOk) {
+                val diffMins = (calDue.timeInMillis - task.reminderTime!!) / 60000L
+                diffMins.toInt().coerceAtLeast(0)
             } else {
                 defaultOffsetMinutes
             }
-        )
+        } else {
+            defaultOffsetMinutes
+        }
     }
+    var selectedOffsetMinutes by rememberSaveable(dialogKey) { mutableStateOf(initialOffsetMinutes) }
 
-    var showDiscardDialog by remember { mutableStateOf(false) }
+    var showDiscardDialog by rememberSaveable { mutableStateOf(false) }
 
-    val hasUnsavedChanges = remember(title, description, selectedCategory, selectedPriority, selectedDateInMillis, selectedTimeStr, setupReminder, isRepeat, repeatType, localSubtasks, attachedImageUri) {
+    val hasUnsavedChanges = remember(
+        title, description, selectedCategory, selectedPriority,
+        selectedDateInMillis, selectedTimeStr, setupReminder, selectedOffsetMinutes,
+        isRepeat, repeatType, localSubtasks, attachedImageUri
+    ) {
         if (task == null) {
             title.isNotBlank() || description.isNotBlank() || localSubtasks.isNotEmpty() ||
             selectedDateInMillis != null || selectedTimeStr != null || attachedImageUri != null ||
             selectedCategory != (initialCategory.ifBlank { "General" }) || selectedPriority != com.fabian.todolist.data.TaskPriority.MEDIUM ||
-            isRepeat || repeatType != com.fabian.todolist.data.RepeatType.NONE
+            isRepeat || repeatType != com.fabian.todolist.data.RepeatType.NONE ||
+            !setupReminder || selectedOffsetMinutes != initialOffsetMinutes
         } else {
             val originalTitle = task.title
             val originalDescription = task.description
@@ -162,11 +182,13 @@ fun AddEditTaskDialog(
             val originalRepeatType = task.repeatType
             val originalImage = task.attachedImageUri
             val originalSubtasks = task.getSubtasks()
+            val originalReminderEnabled = task.reminderTime != null
 
             title != originalTitle || description != originalDescription || selectedCategory != originalCategory ||
             selectedPriority != originalPriority || selectedDateInMillis != originalDate || selectedTimeStr != originalTime ||
             isRepeat != originalRepeat || repeatType != originalRepeatType || attachedImageUri != originalImage ||
-            localSubtasks != originalSubtasks
+            localSubtasks != originalSubtasks ||
+            setupReminder != originalReminderEnabled || selectedOffsetMinutes != initialOffsetMinutes
         }
     }
 
@@ -511,7 +533,7 @@ fun AddEditTaskDialog(
                                         if (genPriority.isNotBlank()) {
                                             selectedPriority = genPriority
                                         }
-                                        localSubtasks = localSubtasks + subtasks.map { Subtask(title = it) }
+                                        updateLocalSubtasks(localSubtasks + subtasks.map { Subtask(title = it) })
                                         isSubtasksExpanded = true
                                         com.fabian.todolist.util.UiUtils.showShortToast(context, aiCompletedToast)
                                     },
@@ -578,7 +600,11 @@ fun AddEditTaskDialog(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     val focusRequester = remember { FocusRequester() }
-                                    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+                                    LaunchedEffect(task?.id) {
+                                        if (task == null) {
+                                            focusRequester.requestFocus()
+                                        }
+                                    }
 
                                     OutlinedTextField(
                                         value = title,
@@ -758,7 +784,7 @@ fun AddEditTaskDialog(
                         // SECTION 4: Subtasks Custom Checklist
                         SubtaskSection(
                             localSubtasks = localSubtasks,
-                            onSubtasksChanged = { localSubtasks = it },
+                            onSubtasksChanged = updateLocalSubtasks,
                             isSubtasksExpanded = isSubtasksExpanded,
                             onExpandedChanged = { isSubtasksExpanded = it },
                             title = title,

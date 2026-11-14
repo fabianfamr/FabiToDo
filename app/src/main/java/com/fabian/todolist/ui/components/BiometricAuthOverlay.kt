@@ -30,18 +30,18 @@ fun BiometricAuthOverlay(
 ) {
     var isAuthenticated by remember(requireBiometrics) { mutableStateOf(!requireBiometrics) }
     var attemptingAuth by remember { mutableStateOf(false) }
+    var promptTrigger by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Re-lock when the app goes to the background. Without this, the user can
-    // authenticate, switch to another app, then return minutes later and the
-    // activity is merely resumed (not recreated) — isAuthenticated stays true
-    // and the biometric lock is silently bypassed.
+    // Re-lock when the app goes to the background, and re-prompt cleanly when returning to foreground.
     DisposableEffect(lifecycleOwner, requireBiometrics) {
         val observer = LifecycleEventObserver { _, event ->
             if (requireBiometrics && event == Lifecycle.Event.ON_STOP) {
                 isAuthenticated = false
                 attemptingAuth = false
+            } else if (requireBiometrics && event == Lifecycle.Event.ON_START && !isAuthenticated) {
+                promptTrigger++
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -89,7 +89,7 @@ fun BiometricAuthOverlay(
         }
     }
 
-    LaunchedEffect(requireBiometrics, attemptingAuth) {
+    LaunchedEffect(requireBiometrics, attemptingAuth, promptTrigger) {
         if (requireBiometrics && (!isAuthenticated || attemptingAuth)) {
             var fragmentActivity: FragmentActivity? = null
             var currentContext = context

@@ -60,7 +60,6 @@ fun TaskDeleteDialog(
                 TextButton(
                     onClick = {
                         onConfirm(taskToDelete)
-                        onDismiss()
                     }
                 ) {
                     Text(stringResource(R.string.accept), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.error)
@@ -104,7 +103,6 @@ fun TaskDeleteBatchDialog(
                 TextButton(
                     onClick = {
                         onConfirm(tasksToDelete)
-                        onDismiss()
                     }
                 ) {
                     Text(stringResource(R.string.accept), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.error)

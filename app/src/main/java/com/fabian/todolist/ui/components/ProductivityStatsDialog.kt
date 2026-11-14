@@ -34,9 +34,10 @@ fun ProductivityStatsDialog(
     tasks: List<Task>,
     onDismiss: () -> Unit
 ) {
-    val totalTasks = tasks.size
-    val completedTasks = tasks.count { it.isCompleted }
-    val pendingTasks = tasks.count { !it.isCompleted && !it.isDeleted }
+    val activeTasks = remember(tasks) { tasks.filter { !it.isDeleted } }
+    val totalTasks = activeTasks.size
+    val completedTasks = activeTasks.count { it.isCompleted }
+    val pendingTasks = activeTasks.count { !it.isCompleted }
     val completionRate = if (totalTasks == 0) 0 else (completedTasks * 100 / totalTasks)
 
     Dialog(

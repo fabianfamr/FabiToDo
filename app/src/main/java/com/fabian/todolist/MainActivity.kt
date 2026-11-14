@@ -40,13 +40,15 @@ import androidx.compose.animation.core.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.fabian.todolist.ui.LoginScreen
 import com.fabian.todolist.ui.AuthViewModel
+import com.fabian.todolist.ui.theme.LocalDateFormat
+import com.fabian.todolist.ui.theme.LocalTimeFormat
 
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.content.ContextCompat
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,16 +56,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-  private var initialAppliedLanguage: String = "system"
-
-
-
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
     // Apply language on startup using modern AppCompat API
     val prefs = getSharedPreferences("fabitodo_preferences", MODE_PRIVATE)
     val savedLang = prefs.getString("app_locale", "system") ?: "system"
-    initialAppliedLanguage = savedLang
     
     if (savedLang != "system") {
       try {
@@ -76,11 +73,6 @@ class MainActivity : AppCompatActivity() {
 
     super.onCreate(savedInstanceState)
     com.fabian.todolist.util.configureAppCheck(this, intent)
-    
-    val quickAddInterval = prefs.getString("quick_add_notification_interval", "off") ?: "off"
-    if (quickAddInterval != "off") {
-      com.fabian.todolist.util.QuickAddNotificationHelper.schedulePeriodicReminders(this, quickAddInterval)
-    }
 
     enableEdgeToEdge()
     setContent {
@@ -136,122 +128,126 @@ class MainActivity : AppCompatActivity() {
       // CORRECCIÓN: reprogramar el recordatorio rápido cuando cambia el intervalo
       // (local o remotamente). Antes solo se reprogramaba al reiniciar la app.
       val quickAddInterval by settingsViewModel.quickAddNotificationInterval.collectAsStateWithLifecycle()
+      var lastScheduledInterval by rememberSaveable { mutableStateOf<String?>(null) }
       LaunchedEffect(quickAddInterval) {
+        val shouldReplace = lastScheduledInterval != null && lastScheduledInterval != quickAddInterval
         com.fabian.todolist.util.QuickAddNotificationHelper.schedulePeriodicReminders(
-          this@MainActivity, quickAddInterval
+          context = this@MainActivity,
+          intervalCode = quickAddInterval,
+          replaceExisting = shouldReplace
         )
+        lastScheduledInterval = quickAddInterval
       }
+
+      val dateFormat by settingsViewModel.dateFormat.collectAsStateWithLifecycle()
+      val timeFormat by settingsViewModel.timeFormat.collectAsStateWithLifecycle()
+      val requireBiometrics by settingsViewModel.requireBiometrics.collectAsStateWithLifecycle()
+      val secureScreenMode by settingsViewModel.secureScreenMode.collectAsStateWithLifecycle()
 
       FabiToDoTheme(
         selectedColor = accentColor,
         selectedDarkTheme = themeDark
       ) {
-        val authViewModel: AuthViewModel = hiltViewModel()
-        val context = LocalContext.current
-        val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle()
-        var hasPromptedSignIn by rememberSaveable { mutableStateOf(false) }
+        CompositionLocalProvider(
+          LocalDateFormat provides dateFormat,
+          LocalTimeFormat provides timeFormat
+        ) {
+          val authViewModel: AuthViewModel = hiltViewModel()
+          val context = LocalContext.current
+          val currentUser by authViewModel.currentUser.collectAsStateWithLifecycle()
 
-        val prefs = remember { context.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
-        var hasCompletedFirstLaunch by remember { mutableStateOf(prefs.getBoolean("has_completed_first_launch", false)) }
+          val localPrefs = remember { context.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
+          var hasPromptedSignIn by remember { mutableStateOf(localPrefs.getBoolean("has_prompted_google_signin", false)) }
+          var hasCompletedFirstLaunch by remember { mutableStateOf(localPrefs.getBoolean("has_completed_first_launch", false)) }
 
-        val coroutineScope = rememberCoroutineScope()
-        val navController = rememberNavController()
-        val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
+          val coroutineScope = rememberCoroutineScope()
+          val navController = rememberNavController()
+          val transition = remember { com.fabian.todolist.ui.PixelTransitionState() }
 
-        LaunchedEffect(hasCompletedFirstLaunch) {
-          if (hasCompletedFirstLaunch) {
-            kotlinx.coroutines.delay(1200)
-            transition.dismiss()
-          }
-        }
-
-        LaunchedEffect(currentUser, transition.running.value) {
-          if (!transition.running.value && currentUser == null && !hasPromptedSignIn) {
-            hasPromptedSignIn = true
-            authViewModel.signInWithGoogle(context)
-          }
-        }
-        val appContent: @Composable () -> Unit = {
-          NavHost(
-            navController = navController,
-            startDestination = "home",
-            modifier = Modifier.fillMaxSize(),
-            enterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
-            exitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
-            popEnterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
-            popExitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) }
-          ) {
-            composable("login") {
-              LoginScreen(
-                viewModel = authViewModel,
-                onLoginSuccess = {
-                  navController.navigate("home") {
-                    popUpTo("login") { inclusive = true }
-                  }
-                }
-              )
-            }
-            composable("home") {
-              TaskScreen(
-                viewModel = viewModel,
-                settingsViewModel = settingsViewModel,
-                authViewModel = authViewModel,
-                onNavigateToGoogleLogin = {
-                  authViewModel.signInWithGoogle(context)
-                },
-                modifier = Modifier.fillMaxSize()
-              )
+          LaunchedEffect(hasCompletedFirstLaunch) {
+            if (hasCompletedFirstLaunch) {
+              kotlinx.coroutines.delay(1200)
+              transition.dismiss()
             }
           }
-        }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-          val isRunning = transition.running.value
-
-          Box(
-            modifier = Modifier
-              .fillMaxSize()
-              .then(
-                if (isRunning) {
-                  Modifier.graphicsLayer {
-                    val t = transition.progress.value
-                    alpha = 1f // Solid reveal behind the dissolving black splash to avoid any transparency gaps
-                    scaleX = com.fabian.todolist.ui.lerp(0.99f, 1f, t)
-                    scaleY = com.fabian.todolist.ui.lerp(0.99f, 1f, t)
-                  }
-                } else Modifier
-              )
-              .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
-          ) {
-            val requireBiometrics by settingsViewModel.requireBiometrics.collectAsStateWithLifecycle()
-            val secureScreenMode by settingsViewModel.secureScreenMode.collectAsStateWithLifecycle()
-            LaunchedEffect(secureScreenMode) {
-              if (secureScreenMode) {
-                window.setFlags(
-                  android.view.WindowManager.LayoutParams.FLAG_SECURE,
-                  android.view.WindowManager.LayoutParams.FLAG_SECURE
+          LaunchedEffect(currentUser, transition.running.value, requireBiometrics) {
+            if (!transition.running.value && !requireBiometrics && currentUser == null && !hasPromptedSignIn) {
+              hasPromptedSignIn = true
+              localPrefs.edit().putBoolean("has_prompted_google_signin", true).apply()
+              authViewModel.signInWithGoogle(context)
+            }
+          }
+          val appContent: @Composable () -> Unit = {
+            NavHost(
+              navController = navController,
+              startDestination = "home",
+              modifier = Modifier.fillMaxSize(),
+              enterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
+              exitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
+              popEnterTransition = { fadeIn(animationSpec = tween(380, easing = FastOutSlowInEasing)) + slideInHorizontally(initialOffsetX = { -it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) },
+              popExitTransition = { fadeOut(animationSpec = tween(280)) + slideOutHorizontally(targetOffsetX = { it / 5 }, animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = 0.8f)) }
+            ) {
+              composable("home") {
+                TaskScreen(
+                  viewModel = viewModel,
+                  settingsViewModel = settingsViewModel,
+                  authViewModel = authViewModel,
+                  onNavigateToGoogleLogin = {
+                    authViewModel.signInWithGoogle(context)
+                  },
+                  modifier = Modifier.fillMaxSize()
                 )
-              } else {
-                window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
               }
-            }
-            com.fabian.todolist.ui.components.BiometricAuthOverlay(requireBiometrics = requireBiometrics) {
-              appContent()
             }
           }
 
-          if (isRunning) {
-            com.fabian.todolist.ui.PixelSplashScene(
-              t = transition.progress.value,
-              isFirstLaunch = !hasCompletedFirstLaunch,
-              onStartClick = {
-                prefs.edit().putBoolean("has_completed_first_launch", true).apply()
-                hasCompletedFirstLaunch = true
-                coroutineScope.launch {
-                  transition.dismiss()
+          Box(modifier = Modifier.fillMaxSize()) {
+            val isRunning = transition.running.value
+
+            Box(
+              modifier = Modifier
+                .fillMaxSize()
+                .then(
+                  if (isRunning) {
+                    Modifier.graphicsLayer {
+                      val t = transition.progress.value
+                      alpha = 1f // Solid reveal behind the dissolving black splash to avoid any transparency gaps
+                      scaleX = com.fabian.todolist.ui.lerp(0.99f, 1f, t)
+                      scaleY = com.fabian.todolist.ui.lerp(0.99f, 1f, t)
+                    }
+                  } else Modifier
+                )
+                .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
+            ) {
+              LaunchedEffect(secureScreenMode) {
+                if (secureScreenMode) {
+                  window.setFlags(
+                    android.view.WindowManager.LayoutParams.FLAG_SECURE,
+                    android.view.WindowManager.LayoutParams.FLAG_SECURE
+                  )
+                } else {
+                  window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
                 }
               }
-            )
+              com.fabian.todolist.ui.components.BiometricAuthOverlay(requireBiometrics = requireBiometrics) {
+                appContent()
+              }
+            }
+
+            if (isRunning) {
+              com.fabian.todolist.ui.PixelSplashScene(
+                t = transition.progress.value,
+                isFirstLaunch = !hasCompletedFirstLaunch,
+                onStartClick = {
+                  localPrefs.edit().putBoolean("has_completed_first_launch", true).apply()
+                  hasCompletedFirstLaunch = true
+                  coroutineScope.launch {
+                    transition.dismiss()
+                  }
+                }
+              )
+            }
           }
         }
       }

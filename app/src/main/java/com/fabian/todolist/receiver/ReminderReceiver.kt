@@ -1,5 +1,6 @@
 package com.fabian.todolist.receiver
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,12 +11,16 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.fabian.todolist.MainActivity
-import com.fabian.todolist.data.AppDatabase
 import com.fabian.todolist.R
+import com.fabian.todolist.data.RepeatType
+import com.fabian.todolist.data.Task
+import com.fabian.todolist.data.TaskPriority
+import com.fabian.todolist.di.AppSingletonEntryPoint
+import com.fabian.todolist.util.AlarmSchedulerHelper
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class ReminderReceiver : BroadcastReceiver() {
 
@@ -23,9 +28,6 @@ class ReminderReceiver : BroadcastReceiver() {
         val prefs = context.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
         val notificationsEnabled = prefs.getBoolean("global_notifications_enabled", true)
 
-        // Defense in depth: reject any internal action coming from a different package.
-        // System actions (BOOT_COMPLETED, SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED)
-        // are always delivered by the OS with a null/empty sender package.
         val action = intent.action
         val isInternalAction = action == ACTION_TASK_REMINDER ||
             action == ACTION_COMPLETE_TASK ||
@@ -38,18 +40,21 @@ class ReminderReceiver : BroadcastReceiver() {
             }
         }
 
-        // Handle device reboots or exact alarm permission state changes to avoid losing user alarms/reminders
         if (action == Intent.ACTION_BOOT_COMPLETED ||
             action == "android.intent.action.QUICKBOOT_POWERON" ||
-            action == "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED") {
-            
+            action == "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED"
+        ) {
+            if (!notificationsEnabled) return
             val pendingResult = goAsync()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val db = AppDatabase.getDatabase(context)
-                    val tasks = db.taskDao().getTasksWithActiveReminders()
+                    val repository = EntryPointAccessors.fromApplication(
+                        context.applicationContext,
+                        AppSingletonEntryPoint::class.java
+                    ).taskRepository()
+                    val tasks = repository.getTasksWithActiveReminders()
                     for (task in tasks) {
-                        com.fabian.todolist.util.AlarmSchedulerHelper.scheduleTaskAlarms(context, task)
+                        AlarmSchedulerHelper.scheduleTaskAlarms(context, task)
                     }
                 } catch (e: Exception) {
                     Log.e("ReminderReceiver", "Error rescheduling reminders on background event", e)
@@ -66,59 +71,82 @@ class ReminderReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val db = AppDatabase.getDatabase(context)
-                val task = db.taskDao().getTaskById(taskId)
+                val repository = EntryPointAccessors.fromApplication(
+                    context.applicationContext,
+                    AppSingletonEntryPoint::class.java
+                ).taskRepository()
+                val task = repository.getTaskById(taskId)
 
                 if (task != null) {
-                    if (intent.action == ACTION_COMPLETE_TASK) {
-                        db.taskDao().updateTask(task.copy(isCompleted = true))
+                    if (action == ACTION_COMPLETE_TASK) {
+                        val notificationManager =
+                            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        notificationManager.cancel(taskId)
                         cancelReminder(context, task)
-                        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                        notificationManager.cancel(taskId)
-                    } else if (intent.action == ACTION_SNOOZE_TASK) {
+
+                        if (task.isRepeat && task.repeatType != RepeatType.NONE) {
+                            val nextSchedule = AlarmSchedulerHelper.computeNextRepeatSchedule(task)
+                            if (nextSchedule != null) {
+                                val nextTask = task.copy(
+                                    dueDate = nextSchedule.first,
+                                    reminderTime = nextSchedule.second,
+                                    isCompleted = false
+                                )
+                                repository.update(nextTask)
+                                if (notificationsEnabled) {
+                                    AlarmSchedulerHelper.scheduleTaskAlarms(context, nextTask)
+                                }
+                            } else {
+                                repository.update(task.copy(isCompleted = true))
+                            }
+                        } else {
+                            repository.update(task.copy(isCompleted = true))
+                        }
+                    } else if (action == ACTION_SNOOZE_TASK) {
                         val snoozeMinutes = prefs.getInt("snooze_duration_minutes", 10)
-                        val snoozeTime = System.currentTimeMillis() + (snoozeMinutes * 60 * 1000)
-                        
-                        db.taskDao().updateTask(task.copy(dueDate = snoozeTime, reminderTime = snoozeTime))
-                        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        val snoozeTime = System.currentTimeMillis() + (snoozeMinutes * 60 * 1000L)
+
+                        repository.update(task.copy(reminderTime = snoozeTime))
+                        val notificationManager =
+                            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                         notificationManager.cancel(taskId)
-                        
-                        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+
+                        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         val reminderIntent = Intent(context, ReminderReceiver::class.java).apply {
                             setAction(ACTION_TASK_REMINDER)
                             putExtra(EXTRA_TASK_ID, task.id)
                         }
                         val pendingIntent = PendingIntent.getBroadcast(
                             context,
-                            task.id,
+                            AlarmSchedulerHelper.getSnoozeRequestCode(task.id),
                             reminderIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                         )
-                        
+
                         try {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                 if (alarmManager.canScheduleExactAlarms()) {
                                     alarmManager.setExactAndAllowWhileIdle(
-                                        android.app.AlarmManager.RTC_WAKEUP,
+                                        AlarmManager.RTC_WAKEUP,
                                         snoozeTime,
                                         pendingIntent
                                     )
                                 } else {
                                     alarmManager.setAndAllowWhileIdle(
-                                        android.app.AlarmManager.RTC_WAKEUP,
+                                        AlarmManager.RTC_WAKEUP,
                                         snoozeTime,
                                         pendingIntent
                                     )
                                 }
                             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 alarmManager.setExactAndAllowWhileIdle(
-                                    android.app.AlarmManager.RTC_WAKEUP,
+                                    AlarmManager.RTC_WAKEUP,
                                     snoozeTime,
                                     pendingIntent
                                 )
                             } else {
                                 alarmManager.setExact(
-                                    android.app.AlarmManager.RTC_WAKEUP,
+                                    AlarmManager.RTC_WAKEUP,
                                     snoozeTime,
                                     pendingIntent
                                 )
@@ -131,7 +159,7 @@ class ReminderReceiver : BroadcastReceiver() {
                             Log.d("ReminderReceiver", "Notifications globally disabled")
                             return@launch
                         }
-                        if (!task.isCompleted) {
+                        if (!task.isCompleted && !task.isDeleted) {
                             val vibrateEnabled = prefs.getBoolean("notifications_vibrate", true)
                             val soundEnabled = prefs.getBoolean("notifications_sound", true)
                             showNotification(context, task.id, task.title, task.description, task.priority, vibrateEnabled, soundEnabled)
@@ -157,31 +185,10 @@ class ReminderReceiver : BroadcastReceiver() {
     ) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = ensureReminderChannel(context, soundEnabled)
 
-        // Use a single static channel ID. Previously the channel ID included the
-        // sound/vibrate flags, creating a new channel every time the user toggled
-        // those settings in NotificationsSettingsDialog — channel proliferation
-        // in the system settings UI and never-deleted stale channels.
-        val channelId = "fabitodo_reminders"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val existingChannel = notificationManager.getNotificationChannel(channelId)
-            if (existingChannel == null) {
-                val channel = NotificationChannel(
-                    channelId,
-                    context.getString(R.string.notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    this.description = context.getString(R.string.notification_channel_desc)
-                    enableVibration(true)
-                    vibrationPattern = longArrayOf(0, 500, 250, 500)
-                }
-                notificationManager.createNotificationChannel(channel)
-            }
-        }
-
-        // Action when notification clicked
         val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
             putExtra("NOTIFICATION_TASK_ID", taskId)
         }
 
@@ -192,12 +199,11 @@ class ReminderReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Set Priority Label in notification
         val priorityTag = when (priority) {
-            com.fabian.todolist.data.TaskPriority.CRITICAL -> context.getString(R.string.priority_critical_label) + ": "
-            com.fabian.todolist.data.TaskPriority.HIGH -> context.getString(R.string.priority_high_label) + ": "
-            com.fabian.todolist.data.TaskPriority.MEDIUM -> context.getString(R.string.priority_medium_label) + ": "
-            com.fabian.todolist.data.TaskPriority.LOW -> context.getString(R.string.priority_low_label) + ": "
+            TaskPriority.CRITICAL -> context.getString(R.string.priority_critical_label) + ": "
+            TaskPriority.HIGH -> context.getString(R.string.priority_high_label) + ": "
+            TaskPriority.MEDIUM -> context.getString(R.string.priority_medium_label) + ": "
+            TaskPriority.LOW -> context.getString(R.string.priority_low_label) + ": "
             else -> ""
         }
 
@@ -207,7 +213,7 @@ class ReminderReceiver : BroadcastReceiver() {
         }
         val completePendingIntent = PendingIntent.getBroadcast(
             context,
-            taskId * 100 + 1,
+            (taskId shl 4) or 13,
             completeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -218,7 +224,7 @@ class ReminderReceiver : BroadcastReceiver() {
         }
         val snoozePendingIntent = PendingIntent.getBroadcast(
             context,
-            taskId * 100 + 2,
+            (taskId shl 4) or 14,
             snoozeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -233,6 +239,9 @@ class ReminderReceiver : BroadcastReceiver() {
             .addAction(android.R.drawable.ic_menu_edit, context.getString(R.string.snooze), snoozePendingIntent)
             .addAction(android.R.drawable.ic_menu_save, context.getString(R.string.finish), completePendingIntent)
 
+        if (!soundEnabled) {
+            notificationBuilder.setSilent(true)
+        }
         if (vibrateEnabled) {
             notificationBuilder.setVibrate(longArrayOf(0, 500, 250, 500))
         } else {
@@ -242,41 +251,8 @@ class ReminderReceiver : BroadcastReceiver() {
         notificationManager.notify(taskId, notificationBuilder.build())
     }
 
-    private fun cancelReminder(context: Context, task: com.fabian.todolist.data.Task) {
-        com.fabian.todolist.util.AlarmSchedulerHelper.cancelTaskAlarms(context, task)
-    }
-
-    /**
-     * Compute the next trigger timestamp for a repeating reminder.
-     * Returns null if [task.repeatType] is unknown or if the result would be in the past.
-     *
-     * Baseline is the current due date (or reminderTime, falling back to "now").
-     * The next occurrence is calculated by adding the repeat interval once; if that
-     * is still in the past (e.g., the device was asleep for a long time), we keep
-     * advancing until we land on a future timestamp.
-     */
-    private fun computeNextRepeatTrigger(task: com.fabian.todolist.data.Task): Long? {
-        val baseline = task.dueDate ?: task.reminderTime ?: System.currentTimeMillis()
-        val now = System.currentTimeMillis()
-        var next = baseline
-        // Cap iterations to avoid infinite loops on pathological timestamps.
-        var safety = 0
-        while (next <= now && safety < 365) {
-            next = advanceRepeat(next, task.repeatType) ?: return null
-            safety++
-        }
-        return if (next > now) next else null
-    }
-
-    private fun advanceRepeat(timestamp: Long, repeatType: String): Long? {
-        val cal = Calendar.getInstance()
-        cal.timeInMillis = timestamp
-        return when (repeatType) {
-            com.fabian.todolist.data.RepeatType.DAILY -> { cal.add(Calendar.DAY_OF_YEAR, 1); cal.timeInMillis }
-            com.fabian.todolist.data.RepeatType.WEEKLY -> { cal.add(Calendar.WEEK_OF_YEAR, 1); cal.timeInMillis }
-            com.fabian.todolist.data.RepeatType.MONTHLY -> { cal.add(Calendar.MONTH, 1); cal.timeInMillis }
-            else -> null
-        }
+    private fun cancelReminder(context: Context, task: Task) {
+        AlarmSchedulerHelper.cancelTaskAlarms(context, task)
     }
 
     companion object {
@@ -284,5 +260,31 @@ class ReminderReceiver : BroadcastReceiver() {
         const val ACTION_TASK_REMINDER = "com.fabian.todolist.ACTION_TASK_REMINDER"
         const val ACTION_COMPLETE_TASK = "com.fabian.todolist.ACTION_COMPLETE_TASK"
         const val ACTION_SNOOZE_TASK = "com.fabian.todolist.ACTION_SNOOZE_TASK"
+        private const val CHANNEL_SOUND = "fabitodo_reminders_sound"
+        private const val CHANNEL_SILENT = "fabitodo_reminders_silent"
+
+        fun ensureReminderChannel(context: Context, soundEnabled: Boolean): String {
+            val channelId = if (soundEnabled) CHANNEL_SOUND else CHANNEL_SILENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                if (notificationManager.getNotificationChannel(channelId) == null) {
+                    val channel = NotificationChannel(
+                        channelId,
+                        context.getString(R.string.notification_channel_name),
+                        NotificationManager.IMPORTANCE_HIGH
+                    ).apply {
+                        description = context.getString(R.string.notification_channel_desc)
+                        enableVibration(true)
+                        vibrationPattern = longArrayOf(0, 500, 250, 500)
+                        if (!soundEnabled) {
+                            setSound(null, null)
+                        }
+                    }
+                    notificationManager.createNotificationChannel(channel)
+                }
+            }
+            return channelId
+        }
     }
 }

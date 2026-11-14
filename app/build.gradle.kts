@@ -74,11 +74,16 @@ android {
         keyPassword = ciKeyPass
       }
     } else if (localReleaseKeystore.exists()) {
-      create("releaseConfig") {
-        storeFile = localReleaseKeystore
-        storePassword = "fabian123"
-        keyAlias = "fabian_alias"
-        keyPassword = "fabian123"
+      val localStorePass = keystoreProps.getProperty("releaseStorePassword")?.ifEmpty { null }
+      val localKeyAlias = keystoreProps.getProperty("releaseKeyAlias")?.ifEmpty { null }
+      val localKeyPass = keystoreProps.getProperty("releaseKeyPassword")?.ifEmpty { null }
+      if (localStorePass != null && localKeyAlias != null && localKeyPass != null) {
+        create("releaseConfig") {
+          storeFile = localReleaseKeystore
+          storePassword = localStorePass
+          keyAlias = localKeyAlias
+          keyPassword = localKeyPass
+        }
       }
     }
   }

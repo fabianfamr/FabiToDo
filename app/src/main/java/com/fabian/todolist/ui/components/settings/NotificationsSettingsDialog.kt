@@ -53,54 +53,39 @@ import com.fabian.todolist.ui.SettingsViewModel
 
     private fun triggerTestNotification(context: Context, soundEnabled: Boolean, vibrateEnabled: Boolean) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channelId = "fabitodo_reminders_${soundEnabled}_${vibrateEnabled}"
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                context.getString(R.string.notification_channel_name),
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = context.getString(R.string.notification_channel_desc)
-                enableVibration(vibrateEnabled)
-                if (vibrateEnabled) {
-                    vibrationPattern = longArrayOf(0, 500, 250, 500)
-                }
-                if (!soundEnabled) {
-                    setSound(null, null)
-                }
-            }
-            notificationManager.createNotificationChannel(channel)
+        val channelId = com.fabian.todolist.receiver.ReminderReceiver.ensureReminderChannel(context, soundEnabled)
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra("NOTIFICATION_TASK_ID", -99) // test ID
         }
 
-    val intent = Intent(context, MainActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        putExtra("NOTIFICATION_TASK_ID", -99) // test ID
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            -99,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notificationBuilder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_notification_checkmark)
+            .setContentTitle(context.getString(R.string.notification_test_title))
+            .setContentText(context.getString(R.string.notification_test_content))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        if (!soundEnabled) {
+            notificationBuilder.setSilent(true)
+        }
+        if (vibrateEnabled) {
+            notificationBuilder.setVibrate(longArrayOf(0, 500, 250, 500))
+        } else {
+            notificationBuilder.setVibrate(null)
+        }
+
+        notificationManager.notify(-99, notificationBuilder.build())
     }
-
-    val pendingIntent = PendingIntent.getActivity(
-        context,
-        -99,
-        intent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
-
-    val notificationBuilder = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.drawable.ic_notification_checkmark)
-        .setContentTitle(context.getString(R.string.notification_test_title))
-        .setContentText(context.getString(R.string.notification_test_content))
-        .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setAutoCancel(true)
-        .setContentIntent(pendingIntent)
-
-    if (vibrateEnabled) {
-        notificationBuilder.setVibrate(longArrayOf(0, 500, 250, 500))
-    } else {
-        notificationBuilder.setVibrate(null)
-    }
-
-    notificationManager.notify(-99, notificationBuilder.build())
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

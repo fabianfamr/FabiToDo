@@ -56,12 +56,6 @@ class TaskViewModel @Inject constructor(
     // SharedPreferences for local settings persistence
     private val prefs = application.getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
 
-    private val client = okhttp3.OkHttpClient.Builder()
-        .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-        .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-        .build()
-
     private val _isGeneratingAI = MutableStateFlow(false)
     val isGeneratingAI: StateFlow<Boolean> = _isGeneratingAI.asStateFlow()
 
@@ -141,20 +135,12 @@ class TaskViewModel @Inject constructor(
             initialValue = 0
         )
 
-    private fun incrementUnsynced() {
-        // Handled automatically via Room DB changes and isSynced = false flag
-    }
-
     private var isAppInForeground = false
     private val _isSyncing = MutableStateFlow(false)
     val isSyncing: StateFlow<Boolean> = _isSyncing.asStateFlow()
 
     fun onAppForegroundStateChanged(isForeground: Boolean) {
         isAppInForeground = isForeground
-    }
-
-    fun markAllSynced() {
-        // Handled via FirestoreSyncManager and Room markTasksSynced
     }
 
     fun generateSubtasksWithAI(
@@ -208,15 +194,13 @@ class TaskViewModel @Inject constructor(
                 """.trimIndent()
                 
                 val useLowLatency = prefs.getBoolean("ai_low_latency_mode", true)
-                val finalModel = if (useLowLatency) "gemini-3.5-flash-lite" else com.fabian.todolist.data.gemini.FirebaseAiManager.mapToSupportedModel(model)
-                
-                Log.d("TaskViewModel", "Calling AI with model: $finalModel (low-latency enabled: $useLowLatency)")
-                val responseText = callAiApi(finalModel, key, promptText)
+                val aiKeyType = prefs.getString("ai_key_type", "public") ?: "public"
+                Log.d("TaskViewModel", "Calling AI with model=$model, keyType=$aiKeyType, lowLatency=$useLowLatency")
+                val responseText = callAiApi(model, key, aiKeyType, useLowLatency, promptText)
                 
                 if (responseText != null) {
                     val rawText = responseText.trim()
                     
-                    // Optimization: Parse JSON in a background thread to avoid jank
                     val parsedData = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                         val startIndex = rawText.indexOf('{')
                         val endIndex = rawText.lastIndexOf('}')
@@ -228,17 +212,17 @@ class TaskViewModel @Inject constructor(
                         }
                         
                         try {
-                            val jsonObject = org.json.JSONObject(cleanedJSON)
+                            val jsonObject = JSONObject(cleanedJSON)
                             val generatedDescription = jsonObject.optString("description", "")
                             
                             val rawCategory = jsonObject.optString("category", "General").trim()
                             val generatedCategory = if (rawCategory.length in 1..25) {
-                                rawCategory.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
+                                rawCategory.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                             } else {
                                 "General"
                             }
                             
-                            val rawPriority = jsonObject.optString("priority", "Media").uppercase(java.util.Locale.ROOT)
+                            val rawPriority = jsonObject.optString("priority", "Media").uppercase(Locale.ROOT)
                             val generatedPriority = when {
                                 rawPriority.contains("CRITIC") || rawPriority.contains("URGENT") || rawPriority.contains("CRÍT") -> TaskPriority.CRITICAL
                                 rawPriority.contains("HIGH") || rawPriority.contains("ALT") -> TaskPriority.HIGH
@@ -251,7 +235,10 @@ class TaskViewModel @Inject constructor(
                             val resultList = mutableListOf<String>()
                             if (subtasksArray != null) {
                                 for (i in 0 until subtasksArray.length()) {
-                                    resultList.add(subtasksArray.getString(i))
+                                    val title = subtasksArray.optString(i, "").trim()
+                                    if (title.isNotBlank()) {
+                                        resultList.add(title)
+                                    }
                                 }
                             }
                             Triple(generatedDescription, generatedCategory, Pair(generatedPriority, resultList))
@@ -281,36 +268,47 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    private suspend fun callAiApi(model: String, key: String, prompt: String): String? = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-        val geminiModel = com.fabian.todolist.data.gemini.FirebaseAiManager.mapToSupportedModel(model)
-        try {
-            return@withContext com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
-                modelName = geminiModel,
-                prompt = prompt,
-                systemInstructionText = "You are a professional, helpful, and empathetic personal productivity strategist. You must output ONLY a valid RAW JSON object.",
-                timeoutMs = 60_000L,
-                userContext = getApplication()
-            )
-        } catch (e: kotlinx.coroutines.CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Log.e("TaskViewModel", "Firebase AI Logic call failed, attempting direct Gemini call if key available", e)
-            if (key.isNotBlank() && key != "PLACEHOLDER_NOT_CONFIGURED" && key != "YOUR_GEMINI_API_KEY") {
-                val request = com.fabian.todolist.data.gemini.GenerateContentRequest(
-                    contents = listOf(
-                        com.fabian.todolist.data.gemini.Content(
-                            parts = listOf(com.fabian.todolist.data.gemini.Part(text = prompt))
-                        )
-                    ),
-                    systemInstruction = com.fabian.todolist.data.gemini.Content(
-                        parts = listOf(com.fabian.todolist.data.gemini.Part(text = "You are a professional, helpful, and empathetic personal productivity strategist. You must output ONLY a valid RAW JSON object."))
-                    )
+    private suspend fun callAiApi(
+        model: String,
+        key: String,
+        aiKeyType: String,
+        useLowLatency: Boolean,
+        prompt: String
+    ): String? = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        val systemPrompt = "You are a professional, helpful, and empathetic personal productivity strategist. You must output ONLY a valid RAW JSON object."
+        val hasValidCustomKey = key.isNotBlank() &&
+            key != "PLACEHOLDER_NOT_CONFIGURED" &&
+            key != "YOUR_GEMINI_API_KEY"
+
+        if (aiKeyType == "custom") {
+            if (!hasValidCustomKey) {
+                throw IllegalStateException(
+                    getApplication<Application>().getString(com.fabian.todolist.R.string.ai_key_req_gemini)
                 )
-                val response = com.fabian.todolist.data.gemini.RetrofitClient.service.generateContent(geminiModel, key, request)
-                return@withContext response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
             }
-            throw e
+            val restModel = com.fabian.todolist.data.gemini.FirebaseAiManager.mapToRestApiModel(model, useLowLatency)
+            val request = com.fabian.todolist.data.gemini.GenerateContentRequest(
+                contents = listOf(
+                    com.fabian.todolist.data.gemini.Content(
+                        parts = listOf(com.fabian.todolist.data.gemini.Part(text = prompt))
+                    )
+                ),
+                systemInstruction = com.fabian.todolist.data.gemini.Content(
+                    parts = listOf(com.fabian.todolist.data.gemini.Part(text = systemPrompt))
+                )
+            )
+            val response = com.fabian.todolist.data.gemini.RetrofitClient.service.generateContent(restModel, key, request)
+            return@withContext response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
         }
+
+        return@withContext com.fabian.todolist.data.gemini.FirebaseAiManager.generateContent(
+            modelName = model,
+            prompt = prompt,
+            systemInstructionText = systemPrompt,
+            lowLatency = useLowLatency,
+            timeoutMs = 60_000L,
+            userContext = getApplication()
+        )
     }
 
     fun runTrashAutoCleanup() {
@@ -504,7 +502,6 @@ class TaskViewModel @Inject constructor(
             if (savedTask.reminderTime != null && !savedTask.isCompleted) {
                 scheduleReminder(savedTask)
             }
-            incrementUnsynced()
         }
     }
 
@@ -516,7 +513,6 @@ class TaskViewModel @Inject constructor(
                 if (savedTask.reminderTime != null && !savedTask.isCompleted) {
                     scheduleReminder(savedTask)
                 }
-                incrementUnsynced()
             }
         }
     }
@@ -531,7 +527,6 @@ class TaskViewModel @Inject constructor(
             } else {
                 cancelReminder(task)
             }
-            incrementUnsynced()
         }
     }
 
@@ -544,7 +539,6 @@ class TaskViewModel @Inject constructor(
             val trashedTasks = repository.getAllTrashedTasksSync()
             trashedTasks.forEach { cancelReminder(it) }
             repository.emptyTrash()
-            incrementUnsynced()
         }
     }
 
@@ -555,41 +549,25 @@ class TaskViewModel @Inject constructor(
                 repository.hardDelete(task)
             } else {
                 cancelReminder(task)
-                // Bump updatedAt so sync knows this is the latest change
                 updateTask(task.copy(
-                    isDeleted = true, 
+                    isDeleted = true,
                     deletedTimestamp = System.currentTimeMillis(),
                     updatedAt = System.currentTimeMillis(),
                     isSynced = false
                 ))
             }
-            incrementUnsynced()
         }
-    }
-
-    private fun computeNextRepeatTrigger(task: Task): Long? {
-        if (!task.isRepeat || task.repeatType == com.fabian.todolist.data.RepeatType.NONE) return null
-        val baseline = task.dueDate ?: task.reminderTime ?: System.currentTimeMillis()
-        val cal = Calendar.getInstance().apply { timeInMillis = baseline }
-        when (task.repeatType) {
-            com.fabian.todolist.data.RepeatType.DAILY -> cal.add(Calendar.DAY_OF_YEAR, 1)
-            com.fabian.todolist.data.RepeatType.WEEKLY -> cal.add(Calendar.WEEK_OF_YEAR, 1)
-            com.fabian.todolist.data.RepeatType.MONTHLY -> cal.add(Calendar.MONTH, 1)
-            else -> return null
-        }
-        return cal.timeInMillis
     }
 
     fun toggleTaskCompletion(task: Task) {
-        // Prevent completing tasks that are in the trash
         if (task.isDeleted) return
 
         if (!task.isCompleted && task.isRepeat && task.repeatType != com.fabian.todolist.data.RepeatType.NONE) {
-            val nextDueDate = computeNextRepeatTrigger(task)
-            if (nextDueDate != null) {
+            val nextSchedule = com.fabian.todolist.util.AlarmSchedulerHelper.computeNextRepeatSchedule(task)
+            if (nextSchedule != null) {
                 val updatedTask = task.copy(
-                    dueDate = nextDueDate,
-                    reminderTime = if (task.reminderTime != null) nextDueDate else null,
+                    dueDate = nextSchedule.first,
+                    reminderTime = nextSchedule.second,
                     isCompleted = false,
                     updatedAt = System.currentTimeMillis(),
                     isSynced = false
@@ -663,7 +641,6 @@ class TaskViewModel @Inject constructor(
                 if (finalToUpdate.isNotEmpty()) {
                     repository.updateTasks(finalToUpdate)
                 }
-                incrementUnsynced()
             }
         }
     }
@@ -678,100 +655,113 @@ class TaskViewModel @Inject constructor(
         com.fabian.todolist.util.AlarmSchedulerHelper.cancelTaskAlarms(context, task)
     }
 
-    // Stream-based memory-safe backup export (prevents OutOfMemory on large databases)
+    suspend fun getAllTasksForBackup(): List<Task> = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        repository.getAllTasksIncludeDeletedSync()
+    }
+
     suspend fun exportBackupToStream(
         outputStream: java.io.OutputStream,
         tasks: List<Task>,
-        customCategories: List<String>
+        customCategories: List<String>,
+        passphrase: String? = null
     ): Boolean = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
         try {
             val prefs = getApplication<Application>().getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
-            val writer = android.util.JsonWriter(java.io.OutputStreamWriter(outputStream, Charsets.UTF_8))
-            writer.setIndent("  ")
-            writer.beginObject()
+            val byteBuffer = java.io.ByteArrayOutputStream()
+            val includeEncryptedSecrets = !passphrase.isNullOrBlank()
 
-            // 1. Categories
-            writer.name("categories")
-            writer.beginArray()
-            for (cat in customCategories) {
-                writer.value(cat)
-            }
-            writer.endArray()
-
-            // 2. Category Colors & Icons
-            writer.name("categoryColors").value(prefs.getString("category_colors", "{}") ?: "{}")
-            writer.name("categoryIcons").value(prefs.getString("category_icons", "{}") ?: "{}")
-
-            // 3. Settings & Preferences
-            // CORRECCIÓN: mapa COMPLETO de ajustes (antes solo se exportaban 10 de
-            // ~28; restaurar un backup perdía el resto de ajustes).
-            writer.name("settings")
-            writer.beginObject()
-            writer.name("themeAccent").value(prefs.getString("accent_color", "system") ?: "system")
-            writer.name("themeDark").value(prefs.getString("theme_mode", "system") ?: "system")
-            writer.name("languageCode").value(prefs.getString("app_locale", "system") ?: "system")
-            writer.name("dateFormat").value(prefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA")
-            writer.name("timeFormat").value(prefs.getString("time_format", "24h") ?: "24h")
-            writer.name("longPressAction").value(prefs.getString("long_press_action", "select") ?: "select")
-            writer.name("confirmOnDelete").value(prefs.getBoolean("confirm_on_delete", true))
-            writer.name("hapticFeedbackOnComplete").value(prefs.getBoolean("haptic_feedback_on_complete", true))
-            writer.name("requireBiometrics").value(prefs.getBoolean("require_biometrics", false))
-            writer.name("secureScreenMode").value(prefs.getBoolean("secure_screen_mode", false))
-            writer.name("encryptBackups").value(prefs.getBoolean("encrypt_backups", false))
-            writer.name("globalNotificationsEnabled").value(prefs.getBoolean("global_notifications_enabled", true))
-            writer.name("quickAddNotificationEnabled").value(prefs.getBoolean("quick_add_notification_enabled", false))
-            writer.name("quickAddNotificationInterval").value(prefs.getString("quick_add_notification_interval", "off") ?: "off")
-            writer.name("quickAddQuietHoursEnabled").value(prefs.getBoolean("quick_add_quiet_hours_enabled", true))
-            writer.name("notificationsSound").value(prefs.getBoolean("notifications_sound", true))
-            writer.name("notificationsVibrate").value(prefs.getBoolean("notifications_vibrate", true))
-            writer.name("reminderOffsetMinutes").value(prefs.getInt("reminder_offset_minutes", 0))
-            writer.name("snoozeDurationMinutes").value(prefs.getInt("snooze_duration_minutes", 10))
-            writer.name("aiModel").value(prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash")
-            writer.name("aiLowLatencyMode").value(prefs.getBoolean("ai_low_latency_mode", true))
-            writer.name("aiSubtaskCount").value(prefs.getInt("ai_subtask_count", 5))
-            writer.name("aiKeyType").value(prefs.getString("ai_key_type", "public") ?: "public")
-            writer.name("aiApiKey").value(prefs.getString("ai_api_key", "") ?: "")
-            writer.name("showAiBanner").value(prefs.getBoolean("show_ai_banner", true))
-            writer.name("showBackupCard").value(prefs.getBoolean("show_backup_card", true))
-            writer.name("userDisplayName").value(prefs.getString("user_display_name", "") ?: "")
-            writer.name("trashRetentionDays").value(prefs.getInt("trash_retention_days", 30))
-            writer.endObject()
-
-            // 4. Tasks
-            writer.name("tasks")
-            writer.beginArray()
-            for (task in tasks) {
+            android.util.JsonWriter(java.io.OutputStreamWriter(byteBuffer, Charsets.UTF_8)).use { writer ->
+                writer.setIndent("  ")
                 writer.beginObject()
-                writer.name("title").value(task.title)
-                writer.name("description").value(task.description)
-                if (task.dueDate != null) writer.name("dueDate").value(task.dueDate)
-                if (task.dueTime != null) writer.name("dueTime").value(task.dueTime)
-                writer.name("isCompleted").value(task.isCompleted)
-                writer.name("category").value(task.category)
-                writer.name("priority").value(task.priority)
-                if (task.reminderTime != null) writer.name("reminderTime").value(task.reminderTime)
-                writer.name("isRepeat").value(task.isRepeat)
-                writer.name("repeatType").value(task.repeatType)
-                writer.name("isDeleted").value(task.isDeleted)
-                writer.name("displayOrder").value(task.displayOrder)
 
-                writer.name("subtasks")
+                writer.name("categories")
                 writer.beginArray()
-                for (sub in task.subtasks) {
-                    writer.beginObject()
-                    writer.name("id").value(sub.id)
-                    writer.name("title").value(sub.title)
-                    writer.name("isCompleted").value(sub.isCompleted)
-                    writer.endObject()
+                for (cat in customCategories) {
+                    writer.value(cat)
                 }
                 writer.endArray()
 
-                writer.endObject()
-            }
-            writer.endArray()
+                writer.name("categoryColors").value(prefs.getString("category_colors", "{}") ?: "{}")
+                writer.name("categoryIcons").value(prefs.getString("category_icons", "{}") ?: "{}")
 
-            writer.endObject()
-            writer.flush()
+                writer.name("settings")
+                writer.beginObject()
+                writer.name("themeAccent").value(prefs.getString("accent_color", "system") ?: "system")
+                writer.name("themeDark").value(prefs.getString("theme_mode", "system") ?: "system")
+                writer.name("languageCode").value(prefs.getString("app_locale", "system") ?: "system")
+                writer.name("dateFormat").value(prefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA")
+                writer.name("timeFormat").value(prefs.getString("time_format", "24h") ?: "24h")
+                writer.name("longPressAction").value(prefs.getString("long_press_action", "select") ?: "select")
+                writer.name("confirmOnDelete").value(prefs.getBoolean("confirm_on_delete", true))
+                writer.name("hapticFeedbackOnComplete").value(prefs.getBoolean("haptic_feedback_on_complete", true))
+                writer.name("requireBiometrics").value(prefs.getBoolean("require_biometrics", false))
+                writer.name("secureScreenMode").value(prefs.getBoolean("secure_screen_mode", false))
+                writer.name("encryptBackups").value(prefs.getBoolean("encrypt_backups", false))
+                writer.name("globalNotificationsEnabled").value(prefs.getBoolean("global_notifications_enabled", true))
+                writer.name("quickAddNotificationEnabled").value(prefs.getBoolean("quick_add_notification_enabled", false))
+                writer.name("quickAddNotificationInterval").value(prefs.getString("quick_add_notification_interval", "off") ?: "off")
+                writer.name("quickAddQuietHoursEnabled").value(prefs.getBoolean("quick_add_quiet_hours_enabled", true))
+                writer.name("notificationsSound").value(prefs.getBoolean("notifications_sound", true))
+                writer.name("notificationsVibrate").value(prefs.getBoolean("notifications_vibrate", true))
+                writer.name("reminderOffsetMinutes").value(prefs.getInt("reminder_offset_minutes", 0))
+                writer.name("snoozeDurationMinutes").value(prefs.getInt("snooze_duration_minutes", 10))
+                writer.name("aiModel").value(prefs.getString("ai_model", "gemini-3.8-flash") ?: "gemini-3.8-flash")
+                writer.name("aiLowLatencyMode").value(prefs.getBoolean("ai_low_latency_mode", true))
+                writer.name("aiSubtaskCount").value(prefs.getInt("ai_subtask_count", 5))
+                writer.name("aiKeyType").value(prefs.getString("ai_key_type", "public") ?: "public")
+                if (includeEncryptedSecrets) {
+                    val decryptedKey = com.fabian.todolist.util.SecurityCryptoHelper.readAndMigrateApiKey(prefs)
+                    writer.name("aiApiKey").value(decryptedKey)
+                }
+                writer.name("showAiBanner").value(prefs.getBoolean("show_ai_banner", true))
+                writer.name("showBackupCard").value(prefs.getBoolean("show_backup_card", true))
+                writer.name("userDisplayName").value(prefs.getString("user_display_name", "") ?: "")
+                writer.name("trashRetentionDays").value(prefs.getInt("trash_retention_days", 30))
+                writer.endObject()
+
+                writer.name("tasks")
+                writer.beginArray()
+                for (task in tasks) {
+                    writer.beginObject()
+                    writer.name("title").value(task.title)
+                    writer.name("description").value(task.description)
+                    if (task.dueDate != null) writer.name("dueDate").value(task.dueDate)
+                    if (task.dueTime != null) writer.name("dueTime").value(task.dueTime)
+                    writer.name("isCompleted").value(task.isCompleted)
+                    writer.name("category").value(task.category)
+                    writer.name("priority").value(task.priority)
+                    if (task.reminderTime != null) writer.name("reminderTime").value(task.reminderTime)
+                    writer.name("isRepeat").value(task.isRepeat)
+                    writer.name("repeatType").value(task.repeatType)
+                    writer.name("isDeleted").value(task.isDeleted)
+                    writer.name("displayOrder").value(task.displayOrder)
+
+                    writer.name("subtasks")
+                    writer.beginArray()
+                    for (sub in task.subtasks) {
+                        writer.beginObject()
+                        writer.name("id").value(sub.id)
+                        writer.name("title").value(sub.title)
+                        writer.name("isCompleted").value(sub.isCompleted)
+                        writer.endObject()
+                    }
+                    writer.endArray()
+
+                    writer.endObject()
+                }
+                writer.endArray()
+                writer.endObject()
+                writer.flush()
+            }
+
+            val rawBytes = byteBuffer.toByteArray()
+            val finalBytes = if (!passphrase.isNullOrBlank()) {
+                com.fabian.todolist.util.SecurityCryptoHelper.encryptBackupBytes(rawBytes, passphrase)
+            } else {
+                rawBytes
+            }
+            outputStream.write(finalBytes)
+            outputStream.flush()
             true
         } catch (e: Exception) {
             if (com.fabian.todolist.BuildConfig.DEBUG) {
@@ -781,190 +771,207 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    // Stream-based memory-safe backup import (prevents OutOfMemory and blocks on IO thread)
     suspend fun importBackupFromStream(
         inputStream: java.io.InputStream,
+        passphrase: String? = null,
         onCategoriesImported: (List<String>) -> Unit = {}
-    ): Boolean = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+    ): com.fabian.todolist.util.BackupImportResult = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
         try {
+            val rawBytes = inputStream.readBytes()
+            val jsonBytes = if (com.fabian.todolist.util.SecurityCryptoHelper.isEncryptedBackup(rawBytes)) {
+                if (passphrase.isNullOrBlank()) {
+                    return@withContext com.fabian.todolist.util.BackupImportResult.RequiresPassword
+                }
+                try {
+                    com.fabian.todolist.util.SecurityCryptoHelper.decryptBackupBytes(rawBytes, passphrase)
+                } catch (_: com.fabian.todolist.util.InvalidBackupPasswordException) {
+                    return@withContext com.fabian.todolist.util.BackupImportResult.WrongPassword
+                }
+            } else {
+                rawBytes
+            }
+
             val prefs = getApplication<Application>().getSharedPreferences("fabitodo_preferences", Context.MODE_PRIVATE)
             val editor = prefs.edit()
-            val reader = android.util.JsonReader(java.io.InputStreamReader(inputStream, Charsets.UTF_8))
-            reader.beginObject()
             val importedTasks = mutableListOf<Task>()
             val importedCategories = mutableListOf<String>()
 
-            while (reader.hasNext()) {
-                when (reader.nextName()) {
-                    "categories" -> {
-                        reader.beginArray()
-                        while (reader.hasNext()) {
-                            val cat = reader.nextString().trim()
-                            if (cat.isNotEmpty() && !importedCategories.contains(cat)) {
-                                importedCategories.add(cat)
+            android.util.JsonReader(java.io.InputStreamReader(java.io.ByteArrayInputStream(jsonBytes), Charsets.UTF_8)).use { reader ->
+                reader.beginObject()
+                while (reader.hasNext()) {
+                    when (reader.nextName()) {
+                        "categories" -> {
+                            reader.beginArray()
+                            while (reader.hasNext()) {
+                                val cat = reader.nextString().trim()
+                                if (cat.isNotEmpty() && !importedCategories.contains(cat)) {
+                                    importedCategories.add(cat)
+                                }
+                            }
+                            reader.endArray()
+                        }
+                        "categoryColors", "category_colors" -> {
+                            if (reader.peek() == android.util.JsonToken.STRING) {
+                                editor.putString("category_colors", reader.nextString())
+                            } else {
+                                reader.skipValue()
                             }
                         }
-                        reader.endArray()
-                    }
-                    "categoryColors", "category_colors" -> {
-                        if (reader.peek() == android.util.JsonToken.STRING) {
-                            editor.putString("category_colors", reader.nextString())
-                        } else {
-                            reader.skipValue()
-                        }
-                    }
-                    "categoryIcons", "category_icons" -> {
-                        if (reader.peek() == android.util.JsonToken.STRING) {
-                            editor.putString("category_icons", reader.nextString())
-                        } else {
-                            reader.skipValue()
-                        }
-                    }
-                    "settings", "preferences" -> {
-                        reader.beginObject()
-                        while (reader.hasNext()) {
-                            when (reader.nextName()) {
-                                "themeAccent", "accent_color" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("accent_color", reader.nextString()) else reader.skipValue()
-                                "themeDark", "theme_mode" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("theme_mode", reader.nextString()) else reader.skipValue()
-                                "languageCode", "app_locale" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("app_locale", reader.nextString()) else reader.skipValue()
-                                "dateFormat", "date_format" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("date_format", reader.nextString()) else reader.skipValue()
-                                "timeFormat", "time_format" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("time_format", reader.nextString()) else reader.skipValue()
-                                "longPressAction", "long_press_action" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("long_press_action", reader.nextString()) else reader.skipValue()
-                                "confirmOnDelete", "confirm_on_delete" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("confirm_on_delete", reader.nextBoolean()) else reader.skipValue()
-                                "hapticFeedbackOnComplete", "haptic_feedback_on_complete" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("haptic_feedback_on_complete", reader.nextBoolean()) else reader.skipValue()
-                                "requireBiometrics", "require_biometrics" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("require_biometrics", reader.nextBoolean()) else reader.skipValue()
-                                "secureScreenMode", "secure_screen_mode" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("secure_screen_mode", reader.nextBoolean()) else reader.skipValue()
-                                "encryptBackups", "encrypt_backups" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("encrypt_backups", reader.nextBoolean()) else reader.skipValue()
-                                "globalNotificationsEnabled", "global_notifications_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("global_notifications_enabled", reader.nextBoolean()) else reader.skipValue()
-                                "quickAddNotificationEnabled", "quick_add_notification_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("quick_add_notification_enabled", reader.nextBoolean()) else reader.skipValue()
-                                "quickAddNotificationInterval", "quick_add_notification_interval" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("quick_add_notification_interval", reader.nextString()) else reader.skipValue()
-                                "quickAddQuietHoursEnabled", "quick_add_quiet_hours_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("quick_add_quiet_hours_enabled", reader.nextBoolean()) else reader.skipValue()
-                                "notificationsSound", "notifications_sound" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("notifications_sound", reader.nextBoolean()) else reader.skipValue()
-                                "notificationsVibrate", "notifications_vibrate" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("notifications_vibrate", reader.nextBoolean()) else reader.skipValue()
-                                "reminderOffsetMinutes", "reminder_offset_minutes" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("reminder_offset_minutes", reader.nextInt()) else reader.skipValue()
-                                "snoozeDurationMinutes", "snooze_duration_minutes" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("snooze_duration_minutes", reader.nextInt()) else reader.skipValue()
-                                "aiModel", "ai_model" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_model", reader.nextString()) else reader.skipValue()
-                                "aiLowLatencyMode", "ai_low_latency_mode" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("ai_low_latency_mode", reader.nextBoolean()) else reader.skipValue()
-                                "aiSubtaskCount", "ai_subtask_count" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("ai_subtask_count", reader.nextInt()) else reader.skipValue()
-                                "aiKeyType", "ai_key_type" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_key_type", reader.nextString()) else reader.skipValue()
-                                "aiApiKey", "ai_api_key" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_api_key", reader.nextString()) else reader.skipValue()
-                                "showAiBanner", "show_ai_banner" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("show_ai_banner", reader.nextBoolean()) else reader.skipValue()
-                                "showBackupCard", "show_backup_card" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("show_backup_card", reader.nextBoolean()) else reader.skipValue()
-                                "userDisplayName", "user_display_name" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("user_display_name", reader.nextString()) else reader.skipValue()
-                                "trashRetentionDays", "trash_retention_days" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("trash_retention_days", reader.nextInt()) else reader.skipValue()
-                                else -> reader.skipValue()
+                        "categoryIcons", "category_icons" -> {
+                            if (reader.peek() == android.util.JsonToken.STRING) {
+                                editor.putString("category_icons", reader.nextString())
+                            } else {
+                                reader.skipValue()
                             }
                         }
-                        reader.endObject()
-                    }
-                    "tasks" -> {
-                        reader.beginArray()
-                        while (reader.hasNext()) {
+                        "settings", "preferences" -> {
                             reader.beginObject()
-                            var title = ""
-                            var description = ""
-                            var dueDate: Long? = null
-                            var dueTime: String? = null
-                            var isCompleted = false
-                            var category = "General"
-                            var priority = TaskPriority.MEDIUM
-                            var reminderTime: Long? = null
-                            var isRepeat = false
-                            var repeatType = com.fabian.todolist.data.RepeatType.NONE
-                            var isDeleted = false
-                            var displayOrder = 0
-                            val subtasks = mutableListOf<Subtask>()
-
                             while (reader.hasNext()) {
                                 when (reader.nextName()) {
-                                    "title" -> title = reader.nextString()
-                                    "description" -> description = reader.nextString()
-                                    "dueDate" -> {
-                                        if (reader.peek() == android.util.JsonToken.NULL) {
-                                            reader.nextNull()
-                                        } else {
-                                            dueDate = reader.nextLong()
-                                        }
+                                    "themeAccent", "accent_color" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("accent_color", reader.nextString()) else reader.skipValue()
+                                    "themeDark", "theme_mode" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("theme_mode", reader.nextString()) else reader.skipValue()
+                                    "languageCode", "app_locale" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("app_locale", reader.nextString()) else reader.skipValue()
+                                    "dateFormat", "date_format" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("date_format", reader.nextString()) else reader.skipValue()
+                                    "timeFormat", "time_format" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("time_format", reader.nextString()) else reader.skipValue()
+                                    "longPressAction", "long_press_action" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("long_press_action", reader.nextString()) else reader.skipValue()
+                                    "confirmOnDelete", "confirm_on_delete" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("confirm_on_delete", reader.nextBoolean()) else reader.skipValue()
+                                    "hapticFeedbackOnComplete", "haptic_feedback_on_complete" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("haptic_feedback_on_complete", reader.nextBoolean()) else reader.skipValue()
+                                    "requireBiometrics", "require_biometrics" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("require_biometrics", reader.nextBoolean()) else reader.skipValue()
+                                    "secureScreenMode", "secure_screen_mode" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("secure_screen_mode", reader.nextBoolean()) else reader.skipValue()
+                                    "encryptBackups", "encrypt_backups" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("encrypt_backups", reader.nextBoolean()) else reader.skipValue()
+                                    "globalNotificationsEnabled", "global_notifications_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("global_notifications_enabled", reader.nextBoolean()) else reader.skipValue()
+                                    "quickAddNotificationEnabled", "quick_add_notification_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("quick_add_notification_enabled", reader.nextBoolean()) else reader.skipValue()
+                                    "quickAddNotificationInterval", "quick_add_notification_interval" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("quick_add_notification_interval", reader.nextString()) else reader.skipValue()
+                                    "quickAddQuietHoursEnabled", "quick_add_quiet_hours_enabled" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("quick_add_quiet_hours_enabled", reader.nextBoolean()) else reader.skipValue()
+                                    "notificationsSound", "notifications_sound" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("notifications_sound", reader.nextBoolean()) else reader.skipValue()
+                                    "notificationsVibrate", "notifications_vibrate" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("notifications_vibrate", reader.nextBoolean()) else reader.skipValue()
+                                    "reminderOffsetMinutes", "reminder_offset_minutes" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("reminder_offset_minutes", reader.nextInt()) else reader.skipValue()
+                                    "snoozeDurationMinutes", "snooze_duration_minutes" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("snooze_duration_minutes", reader.nextInt()) else reader.skipValue()
+                                    "aiModel", "ai_model" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_model", reader.nextString()) else reader.skipValue()
+                                    "aiLowLatencyMode", "ai_low_latency_mode" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("ai_low_latency_mode", reader.nextBoolean()) else reader.skipValue()
+                                    "aiSubtaskCount", "ai_subtask_count" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("ai_subtask_count", reader.nextInt()) else reader.skipValue()
+                                    "aiKeyType", "ai_key_type" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("ai_key_type", reader.nextString()) else reader.skipValue()
+                                    "aiApiKey", "ai_api_key" -> if (reader.peek() == android.util.JsonToken.STRING) {
+                                        val importedKey = reader.nextString()
+                                        editor.putString("ai_api_key", com.fabian.todolist.util.SecurityCryptoHelper.encryptApiKey(importedKey))
+                                    } else {
+                                        reader.skipValue()
                                     }
-                                    "dueTime" -> {
-                                        if (reader.peek() == android.util.JsonToken.NULL) {
-                                            reader.nextNull()
-                                        } else {
-                                            dueTime = reader.nextString()
-                                        }
-                                    }
-                                    "isCompleted" -> isCompleted = reader.nextBoolean()
-                                    "category" -> category = reader.nextString()
-                                    "priority" -> priority = reader.nextString()
-                                    "reminderTime" -> {
-                                        if (reader.peek() == android.util.JsonToken.NULL) {
-                                            reader.nextNull()
-                                        } else {
-                                            reminderTime = reader.nextLong()
-                                        }
-                                    }
-                                    "isRepeat" -> isRepeat = reader.nextBoolean()
-                                    "repeatType" -> repeatType = reader.nextString()
-                                    "isDeleted" -> isDeleted = reader.nextBoolean()
-                                    "displayOrder" -> displayOrder = reader.nextInt()
-                                    "subtasks" -> {
-                                        reader.beginArray()
-                                        while (reader.hasNext()) {
-                                            reader.beginObject()
-                                            var subId = java.util.UUID.randomUUID().toString()
-                                            var subTitle = ""
-                                            var subCompleted = false
-                                            while (reader.hasNext()) {
-                                                when (reader.nextName()) {
-                                                    "id" -> subId = reader.nextString()
-                                                    "title" -> subTitle = reader.nextString()
-                                                    "isCompleted" -> subCompleted = reader.nextBoolean()
-                                                    else -> reader.skipValue()
-                                                }
-                                            }
-                                            reader.endObject()
-                                            if (subTitle.isNotBlank()) {
-                                                subtasks.add(Subtask(id = subId, title = subTitle, isCompleted = subCompleted))
-                                            }
-                                        }
-                                        reader.endArray()
-                                    }
+                                    "showAiBanner", "show_ai_banner" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("show_ai_banner", reader.nextBoolean()) else reader.skipValue()
+                                    "showBackupCard", "show_backup_card" -> if (reader.peek() == android.util.JsonToken.BOOLEAN) editor.putBoolean("show_backup_card", reader.nextBoolean()) else reader.skipValue()
+                                    "userDisplayName", "user_display_name" -> if (reader.peek() == android.util.JsonToken.STRING) editor.putString("user_display_name", reader.nextString()) else reader.skipValue()
+                                    "trashRetentionDays", "trash_retention_days" -> if (reader.peek() == android.util.JsonToken.NUMBER) editor.putInt("trash_retention_days", reader.nextInt()) else reader.skipValue()
                                     else -> reader.skipValue()
                                 }
                             }
                             reader.endObject()
-
-                            if (title.isNotBlank()) {
-                                importedTasks.add(
-                                    Task(
-                                        title = title,
-                                        description = description,
-                                        dueDate = dueDate,
-                                        dueTime = dueTime,
-                                        isCompleted = isCompleted,
-                                        category = category,
-                                        priority = priority,
-                                        reminderTime = reminderTime,
-                                        isRepeat = isRepeat,
-                                        repeatType = repeatType,
-                                        isDeleted = isDeleted,
-                                        displayOrder = displayOrder,
-                                        subtasks = subtasks
-                                    )
-                                )
-                            }
                         }
-                        reader.endArray()
-                    }
-                    else -> reader.skipValue()
-                }
-            }
-            reader.endObject()
-            editor.apply()
+                        "tasks" -> {
+                            reader.beginArray()
+                            while (reader.hasNext()) {
+                                reader.beginObject()
+                                var title = ""
+                                var description = ""
+                                var dueDate: Long? = null
+                                var dueTime: String? = null
+                                var isCompleted = false
+                                var category = "General"
+                                var priority = TaskPriority.MEDIUM
+                                var reminderTime: Long? = null
+                                var isRepeat = false
+                                var repeatType = com.fabian.todolist.data.RepeatType.NONE
+                                var isDeleted = false
+                                var displayOrder = 0
+                                val subtasks = mutableListOf<Subtask>()
 
-            // CORRECCIÓN: los ajustes restaurados del backup quedan marcados como
-            // "pendientes de subir" para propagarse a la nube y al resto de
-            // dispositivos (si hay sesión iniciada).
+                                while (reader.hasNext()) {
+                                    when (reader.nextName()) {
+                                        "title" -> title = reader.nextString()
+                                        "description" -> description = reader.nextString()
+                                        "dueDate" -> {
+                                            if (reader.peek() == android.util.JsonToken.NULL) {
+                                                reader.nextNull()
+                                            } else {
+                                                dueDate = reader.nextLong()
+                                            }
+                                        }
+                                        "dueTime" -> {
+                                            if (reader.peek() == android.util.JsonToken.NULL) {
+                                                reader.nextNull()
+                                            } else {
+                                                dueTime = reader.nextString()
+                                            }
+                                        }
+                                        "isCompleted" -> isCompleted = reader.nextBoolean()
+                                        "category" -> category = reader.nextString()
+                                        "priority" -> priority = reader.nextString()
+                                        "reminderTime" -> {
+                                            if (reader.peek() == android.util.JsonToken.NULL) {
+                                                reader.nextNull()
+                                            } else {
+                                                reminderTime = reader.nextLong()
+                                            }
+                                        }
+                                        "isRepeat" -> isRepeat = reader.nextBoolean()
+                                        "repeatType" -> repeatType = reader.nextString()
+                                        "isDeleted" -> isDeleted = reader.nextBoolean()
+                                        "displayOrder" -> displayOrder = reader.nextInt()
+                                        "subtasks" -> {
+                                            reader.beginArray()
+                                            while (reader.hasNext()) {
+                                                reader.beginObject()
+                                                var subId = java.util.UUID.randomUUID().toString()
+                                                var subTitle = ""
+                                                var subCompleted = false
+                                                while (reader.hasNext()) {
+                                                    when (reader.nextName()) {
+                                                        "id" -> subId = reader.nextString()
+                                                        "title" -> subTitle = reader.nextString()
+                                                        "isCompleted" -> subCompleted = reader.nextBoolean()
+                                                        else -> reader.skipValue()
+                                                    }
+                                                }
+                                                reader.endObject()
+                                                if (subTitle.isNotBlank()) {
+                                                    subtasks.add(Subtask(id = subId, title = subTitle, isCompleted = subCompleted))
+                                                }
+                                            }
+                                            reader.endArray()
+                                        }
+                                        else -> reader.skipValue()
+                                    }
+                                }
+                                reader.endObject()
+
+                                if (title.isNotBlank()) {
+                                    importedTasks.add(
+                                        Task(
+                                            title = title,
+                                            description = description,
+                                            dueDate = dueDate,
+                                            dueTime = dueTime,
+                                            isCompleted = isCompleted,
+                                            category = category,
+                                            priority = priority,
+                                            reminderTime = reminderTime,
+                                            isRepeat = isRepeat,
+                                            repeatType = repeatType,
+                                            isDeleted = isDeleted,
+                                            displayOrder = displayOrder,
+                                            subtasks = subtasks
+                                        )
+                                    )
+                                }
+                            }
+                            reader.endArray()
+                        }
+                        else -> reader.skipValue()
+                    }
+                }
+                reader.endObject()
+            }
+
+            editor.apply()
             firestoreSyncManager.scheduleSettingsPush()
 
             if (importedCategories.isNotEmpty()) {
@@ -977,156 +984,13 @@ class TaskViewModel @Inject constructor(
                 importedTasks.chunked(250).forEach { chunk ->
                     repository.insertTasks(chunk)
                 }
-                incrementUnsynced()
             }
-            true
+            com.fabian.todolist.util.BackupImportResult.Success
         } catch (e: Exception) {
             if (com.fabian.todolist.BuildConfig.DEBUG) {
                 Log.e("TaskViewModel", "Error streaming backup import", e)
             }
-            false
-        }
-    }
-
-    // Export data to a custom JSON string structure
-    fun exportBackupToString(tasks: List<Task>, customCategories: List<String>): String {
-        return try {
-            val root = JSONObject()
-            
-            // Serialize custom lists/categories
-            val catsArray = JSONArray()
-            customCategories.forEach { catsArray.put(it) }
-            root.put("categories", catsArray)
-
-            // Serialize tasks
-            val tasksArray = JSONArray()
-            tasks.forEach { task ->
-                val tObj = JSONObject().apply {
-                    put("title", task.title)
-                    put("description", task.description)
-                    if (task.dueDate != null) put("dueDate", task.dueDate)
-                    if (task.dueTime != null) put("dueTime", task.dueTime)
-                    put("isCompleted", task.isCompleted)
-                    put("category", task.category)
-                    put("priority", task.priority)
-                    if (task.reminderTime != null) put("reminderTime", task.reminderTime)
-                    put("isRepeat", task.isRepeat)
-                    put("repeatType", task.repeatType)
-                    put("isDeleted", task.isDeleted)
-                    // We can now use the subtasks list directly
-                    val subtasksArray = JSONArray()
-                    task.subtasks.forEach { sub ->
-                        subtasksArray.put(JSONObject().apply {
-                            put("id", sub.id)
-                            put("title", sub.title)
-                            put("isCompleted", sub.isCompleted)
-                        })
-                    }
-                    put("subtasks", subtasksArray)
-                }
-                tasksArray.put(tObj)
-            }
-            root.put("tasks", tasksArray)
-            root.toString(2) // Pretty printed JSON
-        } catch (e: Exception) {
-            Log.e("TaskViewModel", "Error exporting database", e)
-            ""
-        }
-    }
-
-    // Import tasks and custom categories from backup JSON string
-    fun importBackupFromString(jsonStr: String, onCategoriesImported: (List<String>) -> Unit = {}): Boolean {
-        return try {
-            val root = JSONObject(jsonStr)
-            
-            // 1. Restore categories if present
-            if (root.has("categories")) {
-                val catsArray = root.getJSONArray("categories")
-                val list = mutableListOf<String>()
-                for (i in 0 until catsArray.length()) {
-                    val cat = catsArray.getString(i)
-                    if (cat.isNotBlank() && !list.contains(cat)) {
-                        list.add(cat)
-                    }
-                }
-                if (list.isNotEmpty()) {
-                    onCategoriesImported(list)
-                }
-            }
-
-            // 2. Restore tasks if present
-            if (root.has("tasks")) {
-                val tasksArray = root.getJSONArray("tasks")
-                val importedTasks = mutableListOf<Task>()
-                for (i in 0 until tasksArray.length()) {
-                    val tObj = tasksArray.getJSONObject(i)
-                    val title = tObj.optString("title", "")
-                    if (title.isBlank()) continue
-
-                    val description = tObj.optString("description", "")
-                    val dueDate = if (tObj.isNull("dueDate")) null else tObj.optLong("dueDate")
-                    val dueTime = if (tObj.isNull("dueTime")) null else tObj.optString("dueTime")
-                    val isCompleted = tObj.optBoolean("isCompleted", false)
-                    val category = tObj.optString("category", "General")
-                    val priority = tObj.optString("priority", TaskPriority.MEDIUM)
-                    val reminderTime = if (tObj.isNull("reminderTime")) null else tObj.optLong("reminderTime")
-                    val isRepeat = tObj.optBoolean("isRepeat", false)
-                    val repeatType = tObj.optString("repeatType", "Ninguno")
-                    val isDeleted = tObj.optBoolean("isDeleted", false)
-                    
-                    val subtasks = mutableListOf<Subtask>()
-                    if (tObj.has("subtasks")) {
-                        val subArr = tObj.getJSONArray("subtasks")
-                        for (j in 0 until subArr.length()) {
-                            val sObj = subArr.getJSONObject(j)
-                            subtasks.add(Subtask(
-                                id = sObj.optString("id", java.util.UUID.randomUUID().toString()),
-                                title = sObj.getString("title"),
-                                isCompleted = sObj.optBoolean("isCompleted", false)
-                            ))
-                        }
-                    } else {
-                        // Compatibility with old backup format
-                        val subtasksJson = tObj.optString("subtasksJson", "[]")
-                        try {
-                            val arr = JSONArray(subtasksJson)
-                            for (j in 0 until arr.length()) {
-                                val sObj = arr.getJSONObject(j)
-                                subtasks.add(Subtask(
-                                    id = sObj.optString("id", java.util.UUID.randomUUID().toString()),
-                                    title = sObj.getString("title"),
-                                    isCompleted = sObj.optBoolean("isCompleted", false)
-                                ))
-                            }
-                        } catch (_: Exception) {}
-                    }
-
-                    importedTasks.add(
-                        Task(
-                            title = title,
-                            description = description,
-                            dueDate = dueDate,
-                            dueTime = dueTime,
-                            isCompleted = isCompleted,
-                            category = category,
-                            priority = priority,
-                            reminderTime = reminderTime,
-                            isRepeat = isRepeat,
-                            repeatType = repeatType,
-                            isDeleted = isDeleted,
-                            subtasks = subtasks
-                        )
-                    )
-                }
-
-                if (importedTasks.isNotEmpty()) {
-                    insertTasks(importedTasks)
-                }
-            }
-            true
-        } catch (e: Exception) {
-            Log.e("TaskViewModel", "Import backup failed", e)
-            false
+            com.fabian.todolist.util.BackupImportResult.InvalidFile
         }
     }
 }

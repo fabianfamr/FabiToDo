@@ -300,8 +300,8 @@ fun EisenhowerMatrixView(
                 }
             } else {
                 itemsIndexed(quad.tasks, key = { _, it -> it.id }) { _, task ->
-                    var isVisible by rememberSaveable { mutableStateOf(true) }
-                    var isExpanded by rememberSaveable { mutableStateOf(false) }
+                    var isVisible by rememberSaveable(task.id, task.isCompleted) { mutableStateOf(true) }
+                    var isExpanded by rememberSaveable(task.id) { mutableStateOf(false) }
 
                     AnimatedVisibility(
                         visible = isVisible,
@@ -318,10 +318,17 @@ fun EisenhowerMatrixView(
                                 if (hapticFeedbackOnComplete && !task.isCompleted) {
                                     com.fabian.todolist.util.HapticUtil.performActionHaptic(localView)
                                 }
-                                isVisible = false
-                                scope.launch {
-                                    delay(300)
+                                val isRepeatingActive = task.isRepeat &&
+                                    task.repeatType != com.fabian.todolist.data.RepeatType.NONE &&
+                                    !task.isCompleted
+                                if (isRepeatingActive) {
                                     onToggleComplete(task)
+                                } else {
+                                    isVisible = false
+                                    scope.launch {
+                                        delay(300)
+                                        onToggleComplete(task)
+                                    }
                                 }
                             },
                             onRestore = {

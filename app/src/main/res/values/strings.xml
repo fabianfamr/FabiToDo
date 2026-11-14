@@ -690,6 +690,16 @@
     <string name="auth_error_unsupported_credential">Unsupported credential type</string>
     <string name="quick_add_fallback_message">Organize your day with FabiToDo</string>
     <string name="category_icon_count">%1$s (%2$d)</string>
+    <string name="backup_password_title">Backup Password</string>
+    <string name="backup_password_export_desc">Enter a password to encrypt this backup file before saving. Keep it in a safe place, as it cannot be recovered.</string>
+    <string name="backup_password_import_desc">This backup file is encrypted. Enter the password used when exporting it.</string>
+    <string name="backup_password_hint">Password</string>
+    <string name="backup_password_empty_error">Please enter a password</string>
+    <string name="backup_password_wrong_error">Incorrect password or corrupted file</string>
+    <string name="backup_password_confirm_btn">Continue</string>
+    <string name="empty_state_filtered_title">No matching tasks</string>
+    <string name="empty_state_filtered_desc">Try clearing the active search or status filter to view your tasks again.</string>
+    <string name="clear_filters_action">Clear filters</string>
 
     <plurals name="scheduled_tasks_count">
         <item quantity="one">%d scheduled task</item>

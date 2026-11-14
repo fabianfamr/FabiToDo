@@ -145,7 +145,7 @@ fun TaskBadges(
         task.dueDate?.let { DateTimeUtils.formatDueDateLocal(it, todayLabel, tomorrowLabel) } ?: ""
     }
     
-    val isDark = isSystemInDarkTheme()
+    val isDark = com.fabian.todolist.ui.theme.LocalIsDarkTheme.current
     val priorityData = remember(task.priority, isDark) {
         when (task.priority) {
             com.fabian.todolist.data.TaskPriority.CRITICAL -> {
@@ -266,9 +266,7 @@ fun TaskBadges(
                 val monthlyLabel = stringResource(R.string.repeat_monthly)
                 val repeatLabel = stringResource(R.string.repeat_label)
                 
-                val context = androidx.compose.ui.platform.LocalContext.current
-                val prefs = remember(context) { context.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
-                val timeFormatPref = remember(prefs) { prefs.getString("time_format", "24h") ?: "24h" }
+                val timeFormatPref = com.fabian.todolist.ui.theme.LocalTimeFormat.current
                 val formattedDueTime = remember(task.dueTime, timeFormatPref) {
                     com.fabian.todolist.util.DateTimeUtils.formatTimeWithPreference(task.dueTime, timeFormatPref)
                 }
@@ -333,6 +331,8 @@ fun TaskSubtasksList(
                     .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                val currentSubtasks by rememberUpdatedState(subtasks)
+                val currentOnUpdateSubtasks by rememberUpdatedState(onUpdateSubtasks)
                 subtasks.forEachIndexed { index, subtask ->
                     key(subtask.id) {
                         var isDragging by remember { mutableStateOf(false) }
@@ -380,7 +380,7 @@ fun TaskSubtasksList(
                                     .size(24.dp)
                                     .clip(CircleShape)
                                     .background(if (isDragging) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f) else Color.Transparent)
-                                    .pointerInput(subtask) {
+                                    .pointerInput(subtask.id) {
                                         detectVerticalDragGestures(
                                             onDragStart = { isDragging = true },
                                             onDragEnd = { isDragging = false; offsetY = 0f },
@@ -388,22 +388,24 @@ fun TaskSubtasksList(
                                             onVerticalDrag = { change, dragAmount ->
                                                 change.consume()
                                                 offsetY += dragAmount
-                                                val currentIndex = subtasks.indexOf(subtask)
-                                                if (offsetY > 100f && currentIndex < subtasks.size - 1) {
-                                                    val updated = subtasks.toMutableList().apply {
+                                                val list = currentSubtasks
+                                                val currentIndex = list.indexOfFirst { it.id == subtask.id }
+                                                if (currentIndex == -1) return@detectVerticalDragGestures
+                                                if (offsetY > 100f && currentIndex < list.size - 1) {
+                                                    val updated = list.toMutableList().apply {
                                                         val temp = get(currentIndex)
                                                         set(currentIndex, get(currentIndex + 1))
                                                         set(currentIndex + 1, temp)
                                                     }
-                                                    onUpdateSubtasks(updated)
+                                                    currentOnUpdateSubtasks(updated)
                                                     offsetY = 0f
                                                 } else if (offsetY < -100f && currentIndex > 0) {
-                                                    val updated = subtasks.toMutableList().apply {
+                                                    val updated = list.toMutableList().apply {
                                                         val temp = get(currentIndex)
                                                         set(currentIndex, get(currentIndex - 1))
                                                         set(currentIndex - 1, temp)
                                                     }
-                                                    onUpdateSubtasks(updated)
+                                                    currentOnUpdateSubtasks(updated)
                                                     offsetY = 0f
                                                 }
                                             }
@@ -505,6 +507,7 @@ fun TaskActionsRow(
             IconButton(
                 onClick = {
                     val shareIntent = android.content.Intent().apply {
+                        action = android.content.Intent.ACTION_SEND
                         val shareText = TaskShareUtils.formatTaskForSharing(context, task)
                         putExtra(android.content.Intent.EXTRA_TEXT, shareText)
                         type = "text/plain"

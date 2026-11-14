@@ -782,10 +782,8 @@ private fun CalendarTaskItemCard(
                     }
 
                     // Due Date / Time (if set)
-                    val calendarContext = androidx.compose.ui.platform.LocalContext.current
-                    val calPrefs = remember(calendarContext) { calendarContext.getSharedPreferences("fabitodo_preferences", android.content.Context.MODE_PRIVATE) }
-                    val calDateFormatPref = remember(calPrefs) { calPrefs.getString("date_format", "DD/MM/AA") ?: "DD/MM/AA" }
-                    val calTimeFormatPref = remember(calPrefs) { calPrefs.getString("time_format", "24h") ?: "24h" }
+                    val calDateFormatPref = com.fabian.todolist.ui.theme.LocalDateFormat.current
+                    val calTimeFormatPref = com.fabian.todolist.ui.theme.LocalTimeFormat.current
 
                     if (task.dueDate != null && isOverdue) {
                         Text(
